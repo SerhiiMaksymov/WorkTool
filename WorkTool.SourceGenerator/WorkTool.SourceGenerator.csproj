@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\EmptyEnumerableException.cs">
+            <Link>Links\EmptyEnumerableException.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\NotEqualsExtension.cs">
+            <Link>Links\NotEqualsExtension.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\WhiteSpaceException.cs">
+            <Link>Links\WhiteSpaceException.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Extensions\EnumerableExtension.cs">
+            <Link>Links\EnumerableExtension.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Extensions\StringExtension.cs">
+            <Link>Links\StringExtension.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Interfaces\ISend.cs">
+            <Link>Links\ISend.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Models\Ref.cs">
+            <Link>Links\Ref.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Services\UdpSend.cs">
+            <Link>Links\UdpSend.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Services\UdpSendString.cs">
+            <Link>Links\UdpSendString.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.SourceGenerator.Core\Attributes\FluentObjectAttribute.cs">
+            <Link>Links\FluentObjectAttribute.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.SourceGenerator.Core\Attributes\ModelObjectAttribute.cs">
+            <Link>Links\ModelObjectAttribute.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.SourceGenerator.Core\Attributes\OptionsObjectAttribute.cs">
+            <Link>Links\OptionsObjectAttribute.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.SourceGenerator.Core\Attributes\PartObjectAttribute.cs">
+            <Link>Links\PartObjectAttribute.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.SourceGenerator.Core\Attributes\PartPropertyAttribute.cs">
+            <Link>Links\PartPropertyAttribute.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.SourceGenerator.Core\Models\GenericMark.cs">
+            <Link>Links\GenericMark.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.SourceGenerator.Core\Models\ObjectType.cs">
+            <Link>Links\ObjectType.cs</Link>
+        </Compile>
+    </ItemGroup>
+
+</Project>
