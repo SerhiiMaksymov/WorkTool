@@ -1,6 +1,7 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
-public class DecimalPropertyInfoTemplatedControl : PropertyInfoTemplatedControl<decimal, NumericUpDown>
+public class DecimalPropertyInfoTemplatedControl
+    : PropertyInfoTemplatedControl<decimal, NumericUpDown>
 {
     static DecimalPropertyInfoTemplatedControl()
     {
@@ -11,12 +12,11 @@ public class DecimalPropertyInfoTemplatedControl : PropertyInfoTemplatedControl<
         : base(
             (property, _, control, _) =>
             {
-                control.GetObservable(NumericUpDown.ValueProperty)
+                control
+                    .GetObservable(NumericUpDown.ValueProperty)
                     .Subscribe(x => property.Value = x ?? 0);
 
-                property.GetObservable(ValueProperty)
-                    .Subscribe(x => control.Value = x);
-            })
-    {
-    }
+                property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
+            }
+        ) { }
 }

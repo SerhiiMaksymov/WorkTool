@@ -1,17 +1,17 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
-public class ReactivePropertyInfoReactiveItemsControl<TViewModel> : PropertyInfoReactiveItemsControl,
-    IViewFor<TViewModel> where TViewModel : class
+public class ReactivePropertyInfoReactiveItemsControl<TViewModel>
+    : PropertyInfoReactiveItemsControl,
+        IViewFor<TViewModel> where TViewModel : class
 {
-    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty
-        .Register<ReactivePropertyInfoReactiveItemsControl<TViewModel>, TViewModel>(nameof(ViewModel));
+    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty.Register<
+        ReactivePropertyInfoReactiveItemsControl<TViewModel>,
+        TViewModel
+    >(nameof(ViewModel));
 
     public ReactivePropertyInfoReactiveItemsControl()
     {
-        this.WhenActivated(
-            _ =>
-            {
-            });
+        this.WhenActivated(_ => { });
 
         this.GetObservable(ViewModelProperty).Subscribe(OnViewModelChanged);
     }

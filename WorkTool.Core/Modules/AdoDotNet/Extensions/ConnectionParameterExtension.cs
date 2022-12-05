@@ -13,7 +13,8 @@ public static class ConnectionParameterExtension
     }
 
     public static IEnumerable<ConnectionParameter> GetNoDefaultParameters(
-    this IEnumerable<ConnectionParameter> parameters)
+        this IEnumerable<ConnectionParameter> parameters
+    )
     {
         return parameters.Where(x => x.IsDefault().IsFalse());
     }

@@ -2,18 +2,19 @@
 
 public class RandomStringInInterval : IRandom<string, Interval<int>>
 {
-    private readonly IRandomArrayItem<char>      randomArrayItemChar;
+    private readonly IRandomArrayItem<char> randomArrayItemChar;
     private readonly IRandom<int, Interval<int>> randomInt32;
-    private readonly char[]                      values;
+    private readonly char[] values;
 
     public RandomStringInInterval(
-    string                      values,
-    IRandomArrayItem<char>      randomArrayItemChar,
-    IRandom<int, Interval<int>> randomInt32)
+        string values,
+        IRandomArrayItem<char> randomArrayItemChar,
+        IRandom<int, Interval<int>> randomInt32
+    )
     {
         this.randomArrayItemChar = randomArrayItemChar.ThrowIfNull();
-        this.values              = values.ThrowIfNull().ToArray();
-        this.randomInt32         = randomInt32.ThrowIfNull();
+        this.values = values.ThrowIfNull().ToArray();
+        this.randomInt32 = randomInt32.ThrowIfNull();
     }
 
     public string GetRandom(Interval<int> interval)

@@ -4,31 +4,35 @@
 public class PropertyInfoReactiveItemsControl : ItemsControl, IObjectValue, IActivatableView
 {
     public const string ElementItemsPresenter = "PART_ItemsPresenter";
-    public const string ElementTextBlock      = "PART_TextBlock";
+    public const string ElementTextBlock = "PART_TextBlock";
 
     public static readonly DirectProperty<PropertyInfoReactiveItemsControl, string> TitleProperty =
         AvaloniaProperty.RegisterDirect<PropertyInfoReactiveItemsControl, string>(
             nameof(Title),
             o => o.Title,
-            (o, v) => o.Title = v);
+            (o, v) => o.Title = v
+        );
 
-    public static readonly DirectProperty<PropertyInfoReactiveItemsControl, PropertyInfo> PropertyInfoProperty =
-        AvaloniaProperty.RegisterDirect<PropertyInfoReactiveItemsControl, PropertyInfo>(
-            nameof(PropertyInfo),
-            o => o.PropertyInfo,
-            (o, v) => o.PropertyInfo = v);
+    public static readonly DirectProperty<
+        PropertyInfoReactiveItemsControl,
+        PropertyInfo
+    > PropertyInfoProperty = AvaloniaProperty.RegisterDirect<
+        PropertyInfoReactiveItemsControl,
+        PropertyInfo
+    >(nameof(PropertyInfo), o => o.PropertyInfo, (o, v) => o.PropertyInfo = v);
 
     public static readonly DirectProperty<PropertyInfoReactiveItemsControl, object> ValueProperty =
         AvaloniaProperty.RegisterDirect<PropertyInfoReactiveItemsControl, object>(
             nameof(Value),
             o => o.Value,
-            (o, v) => o.Value = v);
+            (o, v) => o.Value = v
+        );
     protected readonly AvaloniaList<object> ItemProperties;
-    protected          CompositeDisposable  CompositeDisposable;
-    private            object               @object;
-    private            PropertyInfo         propertyInfo;
-    private            string               title;
-    private            object               value;
+    protected CompositeDisposable CompositeDisposable;
+    private object @object;
+    private PropertyInfo propertyInfo;
+    private string title;
+    private object value;
 
     public string Title
     {
@@ -56,12 +60,16 @@ public class PropertyInfoReactiveItemsControl : ItemsControl, IObjectValue, IAct
         IObjectValue.ObjectProperty.AddOwner<PropertyInfoReactiveItemsControl>(x => x.Object);
 
         PropertyInfoProperty.Changed.AddClassHandler<PropertyInfoReactiveItemsControl>(
-            (_, e) => PropertyInfoChanged(e));
+            (_, e) => PropertyInfoChanged(e)
+        );
 
         IObjectValue.ObjectProperty.Changed.AddClassHandler<PropertyInfoReactiveItemsControl>(
-            (_, e) => ObjectChanged(e));
+            (_, e) => ObjectChanged(e)
+        );
 
-        ValueProperty.Changed.AddClassHandler<PropertyInfoReactiveItemsControl>((_, e) => ValueChanged(e));
+        ValueProperty.Changed.AddClassHandler<PropertyInfoReactiveItemsControl>(
+            (_, e) => ValueChanged(e)
+        );
     }
 
     public PropertyInfoReactiveItemsControl()
@@ -77,9 +85,7 @@ public class PropertyInfoReactiveItemsControl : ItemsControl, IObjectValue, IAct
         set => SetAndRaise(IObjectValue.ObjectProperty, ref @object, value);
     }
 
-    protected virtual void UpdateItems()
-    {
-    }
+    protected virtual void UpdateItems() { }
 
     private static void ValueChanged(AvaloniaPropertyChangedEventArgs e)
     {
@@ -117,7 +123,7 @@ public class PropertyInfoReactiveItemsControl : ItemsControl, IObjectValue, IAct
             return;
         }
 
-        var sender       = (PropertyInfoReactiveItemsControl)e.Sender;
+        var sender = (PropertyInfoReactiveItemsControl)e.Sender;
         var propertyInfo = (PropertyInfo)e.NewValue;
         sender.UpdateItems();
 

@@ -13,7 +13,7 @@ public class AvaloniaUiApp : AvaloniaApplication
 
     public override void Initialize()
     {
-        var styles            = resolver.Resolve<IEnumerable<IStyle>>();
+        var styles = resolver.Resolve<IEnumerable<IStyle>>();
         var resourceProviders = resolver.Resolve<IEnumerable<IResourceProvider>>();
         Styles.AddRange(styles);
         Resources.MergedDictionaries.AddRange(resourceProviders);

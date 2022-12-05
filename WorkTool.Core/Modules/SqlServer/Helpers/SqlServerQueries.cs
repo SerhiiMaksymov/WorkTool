@@ -2,6 +2,7 @@
 
 public static class SqlServerQueries
 {
-    public const string GetTables = @"SELECT *
+    public const string GetTables =
+        @"SELECT *
 FROM INFORMATION_SCHEMA.TABLES;";
 }

@@ -3,9 +3,10 @@
 public static class NameHelper
 {
     public static string GetNameFunction(
-    Type                             serviceType,
-    IEnumerable<ParameterExpression> parameters,
-    MethodInfo                       method)
+        Type serviceType,
+        IEnumerable<ParameterExpression> parameters,
+        MethodInfo method
+    )
     {
         var parametersList = parameters.Select(x => x.Type.Name).JoinString();
 
@@ -13,9 +14,10 @@ public static class NameHelper
     }
 
     public static string GetNameFunction(
-    Type                    serviceType,
-    IEnumerable<Expression> parameters,
-    MethodInfo              method)
+        Type serviceType,
+        IEnumerable<Expression> parameters,
+        MethodInfo method
+    )
     {
         var parametersList = parameters.Select(x => x.Type.Name).JoinString();
 
@@ -24,11 +26,15 @@ public static class NameHelper
 
     public static string GetNameFunction(Expression expression)
     {
-        var lambda               = expression.As<LambdaExpression>();
+        var lambda = expression.As<LambdaExpression>();
         var methodCallExpression = lambda.Body.As<MethodCallExpression>();
-        var genericArguments     = expression.Type.GetGenericArguments();
+        var genericArguments = expression.Type.GetGenericArguments();
 
-        return GetNameFunction(genericArguments.First(), methodCallExpression.Arguments, methodCallExpression.Method);
+        return GetNameFunction(
+            genericArguments.First(),
+            methodCallExpression.Arguments,
+            methodCallExpression.Method
+        );
     }
 
     public static string GetNameAddTabItemFunction(Type tabControlViewType, Type contentType)
@@ -36,7 +42,8 @@ public static class NameHelper
         return $"AddTabItem{GetTypeFullName(contentType)}For{GetTypeFullName(tabControlViewType)}";
     }
 
-    public static string GetNameAddTabItemFunction<TTabControlView, TContent>() where TTabControlView : ITabControlView
+    public static string GetNameAddTabItemFunction<TTabControlView, TContent>()
+        where TTabControlView : ITabControlView
     {
         return GetNameAddTabItemFunction(typeof(TTabControlView), typeof(TContent));
     }

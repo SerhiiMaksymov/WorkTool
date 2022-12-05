@@ -6,7 +6,8 @@ public interface IObjectValue : IAvaloniaObject
         AvaloniaProperty.RegisterDirect<IObjectValue, object>(
             nameof(Object),
             o => o.Object,
-            (o, v) => o.Object = v);
+            (o, v) => o.Object = v
+        );
 
     object Object { get; set; }
 }

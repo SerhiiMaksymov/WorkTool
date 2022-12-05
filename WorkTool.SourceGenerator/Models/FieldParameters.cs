@@ -2,18 +2,23 @@
 
 public readonly struct FieldParameters
 {
-    public FieldParameters(AccessModifier accessModifier, bool isReadonly, TypeParameters type, string name)
+    public FieldParameters(
+        AccessModifier accessModifier,
+        bool isReadonly,
+        TypeParameters type,
+        string name
+    )
     {
-        Name           = name;
-        Type           = type;
+        Name = name;
+        Type = type;
         AccessModifier = accessModifier;
-        IsReadonly     = isReadonly;
+        IsReadonly = isReadonly;
     }
 
     public AccessModifier AccessModifier { get; }
-    public bool           IsReadonly     { get; }
-    public TypeParameters Type           { get; }
-    public string         Name           { get; }
+    public bool IsReadonly { get; }
+    public TypeParameters Type { get; }
+    public string Name { get; }
 
     public override string ToString()
     {

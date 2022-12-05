@@ -2,8 +2,10 @@
 
 public class CommandsControl : ItemsControl
 {
-    public static readonly StyledProperty<object> ContentProperty =
-        AvaloniaProperty.Register<CommandsControl, object>(nameof(Content));
+    public static readonly StyledProperty<object> ContentProperty = AvaloniaProperty.Register<
+        CommandsControl,
+        object
+    >(nameof(Content));
 
     [Content]
     public object Content

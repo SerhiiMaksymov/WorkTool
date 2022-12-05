@@ -2,7 +2,7 @@
 
 public class FluentObjectReceiver : ISyntaxReceiver
 {
-    public readonly List<FluentObjectParameters> Items = new ();
+    public readonly List<FluentObjectParameters> Items = new();
 
     public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
     {
@@ -26,7 +26,10 @@ public class FluentObjectReceiver : ISyntaxReceiver
             return;
         }
 
-        if (attribute.ArgumentList.Arguments[0].Expression is not TypeOfExpressionSyntax typeExpressionSyntax)
+        if (
+            attribute.ArgumentList.Arguments[0].Expression
+            is not TypeOfExpressionSyntax typeExpressionSyntax
+        )
         {
             return;
         }

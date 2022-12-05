@@ -2,14 +2,12 @@
 
 public class DynamicResourceBinding : IBinding
 {
-    private object?         _anchor;
+    private object? _anchor;
     private BindingPriority _priority;
 
     public object? ResourceKey { get; set; }
 
-    public DynamicResourceBinding()
-    {
-    }
+    public DynamicResourceBinding() { }
 
     public DynamicResourceBinding(object resourceKey)
     {
@@ -17,10 +15,11 @@ public class DynamicResourceBinding : IBinding
     }
 
     InstancedBinding? IBinding.Initiate(
-    IAvaloniaObject   target,
-    AvaloniaProperty? targetProperty,
-    object?           anchor,
-    bool              enableDataValidation)
+        IAvaloniaObject target,
+        AvaloniaProperty? targetProperty,
+        object? anchor,
+        bool enableDataValidation
+    )
     {
         if (ResourceKey is null)
         {
@@ -38,7 +37,10 @@ public class DynamicResourceBinding : IBinding
 
         if (_anchor is IResourceProvider resourceProvider)
         {
-            var source = resourceProvider.GetResourceObservable(ResourceKey, GetConverter(targetProperty));
+            var source = resourceProvider.GetResourceObservable(
+                ResourceKey,
+                GetConverter(targetProperty)
+            );
 
             return InstancedBinding.OneWay(source, _priority);
         }

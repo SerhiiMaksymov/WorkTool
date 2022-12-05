@@ -11,12 +11,11 @@ public class UInt32PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<u
         : base(
             (property, _, control, _) =>
             {
-                control.GetObservable(NumericUpDown.ValueProperty)
+                control
+                    .GetObservable(NumericUpDown.ValueProperty)
                     .Subscribe(x => property.Value = (uint)x);
 
-                property.GetObservable(ValueProperty)
-                    .Subscribe(x => control.Value = x);
-            })
-    {
-    }
+                property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
+            }
+        ) { }
 }

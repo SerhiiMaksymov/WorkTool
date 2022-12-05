@@ -6,9 +6,12 @@ public static class OperatorTypeExtension
     {
         switch (type)
         {
-            case OperatorType.Implicit: return "implicit";
-            case OperatorType.Explicit: return "explicit";
-            default:                    return string.Empty;
+            case OperatorType.Implicit:
+                return "implicit";
+            case OperatorType.Explicit:
+                return "explicit";
+            default:
+                return string.Empty;
         }
     }
 }

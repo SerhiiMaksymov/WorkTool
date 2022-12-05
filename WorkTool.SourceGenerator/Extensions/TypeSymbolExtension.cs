@@ -2,17 +2,22 @@
 
 public static class TypeSymbolExtension
 {
-    public static IEnumerable<PropertyParameters> GetPartProperties(this ITypeSymbol     type,
-                                                                    PartObjectParameters parameters)
+    public static IEnumerable<PropertyParameters> GetPartProperties(
+        this ITypeSymbol type,
+        PartObjectParameters parameters
+    )
     {
         var propertySymbols = type.GetMembers().OfType<IPropertySymbol>();
 
         foreach (var propertySymbol in propertySymbols)
         {
-            var partPropertyAttribute = propertySymbol.GetAttributes()
+            var partPropertyAttribute = propertySymbol
+                .GetAttributes()
                 .FirstOrDefault(
-                    x => x.AttributeClass.MetadataName.Equals(nameof(PartPropertyAttribute))
-                    && x.ConstructorArguments[0].Value.Equals(parameters.Name));
+                    x =>
+                        x.AttributeClass.MetadataName.Equals(nameof(PartPropertyAttribute))
+                        && x.ConstructorArguments[0].Value.Equals(parameters.Name)
+                );
 
             if (partPropertyAttribute is null)
             {
@@ -33,13 +38,11 @@ public static class TypeSymbolExtension
         return type.ToTypeParameters(type.Name);
     }
 
-    public static TypeParameters ToTypeParameters(
-    this ITypeSymbol type,
-    string           name)
+    public static TypeParameters ToTypeParameters(this ITypeSymbol type, string name)
     {
-        var namespaceOptions       = type.ToNamespaceOptions();
+        var namespaceOptions = type.ToNamespaceOptions();
         var genericsTypeParameters = type.GetGenericsTypeParameters();
-        var result                 = new TypeParameters(namespaceOptions, name, genericsTypeParameters);
+        var result = new TypeParameters(namespaceOptions, name, genericsTypeParameters);
 
         return result;
     }
@@ -50,8 +53,9 @@ public static class TypeSymbolExtension
     }
 
     public static IEnumerable<MethodParameters> GetObjectOptionsMethods(
-    this ITypeSymbol                type,
-    IEnumerable<PropertyParameters> properties)
+        this ITypeSymbol type,
+        IEnumerable<PropertyParameters> properties
+    )
     {
         var typeParameters = type.ToTypeParameters();
 
@@ -62,7 +66,8 @@ public static class TypeSymbolExtension
             "ToOptions",
             Enumerable.Empty<GenericParameters>(),
             Enumerable.Empty<ArgumentParameters>(),
-            $"return new {typeParameters}(){{{properties.Select(x => $"{x.Name} = {x.Name},").JoinString()}}};");
+            $"return new {typeParameters}(){{{properties.Select(x => $"{x.Name} = {x.Name},").JoinString()}}};"
+        );
     }
 
     public static IEnumerable<TypeParameters> GetGenericsTypeParameters(this ITypeSymbol type)
@@ -74,7 +79,7 @@ public static class TypeSymbolExtension
 
         for (var index = 0; index < namedTypeSymbol.TypeArguments.Length; index++)
         {
-            var typeArgument  = namedTypeSymbol.TypeArguments[index];
+            var typeArgument = namedTypeSymbol.TypeArguments[index];
             var typeParameter = namedTypeSymbol.TypeParameters[index];
 
             if (typeArgument.Name.EndsWith(nameof(GenericMark)))
@@ -82,7 +87,8 @@ public static class TypeSymbolExtension
                 yield return new TypeParameters(
                     null,
                     typeParameter.Name,
-                    Enumerable.Empty<TypeParameters>());
+                    Enumerable.Empty<TypeParameters>()
+                );
             }
             else if (typeParameter.Name == typeArgument.Name)
             {
@@ -104,7 +110,7 @@ public static class TypeSymbolExtension
 
         for (var index = 0; index < namedTypeSymbol.TypeArguments.Length; index++)
         {
-            var typeArgument  = namedTypeSymbol.TypeArguments[index];
+            var typeArgument = namedTypeSymbol.TypeArguments[index];
             var typeParameter = namedTypeSymbol.TypeParameters[index];
 
             if (typeArgument.Name.EndsWith(nameof(GenericMark)))
@@ -113,7 +119,8 @@ public static class TypeSymbolExtension
                     typeParameter.Name,
                     false,
                     GenericOptionsType.None,
-                    Enumerable.Empty<TypeParameters>());
+                    Enumerable.Empty<TypeParameters>()
+                );
             }
             else
             {
@@ -121,10 +128,8 @@ public static class TypeSymbolExtension
                     typeParameter.Name,
                     false,
                     GenericOptionsType.None,
-                    new[]
-                    {
-                        typeArgument.ToTypeParameters()
-                    });
+                    new[] { typeArgument.ToTypeParameters() }
+                );
             }
         }
     }
@@ -227,12 +232,15 @@ public static class TypeSymbolExtension
     {
         var members = type.GetMembers();
 
-        var getProperties = members.OfType<IPropertySymbol>()
+        var getProperties = members
+            .OfType<IPropertySymbol>()
             .Where(
-                x => x.DeclaredAccessibility == Accessibility.Public
-                && x.GetMethod is not null
-                && x.GetMethod.DeclaredAccessibility == Accessibility.Public
-                && !x.IsStatic);
+                x =>
+                    x.DeclaredAccessibility == Accessibility.Public
+                    && x.GetMethod is not null
+                    && x.GetMethod.DeclaredAccessibility == Accessibility.Public
+                    && !x.IsStatic
+            );
 
         foreach (var property in getProperties)
         {
@@ -247,7 +255,8 @@ public static class TypeSymbolExtension
                 AccessModifier.Public,
                 new PropertyGetterOptions(),
                 null,
-                null);
+                null
+            );
         }
     }
 
@@ -255,12 +264,15 @@ public static class TypeSymbolExtension
     {
         var members = type.GetMembers();
 
-        var getProperties = members.OfType<IPropertySymbol>()
+        var getProperties = members
+            .OfType<IPropertySymbol>()
             .Where(
-                x => x.DeclaredAccessibility == Accessibility.Public
-                && x.GetMethod is not null
-                && x.GetMethod.DeclaredAccessibility == Accessibility.Public
-                && !x.IsStatic);
+                x =>
+                    x.DeclaredAccessibility == Accessibility.Public
+                    && x.GetMethod is not null
+                    && x.GetMethod.DeclaredAccessibility == Accessibility.Public
+                    && !x.IsStatic
+            );
 
         foreach (var property in getProperties)
         {
@@ -276,11 +288,13 @@ public static class TypeSymbolExtension
                     new TypeParameters(
                         null,
                         property.GetMethod.OriginalDefinition.ReturnType.Name,
-                        Enumerable.Empty<TypeParameters>()),
+                        Enumerable.Empty<TypeParameters>()
+                    ),
                     AccessModifier.Public,
                     new PropertyGetterOptions(),
                     null,
-                    null);
+                    null
+                );
             }
             else
             {
@@ -290,14 +304,16 @@ public static class TypeSymbolExtension
                     AccessModifier.Public,
                     new PropertyGetterOptions(),
                     null,
-                    null);
+                    null
+                );
             }
         }
     }
 
     public static IEnumerable<ConstructorParameters> GetObjectOptionsConstructors(
-    this ITypeSymbol                type,
-    IEnumerable<PropertyParameters> properties)
+        this ITypeSymbol type,
+        IEnumerable<PropertyParameters> properties
+    )
     {
         var typeParameters = type.ToTypeParameters(type.Name.OptionsTypeNameToModelTypeName());
 
@@ -305,35 +321,43 @@ public static class TypeSymbolExtension
             AccessModifier.Public,
             typeParameters,
             properties.ToArguments(),
-            properties.Select(x => $"{x.Name} = {x.Name.PropertyNameToArgumentName()};")
+            properties
+                .Select(x => $"{x.Name} = {x.Name.PropertyNameToArgumentName()};")
                 .JoinString(Environment.NewLine),
-            null);
+            null
+        );
     }
 
     public static IEnumerable<MethodParameters> GetFluentExtensionMethods(this ITypeSymbol type)
     {
-        var outPutType   = type.ToTypeParameters();
+        var outPutType = type.ToTypeParameters();
         var argumentName = type.Name.PropertyNameToArgumentName();
-        var members      = type.GetMembers();
+        var members = type.GetMembers();
 
-        var setProperties = members.OfType<IPropertySymbol>()
+        var setProperties = members
+            .OfType<IPropertySymbol>()
             .Where(
-                x => x.DeclaredAccessibility == Accessibility.Public
-                && x.SetMethod is not null
-                && x.SetMethod.DeclaredAccessibility == Accessibility.Public
-                && !x.IsStatic);
+                x =>
+                    x.DeclaredAccessibility == Accessibility.Public
+                    && x.SetMethod is not null
+                    && x.SetMethod.DeclaredAccessibility == Accessibility.Public
+                    && !x.IsStatic
+            );
 
-        var getProperties = members.OfType<IPropertySymbol>()
+        var getProperties = members
+            .OfType<IPropertySymbol>()
             .Where(
-                x => x.DeclaredAccessibility == Accessibility.Public
-                && x.GetMethod is not null
-                && x.GetMethod.DeclaredAccessibility == Accessibility.Public
-                && !x.IsStatic);
+                x =>
+                    x.DeclaredAccessibility == Accessibility.Public
+                    && x.GetMethod is not null
+                    && x.GetMethod.DeclaredAccessibility == Accessibility.Public
+                    && !x.IsStatic
+            );
 
         foreach (var property in setProperties)
         {
             var propertyArgumentName = property.Name.PropertyNameToArgumentName();
-            var generic              = $"T{outPutType.Name}";
+            var generic = $"T{outPutType.Name}";
 
             if (property.Name.StartsWith("this["))
             {
@@ -347,19 +371,16 @@ public static class TypeSymbolExtension
                 $"Set{property.Name}",
                 new GenericParameters[]
                 {
-                    new (
-                        generic,
-                        false,
-                        GenericOptionsType.None,
-                        new[]
-                        {
-                            outPutType
-                        })
+                    new(generic, false, GenericOptionsType.None, new[] { outPutType })
                 },
                 new ArgumentParameters[]
                 {
-                    new (true, new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()), argumentName),
-                    new (false, property.Type.ToTypeParameters(), propertyArgumentName)
+                    new(
+                        true,
+                        new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+                        argumentName
+                    ),
+                    new(false, property.Type.ToTypeParameters(), propertyArgumentName)
                 },
                 $@"{
                     argumentName
@@ -370,7 +391,8 @@ public static class TypeSymbolExtension
                 };
 return {
     argumentName
-};");
+};"
+            );
 
             if (property.Type.TypeKind == TypeKind.Enum)
             {
@@ -390,21 +412,19 @@ return {
                         $"Set{property.Name}{memberName}",
                         new GenericParameters[]
                         {
-                            new (
-                                generic,
-                                false,
-                                GenericOptionsType.None,
-                                new[]
-                                {
-                                    outPutType
-                                })
+                            new(generic, false, GenericOptionsType.None, new[] { outPutType })
                         },
                         new ArgumentParameters[]
                         {
-                            new (
+                            new(
                                 true,
-                                new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
-                                argumentName)
+                                new TypeParameters(
+                                    null,
+                                    generic,
+                                    Enumerable.Empty<TypeParameters>()
+                                ),
+                                argumentName
+                            )
                         },
                         $@"{
                             argumentName
@@ -417,7 +437,8 @@ return {
                         };
 return {
     argumentName
-};");
+};"
+                    );
                 }
             }
         }
@@ -436,8 +457,8 @@ return {
                 continue;
             }
 
-            var itemType         = collectionType.Value.Generics.Single();
-            var generic          = $"T{outPutType.Name}";
+            var itemType = collectionType.Value.Generics.Single();
+            var generic = $"T{outPutType.Name}";
             var itemArgumentName = "item";
 
             yield return new MethodParameters(
@@ -447,19 +468,16 @@ return {
                 $"Add{property.Name.PropertyNameToSingle()}",
                 new GenericParameters[]
                 {
-                    new (
-                        generic,
-                        false,
-                        GenericOptionsType.None,
-                        new[]
-                        {
-                            outPutType
-                        })
+                    new(generic, false, GenericOptionsType.None, new[] { outPutType })
                 },
                 new ArgumentParameters[]
                 {
-                    new (true, new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()), argumentName),
-                    new (false, itemType, itemArgumentName)
+                    new(
+                        true,
+                        new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+                        argumentName
+                    ),
+                    new(false, itemType, itemArgumentName)
                 },
                 $@"{
                     argumentName
@@ -470,7 +488,8 @@ return {
                 });
 return {
     argumentName
-};");
+};"
+            );
 
             yield return new MethodParameters(
                 AccessModifier.Public,
@@ -479,30 +498,23 @@ return {
                 $"Add{property.Name}",
                 new GenericParameters[]
                 {
-                    new (
-                        generic,
-                        false,
-                        GenericOptionsType.None,
-                        new[]
-                        {
-                            outPutType
-                        })
+                    new(generic, false, GenericOptionsType.None, new[] { outPutType })
                 },
                 new ArgumentParameters[]
                 {
-                    new (true, new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()), argumentName),
-                    new (
+                    new(
+                        true,
+                        new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+                        argumentName
+                    ),
+                    new(
                         false,
                         typeof(IEnumerable<object>).ToTypeOptions(
-                            new[]
-                            {
-                                itemType
-                            },
-                            new[]
-                            {
-                                typeof(object).ToTypeOptions()
-                            }),
-                        $"{itemArgumentName}s")
+                            new[] { itemType },
+                            new[] { typeof(object).ToTypeOptions() }
+                        ),
+                        $"{itemArgumentName}s"
+                    )
                 },
                 $@"foreach(var {
                     itemArgumentName
@@ -518,7 +530,8 @@ return {
     });
 return {
     argumentName
-};");
+};"
+            );
         }
     }
 }

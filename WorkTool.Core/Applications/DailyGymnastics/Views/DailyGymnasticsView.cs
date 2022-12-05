@@ -7,10 +7,7 @@ public class DailyGymnasticsView : ReactiveUserControl<DailyGymnasticsViewModel>
         ViewModel = viewModel;
 
         KeyBindings.Add(
-            new KeyBinding
-            {
-                Command = viewModel.CheckCommand,
-                Gesture = new KeyGesture(Key.Enter)
-            });
+            new KeyBinding { Command = viewModel.CheckCommand, Gesture = new KeyGesture(Key.Enter) }
+        );
     }
 }

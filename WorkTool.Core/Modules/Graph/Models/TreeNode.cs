@@ -21,18 +21,18 @@ public class TreeNode<TKey, TValue> where TKey : notnull
         }
     }
 
-    public TreeNode<TKey, TValue>              Parent     { get; private set; }
-    public TKey                                Key        { get; }
-    public TValue                              Value      { get; }
-    public IEnumerable<TValue>                 NodeValues { get; }
-    public IEnumerable<TKey>                   NodeKeys   { get; }
-    public IEnumerable<TreeNode<TKey, TValue>> Nodes      { get; }
+    public TreeNode<TKey, TValue> Parent { get; private set; }
+    public TKey Key { get; }
+    public TValue Value { get; }
+    public IEnumerable<TValue> NodeValues { get; }
+    public IEnumerable<TKey> NodeKeys { get; }
+    public IEnumerable<TreeNode<TKey, TValue>> Nodes { get; }
 
     public TreeNode(TKey key, TValue value, IEnumerable<TreeNode<TKey, TValue>> nodes)
     {
         this.nodes = new Dictionary<TKey, TreeNode<TKey, TValue>>();
-        Key        = key.ThrowIfNull();
-        Value      = value.ThrowIfNull();
+        Key = key.ThrowIfNull();
+        Value = value.ThrowIfNull();
 
         foreach (var node in nodes)
         {
@@ -41,7 +41,7 @@ public class TreeNode<TKey, TValue> where TKey : notnull
         }
 
         NodeValues = this.nodes.Values.Select(x => x.Value).ToArray();
-        NodeKeys   = this.nodes.Values.Select(x => x.Key).ToArray();
-        Nodes      = this.nodes.Values;
+        NodeKeys = this.nodes.Values.Select(x => x.Key).ToArray();
+        Nodes = this.nodes.Values;
     }
 }

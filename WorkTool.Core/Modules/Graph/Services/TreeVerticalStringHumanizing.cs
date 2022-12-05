@@ -1,15 +1,18 @@
 ﻿namespace WorkTool.Core.Modules.Graph.Services;
 
-public class TreeVerticalStringHumanizing<TKey, TValue> : IHumanizing<Tree<TKey, TValue>, string> where TKey : notnull
+public class TreeVerticalStringHumanizing<TKey, TValue> : IHumanizing<Tree<TKey, TValue>, string>
+    where TKey : notnull
 {
     private readonly IHumanizing<TreeNode<TKey, TValue>, string> humanizingTreeNode;
-    private readonly TreeVerticalStringHumanizingOptions         options;
+    private readonly TreeVerticalStringHumanizingOptions options;
 
-    public TreeVerticalStringHumanizing(IHumanizing<TreeNode<TKey, TValue>, string> humanizingTreeNode,
-                                        TreeVerticalStringHumanizingOptions         options)
+    public TreeVerticalStringHumanizing(
+        IHumanizing<TreeNode<TKey, TValue>, string> humanizingTreeNode,
+        TreeVerticalStringHumanizingOptions options
+    )
     {
         this.humanizingTreeNode = humanizingTreeNode.ThrowIfNull();
-        this.options            = options.ThrowIfNull();
+        this.options = options.ThrowIfNull();
     }
 
     public string Humanize(Tree<TKey, TValue> input)
@@ -30,10 +33,14 @@ public class TreeVerticalStringHumanizing<TKey, TValue> : IHumanizing<Tree<TKey,
         }
     }
 
-    private void PrintWithIndent(TreeNode<TKey, TValue> treeNode, int indent, StringBuilder stringBuilder)
+    private void PrintWithIndent(
+        TreeNode<TKey, TValue> treeNode,
+        int indent,
+        StringBuilder stringBuilder
+    )
     {
         var humanizeTreeNode = humanizingTreeNode.Humanize(treeNode);
-        var line             = string.Format(options.Format, new string(' ', indent * 2), humanizeTreeNode);
+        var line = string.Format(options.Format, new string(' ', indent * 2), humanizeTreeNode);
         stringBuilder.AppendLine(line);
     }
 }

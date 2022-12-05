@@ -2,8 +2,10 @@
 
 public static class ItemsControlExtension
 {
-    public static TItemsControl AddItems<TItemsControl>(this TItemsControl itemsControl, IEnumerable<object> items)
-        where TItemsControl : ItemsControl
+    public static TItemsControl AddItems<TItemsControl>(
+        this TItemsControl itemsControl,
+        IEnumerable<object> items
+    ) where TItemsControl : ItemsControl
     {
         if (itemsControl.Items is ICollection<object> collection)
         {
@@ -15,15 +17,19 @@ public static class ItemsControlExtension
             return itemsControl;
         }
 
-        var result = new AvaloniaList<object>(itemsControl.Items?.OfType<object>() ?? Enumerable.Empty<object>());
+        var result = new AvaloniaList<object>(
+            itemsControl.Items?.OfType<object>() ?? Enumerable.Empty<object>()
+        );
         result.AddRange(items);
         itemsControl.Items = result;
 
         return itemsControl;
     }
 
-    public static TItemsControl AddItems<TItemsControl>(this TItemsControl itemsControl, params object[] items)
-        where TItemsControl : ItemsControl
+    public static TItemsControl AddItems<TItemsControl>(
+        this TItemsControl itemsControl,
+        params object[] items
+    ) where TItemsControl : ItemsControl
     {
         if (itemsControl.Items is ICollection<object> collection)
         {
@@ -35,7 +41,9 @@ public static class ItemsControlExtension
             return itemsControl;
         }
 
-        var result = new AvaloniaList<object>(itemsControl.Items?.OfType<object>() ?? Enumerable.Empty<object>());
+        var result = new AvaloniaList<object>(
+            itemsControl.Items?.OfType<object>() ?? Enumerable.Empty<object>()
+        );
         result.AddRange(items);
         itemsControl.Items = result;
 
@@ -52,7 +60,9 @@ public static class ItemsControlExtension
             return itemsControl;
         }
 
-        var items = new AvaloniaList<object>(itemsControl.Items?.OfType<object>() ?? Enumerable.Empty<object>())
+        var items = new AvaloniaList<object>(
+            itemsControl.Items?.OfType<object>() ?? Enumerable.Empty<object>()
+        )
         {
             item
         };
@@ -62,8 +72,10 @@ public static class ItemsControlExtension
         return itemsControl;
     }
 
-    public static TItemsControl RemoveItem<TItemsControl>(this TItemsControl itemsControl, object item)
-        where TItemsControl : ItemsControl
+    public static TItemsControl RemoveItem<TItemsControl>(
+        this TItemsControl itemsControl,
+        object item
+    ) where TItemsControl : ItemsControl
     {
         if (itemsControl.Items is ICollection<object> collection)
         {
@@ -72,7 +84,9 @@ public static class ItemsControlExtension
             return itemsControl;
         }
 
-        var items = new AvaloniaList<object>(itemsControl.Items?.OfType<object>() ?? Enumerable.Empty<object>());
+        var items = new AvaloniaList<object>(
+            itemsControl.Items?.OfType<object>() ?? Enumerable.Empty<object>()
+        );
         items.Remove(item);
         itemsControl.Items = items;
 

@@ -2,12 +2,12 @@
 
 public class PropertyDefaultValue
 {
-    public string Name  { get; }
+    public string Name { get; }
     public object Value { get; }
 
     public PropertyDefaultValue(string name, object value)
     {
-        Name  = name.ThrowIfNullOrWhiteSpace();
+        Name = name.ThrowIfNullOrWhiteSpace();
         Value = value.ThrowIfNull();
     }
 }

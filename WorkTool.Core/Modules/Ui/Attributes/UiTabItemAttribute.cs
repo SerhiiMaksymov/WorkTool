@@ -3,14 +3,14 @@
 [AttributeUsage(AttributeTargets.Assembly)]
 public class UiTabItemAttribute : Attribute
 {
-    public Type   TabControlViewType { get; }
-    public string Header             { get; }
-    public Type   ContentType        { get; }
+    public Type TabControlViewType { get; }
+    public string Header { get; }
+    public Type ContentType { get; }
 
     public UiTabItemAttribute(Type tabControlViewType, string header, Type contentType)
     {
         TabControlViewType = tabControlViewType;
-        Header             = header;
-        ContentType        = contentType;
+        Header = header;
+        ContentType = contentType;
     }
 }

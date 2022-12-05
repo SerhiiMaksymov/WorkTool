@@ -2,17 +2,17 @@
 
 public class UdpSend<TMessage> : ISend<TMessage>, IDisposable
 {
-    private readonly UdpClient              client;
-    private          bool                   disposed;
-    public           IPEndPoint             IpEndPoint { get; }
-    public           Func<TMessage, byte[]> Converter  { get; }
+    private readonly UdpClient client;
+    private bool disposed;
+    public IPEndPoint IpEndPoint { get; }
+    public Func<TMessage, byte[]> Converter { get; }
 
     public UdpSend(IPEndPoint ipEndPoint, Func<TMessage, byte[]> converter)
     {
         IpEndPoint = ipEndPoint.ThrowIfNull(nameof(ipEndPoint));
-        client     = new UdpClient();
-        Converter  = converter.ThrowIfNull(nameof(converter));
-        disposed   = false;
+        client = new UdpClient();
+        Converter = converter.ThrowIfNull(nameof(converter));
+        disposed = false;
     }
 
     public void Dispose()

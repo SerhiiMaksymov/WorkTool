@@ -2,21 +2,26 @@
 
 public readonly struct OperatorParameters
 {
-    public OperatorParameters(AccessModifier access, OperatorType type, TypeParameters output, ArgumentParameters input,
-                              string         body)
+    public OperatorParameters(
+        AccessModifier access,
+        OperatorType type,
+        TypeParameters output,
+        ArgumentParameters input,
+        string body
+    )
     {
         Access = access;
-        Type   = type;
+        Type = type;
         Output = output;
-        Input  = input;
-        Body   = body;
+        Input = input;
+        Body = body;
     }
 
-    public AccessModifier     Access { get; }
-    public OperatorType       Type   { get; }
-    public TypeParameters     Output { get; }
-    public ArgumentParameters Input  { get; }
-    public string             Body   { get; }
+    public AccessModifier Access { get; }
+    public OperatorType Type { get; }
+    public TypeParameters Output { get; }
+    public ArgumentParameters Input { get; }
+    public string Body { get; }
 
     public override string ToString()
     {

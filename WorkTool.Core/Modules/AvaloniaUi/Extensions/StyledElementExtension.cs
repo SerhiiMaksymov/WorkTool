@@ -3,12 +3,11 @@
 public static class StyledElementExtension
 {
     public static TStyledElement SetName<TStyledElement>(
-    this TStyledElement styledElement,
-    string              name,
-    INameScope          nameScope)
-        where TStyledElement : StyledElement
+        this TStyledElement styledElement,
+        string name,
+        INameScope nameScope
+    ) where TStyledElement : StyledElement
     {
-        return styledElement.SetName(name)
-            .RegisterInNameScope(nameScope);
+        return styledElement.SetName(name).RegisterInNameScope(nameScope);
     }
 }

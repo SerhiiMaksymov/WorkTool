@@ -2,14 +2,18 @@
 
 public class DialogControl : ContentControl, IDialogView
 {
-    public static readonly StyledProperty<object> DialogProperty =
-        AvaloniaProperty.Register<DialogControl, object>(nameof(Dialog));
+    public static readonly StyledProperty<object> DialogProperty = AvaloniaProperty.Register<
+        DialogControl,
+        object
+    >(nameof(Dialog));
 
     public static readonly StyledProperty<IBrush> DialogBackgroundProperty =
         AvaloniaProperty.Register<DialogControl, IBrush>(nameof(DialogBackground));
 
-    public static readonly StyledProperty<bool> IsVisibleDialogProperty =
-        AvaloniaProperty.Register<DialogControl, bool>(nameof(IsVisibleDialog));
+    public static readonly StyledProperty<bool> IsVisibleDialogProperty = AvaloniaProperty.Register<
+        DialogControl,
+        bool
+    >(nameof(IsVisibleDialog));
     private TaskCompletionSource<bool> taskCompletionSource;
 
     public object Dialog

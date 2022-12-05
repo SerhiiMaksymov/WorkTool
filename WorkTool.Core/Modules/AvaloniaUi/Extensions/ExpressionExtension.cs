@@ -6,14 +6,17 @@ public static class ExpressionExtension
     {
         var lambdaExpression = (LambdaExpression)expression;
         var memberExpression = (MemberExpression)lambdaExpression.Body;
-        var stringBuilder    = new StringBuilder();
+        var stringBuilder = new StringBuilder();
         GetMemberPath(memberExpression, stringBuilder);
         var result = stringBuilder.ToString();
 
         return result;
     }
 
-    private static void GetMemberPath(MemberExpression memberExpression, StringBuilder stringBuilder)
+    private static void GetMemberPath(
+        MemberExpression memberExpression,
+        StringBuilder stringBuilder
+    )
     {
         if (memberExpression.Expression is MemberExpression parent)
         {

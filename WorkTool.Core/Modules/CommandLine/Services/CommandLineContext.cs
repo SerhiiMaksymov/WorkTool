@@ -2,17 +2,20 @@
 
 public class CommandLineContext
 {
-    public const     string                    DefaultRoot = "Root";
+    public const string DefaultRoot = "Root";
     private readonly CommandLineContextOptions options;
 
     private readonly IStreamParser<ICommandLineToken, string> parser;
-    public           Tree<string, CommandLineContextItem>     Tree { get; }
+    public Tree<string, CommandLineContextItem> Tree { get; }
 
-    public CommandLineContext(Tree<string, CommandLineContextItem>     tree,
-                              IStreamParser<ICommandLineToken, string> parser, CommandLineContextOptions options)
+    public CommandLineContext(
+        Tree<string, CommandLineContextItem> tree,
+        IStreamParser<ICommandLineToken, string> parser,
+        CommandLineContextOptions options
+    )
     {
-        Tree         = tree.ThrowIfNull();
-        this.parser  = parser.ThrowIfNull();
+        Tree = tree.ThrowIfNull();
+        this.parser = parser.ThrowIfNull();
         this.options = options.ThrowIfNull();
     }
 
@@ -20,17 +23,16 @@ public class CommandLineContext
     {
         var tokens = GetTokens(args).ToArray();
 
-        var names = tokens.OfType<NameCommandLineToken>()
-            .Select(x => x.Name)
-            .ToArray();
+        var names = tokens.OfType<NameCommandLineToken>().Select(x => x.Name).ToArray();
 
-        var item            = Tree[names];
-        var parameters      = new Dictionary<ArgumentNameCommandLineToken, ArgumentValueCommandLineToken>();
+        var item = Tree[names];
+        var parameters =
+            new Dictionary<ArgumentNameCommandLineToken, ArgumentValueCommandLineToken>();
         var parameterTokens = tokens[names.Length..];
 
         for (var index = 0; index < parameterTokens.Length; index += 2)
         {
-            var name  = parameterTokens[index] as ArgumentNameCommandLineToken;
+            var name = parameterTokens[index] as ArgumentNameCommandLineToken;
             var value = parameterTokens[index + 1] as ArgumentValueCommandLineToken;
             parameters[name] = value;
         }

@@ -3,8 +3,9 @@
 public static class ObjectExtension
 {
     public static PropertyInfoReactiveItemsControl CreateReflectionControlPropertyInfoItemsControl(
-    this object obj,
-    IResolver   resolver)
+        this object obj,
+        IResolver resolver
+    )
     {
         if (obj.GetType().IsValueType)
         {
@@ -15,7 +16,8 @@ public static class ObjectExtension
             return propertyInfoItemsControl;
         }
 
-        var nullablePropertyInfoItemsControl = resolver.Resolve<NullablePropertyInfoReactiveItemsView>();
+        var nullablePropertyInfoItemsControl =
+            resolver.Resolve<NullablePropertyInfoReactiveItemsView>();
         nullablePropertyInfoItemsControl.Value = obj;
         nullablePropertyInfoItemsControl.Title = obj.GetType().ToString();
 
@@ -23,9 +25,10 @@ public static class ObjectExtension
     }
 
     public static PropertyInfoReactiveItemsControl CreateReflectionControlPropertyInfoItemsControl(
-    this object obj,
-    IResolver   resolver,
-    bool        nullable)
+        this object obj,
+        IResolver resolver,
+        bool nullable
+    )
     {
         if (!nullable)
         {
@@ -36,7 +39,8 @@ public static class ObjectExtension
             return propertyInfoItemsControl;
         }
 
-        var nullablePropertyInfoItemsControl = resolver.Resolve<NullablePropertyInfoReactiveItemsView>();
+        var nullablePropertyInfoItemsControl =
+            resolver.Resolve<NullablePropertyInfoReactiveItemsView>();
         nullablePropertyInfoItemsControl.Value = obj;
         nullablePropertyInfoItemsControl.Title = obj.GetType().ToString();
 

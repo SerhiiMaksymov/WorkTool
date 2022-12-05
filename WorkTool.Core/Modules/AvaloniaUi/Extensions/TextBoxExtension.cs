@@ -2,7 +2,8 @@
 
 public static class TextBoxExtension
 {
-    public static IEnumerable<MenuItem> CreateDefaultMenuItems<TTextBox>(this TTextBox textBox) where TTextBox : TextBox
+    public static IEnumerable<MenuItem> CreateDefaultMenuItems<TTextBox>(this TTextBox textBox)
+        where TTextBox : TextBox
     {
         yield return new MenuItem()
             .SetHeader("Cut")

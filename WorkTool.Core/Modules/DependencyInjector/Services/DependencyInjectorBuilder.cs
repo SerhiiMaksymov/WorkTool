@@ -3,34 +3,34 @@
 public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDependencyInjectorBuilder
 {
     private readonly Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>> constructorParameters;
-    private readonly Dictionary<ParameterInfo, object>                       constructorParametersValue;
-    private readonly Dictionary<Type, ConstructorInfo>                       constructors;
-    private readonly Dictionary<Delegate, ParameterInfo[]>                   methodParameters;
-    private readonly Dictionary<Delegate, MethodInfo>                        methods;
-    private readonly Dictionary<Type, Func<IResolver, object>>               singleton;
-    private readonly Dictionary<Type, LazyLoad<object>>                      singletonDefaults;
-    private readonly Dictionary<Type, Type>                                  singletonTypes;
-    private readonly Dictionary<Type, Func<IResolver, object>>               transient;
-    private readonly Dictionary<Type, Func<object>>                          transientDefaults;
-    private readonly Dictionary<Type, Type>                                  transientTypes;
-    private readonly Dictionary<Type, IEnumerable<PropertyInfo>>             typePublicSetters;
+    private readonly Dictionary<ParameterInfo, object> constructorParametersValue;
+    private readonly Dictionary<Type, ConstructorInfo> constructors;
+    private readonly Dictionary<Delegate, ParameterInfo[]> methodParameters;
+    private readonly Dictionary<Delegate, MethodInfo> methods;
+    private readonly Dictionary<Type, Func<IResolver, object>> singleton;
+    private readonly Dictionary<Type, LazyLoad<object>> singletonDefaults;
+    private readonly Dictionary<Type, Type> singletonTypes;
+    private readonly Dictionary<Type, Func<IResolver, object>> transient;
+    private readonly Dictionary<Type, Func<object>> transientDefaults;
+    private readonly Dictionary<Type, Type> transientTypes;
+    private readonly Dictionary<Type, IEnumerable<PropertyInfo>> typePublicSetters;
 
     public bool AutoInject { get; set; }
 
     public DependencyInjectorBuilder()
     {
-        methodParameters           = new Dictionary<Delegate, ParameterInfo[]>();
-        methods                    = new Dictionary<Delegate, MethodInfo>();
-        singletonDefaults          = new Dictionary<Type, LazyLoad<object>>();
-        transientDefaults          = new Dictionary<Type, Func<object>>();
-        constructors               = new Dictionary<Type, ConstructorInfo>();
+        methodParameters = new Dictionary<Delegate, ParameterInfo[]>();
+        methods = new Dictionary<Delegate, MethodInfo>();
+        singletonDefaults = new Dictionary<Type, LazyLoad<object>>();
+        transientDefaults = new Dictionary<Type, Func<object>>();
+        constructors = new Dictionary<Type, ConstructorInfo>();
         constructorParametersValue = new Dictionary<ParameterInfo, object>();
-        constructorParameters      = new Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>>();
-        typePublicSetters          = new Dictionary<Type, IEnumerable<PropertyInfo>>();
-        singleton                  = new Dictionary<Type, Func<IResolver, object>>();
-        transient                  = new Dictionary<Type, Func<IResolver, object>>();
-        singletonTypes             = new Dictionary<Type, Type>();
-        transientTypes             = new Dictionary<Type, Type>();
+        constructorParameters = new Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>>();
+        typePublicSetters = new Dictionary<Type, IEnumerable<PropertyInfo>>();
+        singleton = new Dictionary<Type, Func<IResolver, object>>();
+        transient = new Dictionary<Type, Func<IResolver, object>>();
+        singletonTypes = new Dictionary<Type, Type>();
+        transientTypes = new Dictionary<Type, Type>();
     }
 
     public IDependencyInjector Build()
@@ -48,7 +48,8 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
             transient,
             singleton,
             singletonTypes,
-            transientTypes);
+            transientTypes
+        );
     }
 
     void IRegisterTransient.RegisterTransient<TObject, TImplementation>()
@@ -73,7 +74,9 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
             return properties;
         }
 
-        properties = type.GetProperties(BindingFlags.Instance | BindingFlags.SetProperty | BindingFlags.Public);
+        properties = type.GetProperties(
+            BindingFlags.Instance | BindingFlags.SetProperty | BindingFlags.Public
+        );
         typePublicSetters.Add(type, properties);
 
         return properties;
@@ -120,13 +123,16 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
     public DependencyInjectorBuilder Reserve(Type type, Type parameterType, object value)
     {
         var constructor = GetSingleConstructor(type);
-        var parameter   = GetConstructorParameters(constructor).Single(x => x.ParameterType == parameterType);
+        var parameter = GetConstructorParameters(constructor)
+            .Single(x => x.ParameterType == parameterType);
         constructorParametersValue[parameter] = value;
 
         return this;
     }
 
-    public DependencyInjectorBuilder AddConfiguration(IDependencyInjectorConfiguration configuration)
+    public DependencyInjectorBuilder AddConfiguration(
+        IDependencyInjectorConfiguration configuration
+    )
     {
         configuration.Configure(this);
 
@@ -153,7 +159,8 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
         return this;
     }
 
-    public DependencyInjectorBuilder RegisterTransient<TObject, TImplementation>() where TImplementation : TObject
+    public DependencyInjectorBuilder RegisterTransient<TObject, TImplementation>()
+        where TImplementation : TObject
     {
         transientTypes[typeof(TObject)] = typeof(TImplementation);
 
@@ -211,7 +218,8 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
         return RegisterSingleton(typeof(TValue), () => func.Invoke());
     }
 
-    public DependencyInjectorBuilder RegisterSingleton<TObject, TImplementation>() where TImplementation : TObject
+    public DependencyInjectorBuilder RegisterSingleton<TObject, TImplementation>()
+        where TImplementation : TObject
     {
         return RegisterSingleton(typeof(TObject), typeof(TImplementation));
     }

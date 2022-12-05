@@ -2,7 +2,8 @@
 
 public readonly struct TypeParameters : IEquatable<TypeParameters>, IEquatable<INamedTypeSymbol>
 {
-    public static readonly TypeParameters Void = new (null, "void", Enumerable.Empty<TypeParameters>());
+    public static readonly TypeParameters Void =
+        new(null, "void", Enumerable.Empty<TypeParameters>());
 
     public static readonly IEnumerable<string> PrimitiveTypeNames = new[]
     {
@@ -28,16 +29,20 @@ public readonly struct TypeParameters : IEquatable<TypeParameters>, IEquatable<I
 
     private readonly List<TypeParameters> generics;
 
-    public TypeParameters(NamespaceOptions? @namespace, string name, IEnumerable<TypeParameters> generics)
+    public TypeParameters(
+        NamespaceOptions? @namespace,
+        string name,
+        IEnumerable<TypeParameters> generics
+    )
     {
-        Namespace     = @namespace;
-        Name          = name;
+        Namespace = @namespace;
+        Name = name;
         this.generics = new List<TypeParameters>(generics);
     }
 
-    public NamespaceOptions?           Namespace { get; }
-    public string                      Name      { get; }
-    public IEnumerable<TypeParameters> Generics  => generics;
+    public NamespaceOptions? Namespace { get; }
+    public string Name { get; }
+    public IEnumerable<TypeParameters> Generics => generics;
 
     public bool IsPrimitiveType()
     {
@@ -103,8 +108,7 @@ public readonly struct TypeParameters : IEquatable<TypeParameters>, IEquatable<I
 
         if (Namespace.HasValue)
         {
-            return
-                $"{Namespace}.{Name}{(Generics.Any() ? $"<{string.Join(", ", Generics.Select(x => x.ToText()))}>" : string.Empty)}";
+            return $"{Namespace}.{Name}{(Generics.Any() ? $"<{string.Join(", ", Generics.Select(x => x.ToText()))}>" : string.Empty)}";
         }
 
         return Name;

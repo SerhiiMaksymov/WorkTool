@@ -2,7 +2,7 @@
 
 public class PartObjectReceiver : ISyntaxReceiver
 {
-    public readonly List<PartObjectParameters> Items = new ();
+    public readonly List<PartObjectParameters> Items = new();
 
     public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
     {
@@ -26,22 +26,33 @@ public class PartObjectReceiver : ISyntaxReceiver
             return;
         }
 
-        if (attribute.ArgumentList.Arguments[0].Expression is not TypeOfExpressionSyntax typeExpressionSyntax)
+        if (
+            attribute.ArgumentList.Arguments[0].Expression
+            is not TypeOfExpressionSyntax typeExpressionSyntax
+        )
         {
             return;
         }
 
-        if (attribute.ArgumentList.Arguments[1].Expression is not LiteralExpressionSyntax nameSyntax)
+        if (
+            attribute.ArgumentList.Arguments[1].Expression is not LiteralExpressionSyntax nameSyntax
+        )
         {
             return;
         }
 
-        if (attribute.ArgumentList.Arguments[2].Expression is not LiteralExpressionSyntax classNameSyntax)
+        if (
+            attribute.ArgumentList.Arguments[2].Expression
+            is not LiteralExpressionSyntax classNameSyntax
+        )
         {
             return;
         }
 
-        if (attribute.ArgumentList.Arguments[3].Expression is not MemberAccessExpressionSyntax objectTypeSyntax)
+        if (
+            attribute.ArgumentList.Arguments[3].Expression
+            is not MemberAccessExpressionSyntax objectTypeSyntax
+        )
         {
             return;
         }
@@ -53,6 +64,8 @@ public class PartObjectReceiver : ISyntaxReceiver
                 typeExpressionSyntax.Type,
                 nameSyntax.Token.ValueText,
                 classNameSyntax.Token.ValueText,
-                objectType));
+                objectType
+            )
+        );
     }
 }

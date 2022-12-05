@@ -1,7 +1,7 @@
 ﻿namespace WorkTool.Core.Applications.LanguageTeacher.Services;
 
-public class LanguageDictionaryBuilder<TLanguage, TTranslate> : IBuilder<LanguageDictionary<TLanguage, TTranslate>>
-    where TLanguage : notnull
+public class LanguageDictionaryBuilder<TLanguage, TTranslate>
+    : IBuilder<LanguageDictionary<TLanguage, TTranslate>> where TLanguage : notnull
 {
     private readonly Dictionary<TLanguage, List<TTranslate>> _translates;
 
@@ -18,7 +18,10 @@ public class LanguageDictionaryBuilder<TLanguage, TTranslate> : IBuilder<Languag
         return new LanguageDictionary<TLanguage, TTranslate>(dictionary);
     }
 
-    public LanguageDictionaryBuilder<TLanguage, TTranslate> Add(TLanguage englishWord, TTranslate russianWord)
+    public LanguageDictionaryBuilder<TLanguage, TTranslate> Add(
+        TLanguage englishWord,
+        TTranslate russianWord
+    )
     {
         if (!_translates.ContainsKey(englishWord))
         {

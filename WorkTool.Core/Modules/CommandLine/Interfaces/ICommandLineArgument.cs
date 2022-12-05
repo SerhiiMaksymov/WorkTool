@@ -2,6 +2,6 @@
 
 public interface ICommandLineArgument<out TValue>
 {
-    ICommandLineArgumentMeta<TValue> Meta  { get; }
-    TValue                           Value { get; }
+    ICommandLineArgumentMeta<TValue> Meta { get; }
+    TValue Value { get; }
 }

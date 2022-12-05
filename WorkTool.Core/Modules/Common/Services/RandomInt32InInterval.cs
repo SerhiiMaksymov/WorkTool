@@ -2,7 +2,7 @@
 
 public class RandomInt32InInterval : IRandom<int, Interval<int>>
 {
-    public static readonly RandomInt32InInterval Default = new ();
+    public static readonly RandomInt32InInterval Default = new();
 
     public int GetRandom(Interval<int> options)
     {

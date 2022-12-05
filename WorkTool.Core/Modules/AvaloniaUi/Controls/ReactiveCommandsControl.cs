@@ -1,16 +1,16 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
-public class ReactiveCommandsControl<TViewModel> : CommandsControl, IViewFor<TViewModel> where TViewModel : class
+public class ReactiveCommandsControl<TViewModel> : CommandsControl, IViewFor<TViewModel>
+    where TViewModel : class
 {
-    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty
-        .Register<ReactiveCommandsControl<TViewModel>, TViewModel>(nameof(ViewModel));
+    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty.Register<
+        ReactiveCommandsControl<TViewModel>,
+        TViewModel
+    >(nameof(ViewModel));
 
     public ReactiveCommandsControl()
     {
-        this.WhenActivated(
-            _ =>
-            {
-            });
+        this.WhenActivated(_ => { });
 
         this.GetObservable(ViewModelProperty).Subscribe(OnViewModelChanged);
     }

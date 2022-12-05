@@ -2,38 +2,47 @@
 
 public static class DbContextExtension
 {
-    public static int ExecuteNonCommand<TCommand, TParameter>(this DbContext          context,
-                                                              string                  query,
-                                                              IEnumerable<TParameter> parameters)
-        where TCommand : DbCommand, new() where TParameter : DbParameter
+    public static int ExecuteNonCommand<TCommand, TParameter>(
+        this DbContext context,
+        string query,
+        IEnumerable<TParameter> parameters
+    )
+        where TCommand : DbCommand, new()
+        where TParameter : DbParameter
     {
         using var command = context.CreateCommand<TCommand, TParameter>(query, parameters);
 
         return command.ExecuteNonQuery();
     }
 
-    public static Task<int> ExecuteNonCommandAsync<TCommand, TParameter>(this DbContext          context,
-                                                                         string                  query,
-                                                                         IEnumerable<TParameter> parameters)
-        where TCommand : DbCommand, new() where TParameter : DbParameter
+    public static Task<int> ExecuteNonCommandAsync<TCommand, TParameter>(
+        this DbContext context,
+        string query,
+        IEnumerable<TParameter> parameters
+    )
+        where TCommand : DbCommand, new()
+        where TParameter : DbParameter
     {
         using var command = context.CreateCommand<TCommand, TParameter>(query, parameters);
 
         return command.ExecuteNonQueryAsync();
     }
 
-    public static int ExecuteNonCommand<TCommand>(this DbContext context,
-                                                  string         query) where TCommand : DbCommand, new()
+    public static int ExecuteNonCommand<TCommand>(this DbContext context, string query)
+        where TCommand : DbCommand, new()
     {
         using var command = context.CreateCommand<TCommand>(query);
 
         return command.ExecuteNonQuery();
     }
 
-    public static object ExecuteScalarCommand<TCommand, TParameter>(this DbContext          context,
-                                                                    string                  query,
-                                                                    IEnumerable<TParameter> parameters)
-        where TCommand : DbCommand, new() where TParameter : DbParameter
+    public static object ExecuteScalarCommand<TCommand, TParameter>(
+        this DbContext context,
+        string query,
+        IEnumerable<TParameter> parameters
+    )
+        where TCommand : DbCommand, new()
+        where TParameter : DbParameter
     {
         using var command = context.CreateCommand<TCommand, TParameter>(query, parameters);
 
@@ -48,13 +57,14 @@ public static class DbContextExtension
         return command.ExecuteScalar();
     }
 
-    public static TCommand CreateCommand<TCommand>(this DbContext context) where TCommand : DbCommand, new()
+    public static TCommand CreateCommand<TCommand>(this DbContext context)
+        where TCommand : DbCommand, new()
     {
         var connection = context.Database.GetDbConnection();
 
         var command = new TCommand
         {
-            Connection  = connection,
+            Connection = connection,
             Transaction = context.Database.CurrentTransaction?.GetDbTransaction()
         };
 
@@ -70,10 +80,13 @@ public static class DbContextExtension
         return command;
     }
 
-    public static TCommand CreateCommand<TCommand, TParameter>(this DbContext          context,
-                                                               string                  query,
-                                                               IEnumerable<TParameter> parameters)
-        where TCommand : DbCommand, new() where TParameter : DbParameter
+    public static TCommand CreateCommand<TCommand, TParameter>(
+        this DbContext context,
+        string query,
+        IEnumerable<TParameter> parameters
+    )
+        where TCommand : DbCommand, new()
+        where TParameter : DbParameter
     {
         var command = context.CreateCommand<TCommand>(query);
         command.Parameters.AddRange(parameters.ToArray());
@@ -81,61 +94,75 @@ public static class DbContextExtension
         return command;
     }
 
-    public static async Task<DataTable> GetDataTablesync<TContext, TCommand, TParameter>(this TContext context,
+    public static async Task<DataTable> GetDataTablesync<TContext, TCommand, TParameter>(
+        this TContext context,
         string query,
-        IEnumerable<TParameter> parameters) where TCommand : DbCommand, new()
+        IEnumerable<TParameter> parameters
+    )
+        where TCommand : DbCommand, new()
         where TParameter : DbParameter
         where TContext : DbContext
     {
         await using var command = context.CreateCommand<TCommand>();
-        var             result  = await command.GetDataTableAsync(query, parameters);
+        var result = await command.GetDataTableAsync(query, parameters);
 
         return result;
     }
 
-    public static DataTable GetDataTable<TContext, TCommand, TParameter>(this TContext           context,
-                                                                         string                  query,
-                                                                         IEnumerable<TParameter> parameters)
+    public static DataTable GetDataTable<TContext, TCommand, TParameter>(
+        this TContext context,
+        string query,
+        IEnumerable<TParameter> parameters
+    )
         where TCommand : DbCommand, new()
         where TParameter : DbParameter
         where TContext : DbContext
     {
         using var command = context.CreateCommand<TCommand>();
-        var       result  = command.GetDataTable(query, parameters);
+        var result = command.GetDataTable(query, parameters);
 
         return result;
     }
 
-    public static async Task<DataTable> GetDataTableAsync<TContext, TCommand, TDataAdapter, TParameter>(
-    this TContext           context,
-    string                  query,
-    IEnumerable<TParameter> parameters) where TCommand : DbCommand, new()
+    public static async Task<DataTable> GetDataTableAsync<
+        TContext,
+        TCommand,
+        TDataAdapter,
+        TParameter
+    >(this TContext context, string query, IEnumerable<TParameter> parameters)
+        where TCommand : DbCommand, new()
         where TParameter : DbParameter
         where TContext : DbContext
         where TDataAdapter : DbDataAdapter, new()
     {
         await using var command = context.CreateCommand<TCommand>();
-        var             result = await command.GetDataTableAsync<TCommand, TDataAdapter, TParameter>(query, parameters);
+        var result = await command.GetDataTableAsync<TCommand, TDataAdapter, TParameter>(
+            query,
+            parameters
+        );
 
         return result;
     }
 
-    public static DataTable GetDataTable<TContext, TCommand>(this TContext context,
-                                                             string        query) where TCommand : DbCommand, new()
+    public static DataTable GetDataTable<TContext, TCommand>(this TContext context, string query)
+        where TCommand : DbCommand, new()
         where TContext : DbContext
     {
         using var command = context.CreateCommand<TCommand>();
-        var       result  = command.GetDataTable(query);
+        var result = command.GetDataTable(query);
 
         return result;
     }
 
-    public static async Task<DataTable> GetDataTableAsync<TContext, TCommand>(this TContext context, string query)
+    public static async Task<DataTable> GetDataTableAsync<TContext, TCommand>(
+        this TContext context,
+        string query
+    )
         where TCommand : DbCommand, new()
         where TContext : DbContext
     {
         await using var command = context.CreateCommand<TCommand>();
-        var             result  = await command.GetDataTableAsync(query);
+        var result = await command.GetDataTableAsync(query);
 
         return result;
     }
@@ -145,7 +172,7 @@ public static class DbContextExtension
         where TContext : DbContext
     {
         using var command = context.CreateCommand<TCommand>();
-        var       result  = command.ExecuteNonQuery(query);
+        var result = command.ExecuteNonQuery(query);
 
         return result;
     }
@@ -154,25 +181,29 @@ public static class DbContextExtension
         where TCommand : DbCommand, new()
     {
         using var command = context.CreateCommand<TCommand>();
-        var       result  = command.GetDataTable(query);
+        var result = command.GetDataTable(query);
 
         return result;
     }
 
-    public static DataTable GetDataTable<TCommand, TParameter>(this DbContext          context,
-                                                               string                  query,
-                                                               IEnumerable<TParameter> parameters)
-        where TParameter : DbParameter where TCommand : DbCommand, new()
+    public static DataTable GetDataTable<TCommand, TParameter>(
+        this DbContext context,
+        string query,
+        IEnumerable<TParameter> parameters
+    )
+        where TParameter : DbParameter
+        where TCommand : DbCommand, new()
     {
         using var command = context.CreateCommand<TCommand>();
-        var       result  = command.GetDataTable(query, parameters);
+        var result = command.GetDataTable(query, parameters);
 
         return result;
     }
 
-    public static void Execute<TContext>(this TContext                           context,
-                                         Action<TContext, IDbContextTransaction> execute)
-        where TContext : DbContext
+    public static void Execute<TContext>(
+        this TContext context,
+        Action<TContext, IDbContextTransaction> execute
+    ) where TContext : DbContext
     {
         execute.ThrowIfNull();
         var transaction = context.Database.CurrentTransaction;
@@ -191,12 +222,13 @@ public static class DbContextExtension
         }
     }
 
-    public static async Task ExecuteAsync<TContext>(this TContext        context,
-                                                    Func<TContext, Task> execute)
-        where TContext : DbContext
+    public static async Task ExecuteAsync<TContext>(
+        this TContext context,
+        Func<TContext, Task> execute
+    ) where TContext : DbContext
     {
         execute.ThrowIfNull();
-        var database    = context.Database;
+        var database = context.Database;
         var transaction = database.CurrentTransaction;
 
         try
@@ -216,9 +248,10 @@ public static class DbContextExtension
         }
     }
 
-    public static TResult Execute<TContext, TResult>(this TContext                                  context,
-                                                     Func<TContext, IDbContextTransaction, TResult> execute)
-        where TContext : DbContext
+    public static TResult Execute<TContext, TResult>(
+        this TContext context,
+        Func<TContext, IDbContextTransaction, TResult> execute
+    ) where TContext : DbContext
     {
         execute.ThrowIfNull();
         var transaction = context.Database.CurrentTransaction;
@@ -239,9 +272,10 @@ public static class DbContextExtension
         }
     }
 
-    public static async Task<TResult> ExecuteAsync<TContext, TResult>(this TContext                 context,
-                                                                      Func<TContext, Task<TResult>> execute)
-        where TContext : DbContext
+    public static async Task<TResult> ExecuteAsync<TContext, TResult>(
+        this TContext context,
+        Func<TContext, Task<TResult>> execute
+    ) where TContext : DbContext
     {
         execute.ThrowIfNull();
         var transaction = context.Database.CurrentTransaction;

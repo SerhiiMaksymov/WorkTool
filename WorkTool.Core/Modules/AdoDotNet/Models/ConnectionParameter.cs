@@ -2,12 +2,15 @@
 
 public record ConnectionParameter
 {
-    public ConnectionParameterInfo  Info           { get; }
+    public ConnectionParameterInfo Info { get; }
     public ConnectionParameterValue ParameterValue { get; }
 
-    public ConnectionParameter(ConnectionParameterInfo info, ConnectionParameterValue parameterValue)
+    public ConnectionParameter(
+        ConnectionParameterInfo info,
+        ConnectionParameterValue parameterValue
+    )
     {
-        Info           = info;
+        Info = info;
         ParameterValue = parameterValue;
     }
 }

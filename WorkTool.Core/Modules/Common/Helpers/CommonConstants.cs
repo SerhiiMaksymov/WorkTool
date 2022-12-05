@@ -4,15 +4,16 @@ public static class CommonConstants
 {
     public const ushort BufferSize = 16 * 1024;
 
-    public const           string UpperChars   = "QWERTYUIOPASDFGHJKLZXCVBNM";
-    public const           string LowerChars   = "qwertyuiopasdfghjklzxcvbnm";
-    public const           string NumberChars  = "1234567890";
-    public const           string SymbolsChars = "`~!@#$%^&*()-_=,./<>?\\|";
-    public const           string SpaceChars   = " \\t";
-    public static readonly Random Random       = new ();
-    public static readonly string LetterChars  = UpperChars + LowerChars;
-    public static readonly string AllLineChars = LetterChars + NumberChars + SymbolsChars + SpaceChars;
-    public static readonly string AllChars     = AllLineChars + Environment.NewLine;
+    public const string UpperChars = "QWERTYUIOPASDFGHJKLZXCVBNM";
+    public const string LowerChars = "qwertyuiopasdfghjklzxcvbnm";
+    public const string NumberChars = "1234567890";
+    public const string SymbolsChars = "`~!@#$%^&*()-_=,./<>?\\|";
+    public const string SpaceChars = " \\t";
+    public static readonly Random Random = new();
+    public static readonly string LetterChars = UpperChars + LowerChars;
+    public static readonly string AllLineChars =
+        LetterChars + NumberChars + SymbolsChars + SpaceChars;
+    public static readonly string AllChars = AllLineChars + Environment.NewLine;
 
     public static readonly string[] LastNames =
     {

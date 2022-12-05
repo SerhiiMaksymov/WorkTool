@@ -2,29 +2,25 @@
 
 public sealed class KeyboardKeyGesture : IEquatable<KeyboardKeyGesture>
 {
-    private static readonly Dictionary<string, KeyboardKey> SKeySynonyms = new ()
-    {
+    private static readonly Dictionary<string, KeyboardKey> SKeySynonyms =
+        new()
         {
-            "+", KeyboardKey.OemPlus
-        },
-        {
-            "-", KeyboardKey.OemMinus
-        },
-        {
-            ".", KeyboardKey.OemPeriod
-        },
-        {
-            ",", KeyboardKey.OemComma
-        }
-    };
+            { "+", KeyboardKey.OemPlus },
+            { "-", KeyboardKey.OemMinus },
+            { ".", KeyboardKey.OemPeriod },
+            { ",", KeyboardKey.OemComma }
+        };
 
     public KeyboardKey Key { get; }
 
     public KeyboardKeyModifiers KeyModifiers { get; }
 
-    public KeyboardKeyGesture(KeyboardKey key, KeyboardKeyModifiers modifiers = KeyboardKeyModifiers.None)
+    public KeyboardKeyGesture(
+        KeyboardKey key,
+        KeyboardKeyModifiers modifiers = KeyboardKeyModifiers.None
+    )
     {
-        Key          = key;
+        Key = key;
         KeyModifiers = modifiers;
     }
 
@@ -78,13 +74,13 @@ public sealed class KeyboardKeyGesture : IEquatable<KeyboardKeyGesture>
 
     public static KeyboardKeyGesture Parse(string gesture)
     {
-        var key          = KeyboardKey.None;
+        var key = KeyboardKey.None;
         var keyModifiers = KeyboardKeyModifiers.None;
-        var cstart       = 0;
+        var cstart = 0;
 
         for (var c = 0; c <= gesture.Length; c++)
         {
-            var ch     = c == gesture.Length ? '\0' : gesture[c];
+            var ch = c == gesture.Length ? '\0' : gesture[c];
             var isLast = c == gesture.Length;
 
             if (!isLast && (ch != '+' || cstart == c))
@@ -167,9 +163,11 @@ public sealed class KeyboardKeyGesture : IEquatable<KeyboardKeyGesture>
             return KeyboardKeyModifiers.Control;
         }
 
-        if (modifier.Equals("cmd".AsSpan(), StringComparison.OrdinalIgnoreCase)
-        || modifier.Equals("win".AsSpan(), StringComparison.OrdinalIgnoreCase)
-        || modifier.Equals("⌘".AsSpan(), StringComparison.OrdinalIgnoreCase))
+        if (
+            modifier.Equals("cmd".AsSpan(), StringComparison.OrdinalIgnoreCase)
+            || modifier.Equals("win".AsSpan(), StringComparison.OrdinalIgnoreCase)
+            || modifier.Equals("⌘".AsSpan(), StringComparison.OrdinalIgnoreCase)
+        )
         {
             return KeyboardKeyModifiers.Meta;
         }

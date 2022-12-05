@@ -3,11 +3,11 @@
 public class PropertyInfoReactiveItemsView<TType> : PropertyInfoReactiveItemsView
 {
     public PropertyInfoReactiveItemsView(
-    UiContext                           avaloniaUiContext,
-    ViewModelBase                       viewModel,
-    PropertyInfoTemplatedControlContext context,
-    IResolver                           resolver)
-        : base(avaloniaUiContext, viewModel, context)
+        UiContext avaloniaUiContext,
+        ViewModelBase viewModel,
+        PropertyInfoTemplatedControlContext context,
+        IResolver resolver
+    ) : base(avaloniaUiContext, viewModel, context)
     {
         Value = resolver.Resolve<TType>();
         Title = typeof(TType).ToString();
@@ -17,16 +17,20 @@ public class PropertyInfoReactiveItemsView<TType> : PropertyInfoReactiveItemsVie
 public class PropertyInfoReactiveItemsView : ReactivePropertyInfoReactiveItemsControl<ViewModelBase>
 {
     private const BindingFlags PropertiesFlags =
-        BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty;
+        BindingFlags.Instance
+        | BindingFlags.Public
+        | BindingFlags.GetProperty
+        | BindingFlags.SetProperty;
     private readonly PropertyInfoTemplatedControlContext context;
 
     public PropertyInfoReactiveItemsView(
-    UiContext                           avaloniaUiContext,
-    ViewModelBase                       viewModel,
-    PropertyInfoTemplatedControlContext context)
+        UiContext avaloniaUiContext,
+        ViewModelBase viewModel,
+        PropertyInfoTemplatedControlContext context
+    )
     {
         this.context = context.ThrowIfNull();
-        DataContext  = viewModel.ThrowIfNull();
+        DataContext = viewModel.ThrowIfNull();
         avaloniaUiContext.InitView(this);
     }
 
@@ -40,8 +44,7 @@ public class PropertyInfoReactiveItemsView : ReactivePropertyInfoReactiveItemsCo
             return;
         }
 
-        var properties = Value.GetType()
-            .GetProperties(PropertiesFlags);
+        var properties = Value.GetType().GetProperties(PropertiesFlags);
 
         foreach (var property in properties)
         {

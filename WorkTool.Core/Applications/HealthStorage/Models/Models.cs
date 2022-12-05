@@ -1,6 +1,6 @@
-﻿[assembly:
-    PartObject(
-        typeof(HealthWeightOptions<GenericMark>),
-        "CreateHealthWeightModel",
-        "CreateHealthWeightModel",
-        ObjectType.Class)]
+﻿[assembly: PartObject(
+    typeof(HealthWeightOptions<GenericMark>),
+    "CreateHealthWeightModel",
+    "CreateHealthWeightModel",
+    ObjectType.Class
+)]

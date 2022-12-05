@@ -1,15 +1,18 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Views;
 
-public class NullablePropertyInfoReactiveItemsView : ReactiveNullablePropertyInfoReactiveItemsControl<ViewModelBase>
+public class NullablePropertyInfoReactiveItemsView
+    : ReactiveNullablePropertyInfoReactiveItemsControl<ViewModelBase>
 {
     private readonly PropertyInfoTemplatedControlContext context;
 
-    public NullablePropertyInfoReactiveItemsView(UiContext                           avaloniaUiContext,
-                                                 ViewModelBase                       viewModel,
-                                                 PropertyInfoTemplatedControlContext context)
+    public NullablePropertyInfoReactiveItemsView(
+        UiContext avaloniaUiContext,
+        ViewModelBase viewModel,
+        PropertyInfoTemplatedControlContext context
+    )
     {
         this.context = context.ThrowIfNull();
-        DataContext  = viewModel.ThrowIfNull();
+        DataContext = viewModel.ThrowIfNull();
         avaloniaUiContext.InitView(this);
     }
 
@@ -22,9 +25,14 @@ public class NullablePropertyInfoReactiveItemsView : ReactiveNullablePropertyInf
             return;
         }
 
-        var properties = Value.GetType()
+        var properties = Value
+            .GetType()
             .GetProperties(
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty);
+                BindingFlags.Instance
+                    | BindingFlags.Public
+                    | BindingFlags.GetProperty
+                    | BindingFlags.SetProperty
+            );
 
         foreach (var property in properties)
         {

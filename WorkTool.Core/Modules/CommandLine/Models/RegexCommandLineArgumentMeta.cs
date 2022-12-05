@@ -4,7 +4,8 @@ public class RegexCommandLineArgumentMeta : CommandLineArgumentMeta<Regex>
 {
     public RegexOptions Options { get; }
 
-    public RegexCommandLineArgumentMeta(string key, Regex @default, RegexOptions options) : base(key, @default)
+    public RegexCommandLineArgumentMeta(string key, Regex @default, RegexOptions options)
+        : base(key, @default)
     {
         Options = options;
     }

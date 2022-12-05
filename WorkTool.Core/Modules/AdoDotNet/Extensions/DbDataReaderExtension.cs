@@ -2,8 +2,10 @@
 
 public static class DbDataReaderExtension
 {
-    public static string GetCsvColumnsStringName<TDbDataReader>(this TDbDataReader reader, string separator)
-        where TDbDataReader : DbDataReader
+    public static string GetCsvColumnsStringName<TDbDataReader>(
+        this TDbDataReader reader,
+        string separator
+    ) where TDbDataReader : DbDataReader
     {
         separator.ThrowIfNull(nameof(separator));
 
@@ -32,8 +34,10 @@ public static class DbDataReaderExtension
         return result;
     }
 
-    public static async Task<IEnumerable<IEnumerable<string>>>
-        GetRowsStringValueAsync<TDbDataReader>(this TDbDataReader reader) where TDbDataReader : DbDataReader
+    public static async Task<
+        IEnumerable<IEnumerable<string>>
+    > GetRowsStringValueAsync<TDbDataReader>(this TDbDataReader reader)
+        where TDbDataReader : DbDataReader
     {
         var result = new List<IEnumerable<string>>();
 
@@ -45,17 +49,21 @@ public static class DbDataReaderExtension
         return result;
     }
 
-    public static string GetCvsRowStringValues<TDbDataReader>(this TDbDataReader reader, string separator)
-        where TDbDataReader : DbDataReader
+    public static string GetCvsRowStringValues<TDbDataReader>(
+        this TDbDataReader reader,
+        string separator
+    ) where TDbDataReader : DbDataReader
     {
         separator.ThrowIfNull(nameof(separator));
 
         return reader.GetRowStringValues().JoinString(separator);
     }
 
-    public static string GetCvsRowsStringValue<TDbDataReader>(this TDbDataReader reader,
-                                                              string separator,
-                                                              string rowSeparator) where TDbDataReader : DbDataReader
+    public static string GetCvsRowsStringValue<TDbDataReader>(
+        this TDbDataReader reader,
+        string separator,
+        string rowSeparator
+    ) where TDbDataReader : DbDataReader
     {
         separator.ThrowIfNull(nameof(separator));
         rowSeparator.ThrowIfNull(nameof(rowSeparator));
@@ -69,10 +77,11 @@ public static class DbDataReaderExtension
         return rows.JoinString(rowSeparator);
     }
 
-    public static async Task<string> GetCvsRowsStringValueAsync<TDbDataReader>(this TDbDataReader reader,
-                                                                               string             separator,
-                                                                               string             rowSeparator)
-        where TDbDataReader : DbDataReader
+    public static async Task<string> GetCvsRowsStringValueAsync<TDbDataReader>(
+        this TDbDataReader reader,
+        string separator,
+        string rowSeparator
+    ) where TDbDataReader : DbDataReader
     {
         separator.ThrowIfNull(nameof(separator));
         rowSeparator.ThrowIfNull(nameof(rowSeparator));
@@ -86,39 +95,44 @@ public static class DbDataReaderExtension
         return rows.JoinString(rowSeparator);
     }
 
-    public static string GetCvsString<TDbDataReader>(this TDbDataReader reader,
-                                                     string             separator,
-                                                     string             rowSeparator) where TDbDataReader : DbDataReader
+    public static string GetCvsString<TDbDataReader>(
+        this TDbDataReader reader,
+        string separator,
+        string rowSeparator
+    ) where TDbDataReader : DbDataReader
     {
         separator.ThrowIfNull(nameof(separator));
         rowSeparator.ThrowIfNull(nameof(rowSeparator));
         var columnsStringName = reader.GetCsvColumnsStringName(separator);
-        var rowsStringValue   = reader.GetCvsRowsStringValue(separator, rowSeparator);
+        var rowsStringValue = reader.GetCvsRowsStringValue(separator, rowSeparator);
 
         return $"{columnsStringName}{rowSeparator}{rowsStringValue}";
     }
 
-    public static async Task<string> GetCsvStringAsync<TDbDataReader>(this TDbDataReader reader,
-                                                                      string             separator,
-                                                                      string             rowSeparator)
-        where TDbDataReader : DbDataReader
+    public static async Task<string> GetCsvStringAsync<TDbDataReader>(
+        this TDbDataReader reader,
+        string separator,
+        string rowSeparator
+    ) where TDbDataReader : DbDataReader
     {
         separator.ThrowIfNull(nameof(separator));
         rowSeparator.ThrowIfNull(nameof(rowSeparator));
         var columnsStringName = reader.GetCsvColumnsStringName(separator);
-        var rowsStringValue   = await reader.GetCvsRowsStringValueAsync(separator, rowSeparator);
+        var rowsStringValue = await reader.GetCvsRowsStringValueAsync(separator, rowSeparator);
 
         return $"{columnsStringName}{rowSeparator}{rowsStringValue}";
     }
 
-    public static async Task<string> GetTableStringAsync<TDbDataReader>(this TDbDataReader reader,
-                                                                        string rowSeparator,
-                                                                        int padding) where TDbDataReader : DbDataReader
+    public static async Task<string> GetTableStringAsync<TDbDataReader>(
+        this TDbDataReader reader,
+        string rowSeparator,
+        int padding
+    ) where TDbDataReader : DbDataReader
     {
         var columnNames = reader.GetColumnsNames().ToArray();
-        var valueRows   = (await reader.GetRowsStringValueAsync()).ToArray();
-        var values      = new string[valueRows.Length][];
-        var maxLengths  = new int[columnNames.Length];
+        var valueRows = (await reader.GetRowsStringValueAsync()).ToArray();
+        var values = new string[valueRows.Length][];
+        var maxLengths = new int[columnNames.Length];
 
         for (var index = 0; index < columnNames.Length; index++)
         {
@@ -134,7 +148,7 @@ public static class DbDataReaderExtension
             {
                 var value = valuesRow[columnIndex];
                 values[rowIndex][columnIndex] = value;
-                maxLengths[columnIndex]       = Math.Max(value.Length, maxLengths[columnIndex]);
+                maxLengths[columnIndex] = Math.Max(value.Length, maxLengths[columnIndex]);
             }
         }
 
@@ -142,8 +156,10 @@ public static class DbDataReaderExtension
 
         for (var index = 0; index < formatColumnNames.Length; index++)
         {
-            formatColumnNames[index] =
-                string.Format("{0," + (-maxLengths[index] + padding) + "}", columnNames[index]);
+            formatColumnNames[index] = string.Format(
+                "{0," + (-maxLengths[index] + padding) + "}",
+                columnNames[index]
+            );
         }
 
         var formatRows = new string[valueRows.Length];

@@ -2,7 +2,7 @@
 
 public readonly struct IndexOfNeedlesResult
 {
-    public int                  Index { get; }
+    public int Index { get; }
     public ReadOnlyMemory<byte> Match { get; }
 
     public IndexOfNeedlesResult(int index, ReadOnlyMemory<byte> match)

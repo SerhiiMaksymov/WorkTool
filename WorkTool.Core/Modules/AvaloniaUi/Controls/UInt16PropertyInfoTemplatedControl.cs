@@ -1,6 +1,7 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
-public class UInt16PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<ushort, NumericUpDown>
+public class UInt16PropertyInfoTemplatedControl
+    : PropertyInfoTemplatedControl<ushort, NumericUpDown>
 {
     static UInt16PropertyInfoTemplatedControl()
     {
@@ -12,12 +13,11 @@ public class UInt16PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<u
         : base(
             (property, _, control, _) =>
             {
-                control.GetObservable(NumericUpDown.ValueProperty)
+                control
+                    .GetObservable(NumericUpDown.ValueProperty)
                     .Subscribe(x => property.Value = x.HasValue ? (ushort)x.Value : (ushort)0);
 
-                property.GetObservable(ValueProperty)
-                    .Subscribe(x => control.Value = x);
-            })
-    {
-    }
+                property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
+            }
+        ) { }
 }

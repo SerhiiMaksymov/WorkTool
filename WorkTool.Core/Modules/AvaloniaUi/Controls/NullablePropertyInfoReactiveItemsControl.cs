@@ -2,13 +2,15 @@
 
 public class NullablePropertyInfoReactiveItemsControl : PropertyInfoReactiveItemsControl
 {
-    public static readonly DirectProperty<NullablePropertyInfoReactiveItemsControl, bool> IsNullProperty =
-        AvaloniaProperty.RegisterDirect<NullablePropertyInfoReactiveItemsControl, bool>(
-            nameof(IsNull),
-            o => o.IsNull,
-            (o, v) => o.IsNull = v);
+    public static readonly DirectProperty<
+        NullablePropertyInfoReactiveItemsControl,
+        bool
+    > IsNullProperty = AvaloniaProperty.RegisterDirect<
+        NullablePropertyInfoReactiveItemsControl,
+        bool
+    >(nameof(IsNull), o => o.IsNull, (o, v) => o.IsNull = v);
     private object cache;
-    private bool   isNull;
+    private bool isNull;
 
     public CheckBox CheckBox { get; }
 
@@ -21,7 +23,8 @@ public class NullablePropertyInfoReactiveItemsControl : PropertyInfoReactiveItem
     static NullablePropertyInfoReactiveItemsControl()
     {
         ItemsPanelProperty.OverrideDefaultValue<NullablePropertyInfoReactiveItemsControl>(
-            new FuncTemplate<IPanel>(() => new ItemsRepeater()));
+            new FuncTemplate<IPanel>(() => new ItemsRepeater())
+        );
 
         IsNullProperty.Changed.AddClassHandler<NullablePropertyInfoReactiveItemsControl>(
             (_, e) =>
@@ -36,7 +39,8 @@ public class NullablePropertyInfoReactiveItemsControl : PropertyInfoReactiveItem
                 {
                     sender.Value = sender.cache;
                 }
-            });
+            }
+        );
 
         ValueProperty.Changed.AddClassHandler<NullablePropertyInfoReactiveItemsControl>(
             (_, e) =>
@@ -49,7 +53,8 @@ public class NullablePropertyInfoReactiveItemsControl : PropertyInfoReactiveItem
                 }
 
                 sender.cache = sender.Value;
-            });
+            }
+        );
     }
 
     public NullablePropertyInfoReactiveItemsControl()

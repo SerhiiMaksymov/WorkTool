@@ -6,10 +6,14 @@ public static class StructIdentifierExtension
     {
         switch (identifier)
         {
-            case StructIdentifier.None:     return string.Empty;
-            case StructIdentifier.Readonly: return "readonly";
-            case StructIdentifier.Partial:  return "partial";
-            default:                        throw new ArgumentOutOfRangeException(nameof(StructIdentifier));
+            case StructIdentifier.None:
+                return string.Empty;
+            case StructIdentifier.Readonly:
+                return "readonly";
+            case StructIdentifier.Partial:
+                return "partial";
+            default:
+                throw new ArgumentOutOfRangeException(nameof(StructIdentifier));
         }
     }
 }

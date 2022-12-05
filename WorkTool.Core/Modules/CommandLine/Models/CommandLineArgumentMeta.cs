@@ -1,6 +1,8 @@
 ﻿namespace WorkTool.Core.Modules.CommandLine.Models;
 
-public abstract class CommandLineArgumentMeta<TType> : Identifier<string>, ICommandLineArgumentMeta<TType>
+public abstract class CommandLineArgumentMeta<TType>
+    : Identifier<string>,
+        ICommandLineArgumentMeta<TType>
 {
     protected CommandLineArgumentMeta(string key, TType @default) : base(key)
     {

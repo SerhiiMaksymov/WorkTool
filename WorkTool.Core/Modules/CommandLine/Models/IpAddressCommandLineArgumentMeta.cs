@@ -2,9 +2,7 @@
 
 public class IpAddressCommandLineArgumentMeta : CommandLineArgumentMeta<IPAddress>
 {
-    public IpAddressCommandLineArgumentMeta(string key, IPAddress address) : base(key, address)
-    {
-    }
+    public IpAddressCommandLineArgumentMeta(string key, IPAddress address) : base(key, address) { }
 
     public override IPAddress Parse(string value)
     {

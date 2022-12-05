@@ -2,10 +2,12 @@
 
 public static class DataRowCollectionExtension
 {
-    public static string ToCsv(this DataRowCollection rowCollection,
-                               DataColumnCollection   columnCollection,
-                               string                 separator,
-                               string                 rowSeparator)
+    public static string ToCsv(
+        this DataRowCollection rowCollection,
+        DataColumnCollection columnCollection,
+        string separator,
+        string rowSeparator
+    )
     {
         rowCollection.ThrowIfNull();
         columnCollection.ThrowIfNull();
@@ -14,9 +16,11 @@ public static class DataRowCollectionExtension
         foreach (DataRow row in rowCollection)
         {
             result.Add(
-                columnCollection.OfType<DataColumn>()
+                columnCollection
+                    .OfType<DataColumn>()
                     .Select(x => row[x]?.ToString() ?? string.Empty)
-                    .JoinString(separator));
+                    .JoinString(separator)
+            );
         }
 
         return result.JoinString(rowSeparator);

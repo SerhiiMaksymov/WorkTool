@@ -2,34 +2,33 @@
 
 public class StreamHumanizing : IHumanizing<Stream, string>
 {
-    private readonly string   _breakString;
-    private readonly ulong    _charSize;
+    private readonly string _breakString;
+    private readonly ulong _charSize;
     private readonly Encoding _encoding;
-    private readonly ushort   _encodingCharSize;
-    private readonly string   _splitString;
+    private readonly ushort _encodingCharSize;
+    private readonly string _splitString;
 
     public StreamHumanizing(
-    string   splitString,
-    ulong    charSize,
-    string   breakStrings,
-    Encoding encoding,
-    ushort   encodingCharSize)
+        string splitString,
+        ulong charSize,
+        string breakStrings,
+        Encoding encoding,
+        ushort encodingCharSize
+    )
     {
-        _splitString      = splitString;
-        _charSize         = charSize;
-        _breakString      = breakStrings;
-        _encoding         = encoding.ThrowIfNull();
+        _splitString = splitString;
+        _charSize = charSize;
+        _breakString = breakStrings;
+        _encoding = encoding.ThrowIfNull();
         _encodingCharSize = encodingCharSize;
     }
 
-    public StreamHumanizing() : this(" ", 2, Environment.NewLine, Encoding.UTF8, 4)
-    {
-    }
+    public StreamHumanizing() : this(" ", 2, Environment.NewLine, Encoding.UTF8, 4) { }
 
     public string Humanize(Stream stream)
     {
         var stringBuilder = new StringBuilder();
-        var buffer        = new Span<byte>(new byte[_encodingCharSize * _charSize]);
+        var buffer = new Span<byte>(new byte[_encodingCharSize * _charSize]);
 
         while (stream.Read(buffer) != 0)
         {

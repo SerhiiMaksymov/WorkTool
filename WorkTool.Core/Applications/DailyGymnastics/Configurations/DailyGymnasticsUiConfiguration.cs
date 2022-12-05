@@ -2,7 +2,5 @@
 
 public class DailyGymnasticsUiConfiguration : IUiConfiguration
 {
-    public void Configure(UiContextBuilder builder)
-    {
-    }
+    public void Configure(UiContextBuilder builder) { }
 }

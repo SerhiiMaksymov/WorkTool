@@ -14,11 +14,7 @@ public class PdfReaderService : IPdfReader
         var readBuffer = new byte[_bufferSize].AsMemory();
         await stream.ReadAsync(readBuffer);
 
-        var index = readBuffer.IndexOf(
-            new byte[]
-            {
-                10
-            });
+        var index = readBuffer.IndexOf(new byte[] { 10 });
 
         yield break;
     }

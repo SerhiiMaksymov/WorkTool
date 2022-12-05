@@ -2,12 +2,12 @@
 
 public class DailyGymnasticsStatistic
 {
-    public ulong  Count                 { get; }
+    public ulong Count { get; }
     public double CalculationsPerSecond { get; }
 
     public DailyGymnasticsStatistic(ulong count, double calculationsPerSecond)
     {
-        Count                 = count;
+        Count = count;
         CalculationsPerSecond = calculationsPerSecond;
     }
 }

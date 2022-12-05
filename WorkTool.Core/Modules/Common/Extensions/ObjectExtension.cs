@@ -14,7 +14,10 @@ public static class ObjectExtension
         return value as T;
     }
 
-    public static T ThrowIfNull<T>(this T obj, [CallerArgumentExpression("obj")] string paramName = "")
+    public static T ThrowIfNull<T>(
+        this T obj,
+        [CallerArgumentExpression("obj")] string paramName = ""
+    )
     {
         return obj is null ? throw new ArgumentNullException(paramName) : obj;
     }

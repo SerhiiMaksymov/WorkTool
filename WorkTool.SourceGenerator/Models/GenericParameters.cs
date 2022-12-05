@@ -4,17 +4,22 @@ public readonly struct GenericParameters
 {
     private readonly List<TypeParameters> types;
 
-    public GenericParameters(string alias, bool isNew, GenericOptionsType type, IEnumerable<TypeParameters> types)
+    public GenericParameters(
+        string alias,
+        bool isNew,
+        GenericOptionsType type,
+        IEnumerable<TypeParameters> types
+    )
     {
-        Alias      = alias;
-        IsNew      = isNew;
-        Type       = type;
+        Alias = alias;
+        IsNew = isNew;
+        Type = type;
         this.types = new List<TypeParameters>(types);
     }
 
-    public string                      Alias { get; }
-    public bool                        IsNew { get; }
-    public GenericOptionsType          Type  { get; }
+    public string Alias { get; }
+    public bool IsNew { get; }
+    public GenericOptionsType Type { get; }
     public IEnumerable<TypeParameters> Types => types;
 
     public override string ToString()

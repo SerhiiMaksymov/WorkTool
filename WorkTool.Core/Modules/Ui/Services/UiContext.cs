@@ -2,34 +2,47 @@
 
 public class UiContext
 {
-    protected readonly Dictionary<Type, IEnumerable<Func<object>>>                      children;
-    protected readonly Dictionary<Type, IEnumerable<CommandContext>>                    commands;
-    protected readonly Dictionary<Type, Func<object>>                                   contents;
-    protected readonly Dictionary<Type, TreeNode<string, MenuItemContext>[]>            contextMenus;
-    protected readonly Dictionary<Type, IEnumerable<KeyboardKeyBinding>>                keyboardKeyGestures;
-    protected readonly Dictionary<Type, TreeNode<string, MenuItemContext>[]>            menu;
-    protected readonly Dictionary<ClassPropertyPath, IEnumerable<PropertyDefaultValue>> propertyDefaultValues;
+    protected readonly Dictionary<Type, IEnumerable<Func<object>>> children;
+    protected readonly Dictionary<Type, IEnumerable<CommandContext>> commands;
+    protected readonly Dictionary<Type, Func<object>> contents;
+    protected readonly Dictionary<Type, TreeNode<string, MenuItemContext>[]> contextMenus;
+    protected readonly Dictionary<Type, IEnumerable<KeyboardKeyBinding>> keyboardKeyGestures;
+    protected readonly Dictionary<Type, TreeNode<string, MenuItemContext>[]> menu;
+    protected readonly Dictionary<
+        ClassPropertyPath,
+        IEnumerable<PropertyDefaultValue>
+    > propertyDefaultValues;
 
-    public UiContext(IReadOnlyDictionary<Type, Func<object>>                                   contents,
-                     IReadOnlyDictionary<Type, TreeNode<string, MenuItemContext>[]>            menu,
-                     IReadOnlyDictionary<Type, IEnumerable<KeyboardKeyBinding>>                keyboardKeyGestures,
-                     IReadOnlyDictionary<Type, IEnumerable<CommandContext>>                    commands,
-                     IReadOnlyDictionary<Type, TreeNode<string, MenuItemContext>[]>            contextMenus,
-                     IReadOnlyDictionary<Type, IEnumerable<Func<object>>>                      children,
-                     IReadOnlyDictionary<ClassPropertyPath, IEnumerable<PropertyDefaultValue>> propertyDefaultValues)
+    public UiContext(
+        IReadOnlyDictionary<Type, Func<object>> contents,
+        IReadOnlyDictionary<Type, TreeNode<string, MenuItemContext>[]> menu,
+        IReadOnlyDictionary<Type, IEnumerable<KeyboardKeyBinding>> keyboardKeyGestures,
+        IReadOnlyDictionary<Type, IEnumerable<CommandContext>> commands,
+        IReadOnlyDictionary<Type, TreeNode<string, MenuItemContext>[]> contextMenus,
+        IReadOnlyDictionary<Type, IEnumerable<Func<object>>> children,
+        IReadOnlyDictionary<
+            ClassPropertyPath,
+            IEnumerable<PropertyDefaultValue>
+        > propertyDefaultValues
+    )
     {
-        this.propertyDefaultValues =
-            new Dictionary<ClassPropertyPath, IEnumerable<PropertyDefaultValue>>(propertyDefaultValues.ThrowIfNull());
+        this.propertyDefaultValues = new Dictionary<
+            ClassPropertyPath,
+            IEnumerable<PropertyDefaultValue>
+        >(propertyDefaultValues.ThrowIfNull());
 
         this.children = new Dictionary<Type, IEnumerable<Func<object>>>(children.ThrowIfNull());
         this.contents = new Dictionary<Type, Func<object>>(contents.ThrowIfNull());
-        this.menu     = new Dictionary<Type, TreeNode<string, MenuItemContext>[]>(menu.ThrowIfNull());
+        this.menu = new Dictionary<Type, TreeNode<string, MenuItemContext>[]>(menu.ThrowIfNull());
 
-        this.keyboardKeyGestures =
-            new Dictionary<Type, IEnumerable<KeyboardKeyBinding>>(keyboardKeyGestures.ThrowIfNull());
+        this.keyboardKeyGestures = new Dictionary<Type, IEnumerable<KeyboardKeyBinding>>(
+            keyboardKeyGestures.ThrowIfNull()
+        );
 
-        this.commands     = new Dictionary<Type, IEnumerable<CommandContext>>(commands.ThrowIfNull());
-        this.contextMenus = new Dictionary<Type, TreeNode<string, MenuItemContext>[]>(contextMenus.ThrowIfNull());
+        this.commands = new Dictionary<Type, IEnumerable<CommandContext>>(commands.ThrowIfNull());
+        this.contextMenus = new Dictionary<Type, TreeNode<string, MenuItemContext>[]>(
+            contextMenus.ThrowIfNull()
+        );
     }
 
     public IEnumerable<PropertyDefaultValue> GetDefaultValues(ClassPropertyPath property)

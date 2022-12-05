@@ -10,44 +10,52 @@ public static class StyleConstants
                 .SetProperty(TemplatedControl.TemplateProperty)
                 .SetValue(
                     new FuncControlTemplate<DailyGymnasticsView>(
-                        (_, _) => new TabControl()
-                            .AddStyle(
-                                new Style()
-                                    .SetSelector(
-                                        default(Selector).Is<TabControl>()
-                                            .Child()
-                                            .OfType<Border>()
-                                            .Child()
-                                            .OfType<DockPanel>()
-                                            .Child()
-                                            .OfType<ItemsPresenter>())
-                                    .AddSetter(Visual.IsVisibleProperty, false))
-                            .BindBindingValue(
-                                SelectingItemsControl.SelectedIndexProperty,
-                                (DailyGymnasticsViewModel vm) => vm.CurrentTab,
-                                BindingMode.TwoWay)
-                            .Item
-                            .AddItem(
-                                new TabItem()
-                                    .SetContent(
+                        (_, _) =>
+                            new TabControl()
+                                .AddStyle(
+                                    new Style()
+                                        .SetSelector(
+                                            default(Selector)
+                                                .Is<TabControl>()
+                                                .Child()
+                                                .OfType<Border>()
+                                                .Child()
+                                                .OfType<DockPanel>()
+                                                .Child()
+                                                .OfType<ItemsPresenter>()
+                                        )
+                                        .AddSetter(Visual.IsVisibleProperty, false)
+                                )
+                                .BindBindingValue(
+                                    SelectingItemsControl.SelectedIndexProperty,
+                                    (DailyGymnasticsViewModel vm) => vm.CurrentTab,
+                                    BindingMode.TwoWay
+                                )
+                                .Item.AddItem(
+                                    new TabItem().SetContent(
                                         new Button()
                                             .SetVerticalAlignmentStretch()
                                             .SetHorizontalAlignmentStretch()
                                             .SetHorizontalContentAlignmentCenter()
                                             .SetVerticalContentAlignmentCenter()
                                             .SetContent(
-                                                new TextBlock()
-                                                    .SetText("Start")
-                                                    .SetFontSize(60))
+                                                new TextBlock().SetText("Start").SetFontSize(60)
+                                            )
                                             .BindBindingValue(
                                                 Button.CommandProperty,
-                                                (DailyGymnasticsViewModel vm) => vm.StartCommand)
-                                            .Item))
-                            .AddItem(
-                                new TabItem()
-                                    .SetContent(
+                                                (DailyGymnasticsViewModel vm) => vm.StartCommand
+                                            )
+                                            .Item
+                                    )
+                                )
+                                .AddItem(
+                                    new TabItem().SetContent(
                                         new Grid()
-                                            .AddRowDefinitions(GridLength.Auto, GridLength.Star, GridLength.Auto)
+                                            .AddRowDefinitions(
+                                                GridLength.Auto,
+                                                GridLength.Star,
+                                                GridLength.Auto
+                                            )
                                             .AddChild(
                                                 new TextBlock()
                                                     .SetFontSize(60)
@@ -56,12 +64,17 @@ public static class StyleConstants
                                                     .BindBindingValue(
                                                         TextBlock.TextProperty,
                                                         (DailyGymnasticsViewModel vm) => vm.Time,
-                                                        "{0:hh\\:mm\\:ss}")
-                                                    .Item)
+                                                        "{0:hh\\:mm\\:ss}"
+                                                    )
+                                                    .Item
+                                            )
                                             .AddChild(
                                                 new Grid()
                                                     .SetGridRow(1)
-                                                    .AddColumnDefinitions(GridLength.Star, GridLength.Star)
+                                                    .AddColumnDefinitions(
+                                                        GridLength.Star,
+                                                        GridLength.Star
+                                                    )
                                                     .AddChild(
                                                         new StackPanel()
                                                             .SetOrientation(Orientation.Horizontal)
@@ -72,8 +85,12 @@ public static class StyleConstants
                                                                     .SetVerticalAlignmentCenter()
                                                                     .BindBindingValue(
                                                                         TextBlock.TextProperty,
-                                                                        (DailyGymnasticsViewModel vm) => vm.Sample)
-                                                                    .Item)
+                                                                        (
+                                                                            DailyGymnasticsViewModel vm
+                                                                        ) => vm.Sample
+                                                                    )
+                                                                    .Item
+                                                            )
                                                             .AddChild(
                                                                 new TextBox()
                                                                     .SetFontSize(60)
@@ -82,10 +99,21 @@ public static class StyleConstants
                                                                     .SetWidth(400)
                                                                     .BindBindingValue(
                                                                         TextBlock.TextProperty,
-                                                                        (DailyGymnasticsViewModel vm) => vm.Result,
-                                                                        binding => binding.SetMode(BindingMode.TwoWay)
-                                                                            .SetConverter(new MinusToNumberConverter()))
-                                                                    .Item))
+                                                                        (
+                                                                            DailyGymnasticsViewModel vm
+                                                                        ) => vm.Result,
+                                                                        binding =>
+                                                                            binding
+                                                                                .SetMode(
+                                                                                    BindingMode.TwoWay
+                                                                                )
+                                                                                .SetConverter(
+                                                                                    new MinusToNumberConverter()
+                                                                                )
+                                                                    )
+                                                                    .Item
+                                                            )
+                                                    )
                                                     .AddChild(
                                                         new TextBlock()
                                                             .SetGridColumn(1)
@@ -94,9 +122,13 @@ public static class StyleConstants
                                                             .SetVerticalAlignmentCenter()
                                                             .BindBindingValue(
                                                                 TextBlock.TextProperty,
-                                                                (DailyGymnasticsViewModel vm) => vm.Count,
-                                                                BindingMode.TwoWay)
-                                                            .Item))
+                                                                (DailyGymnasticsViewModel vm) =>
+                                                                    vm.Count,
+                                                                BindingMode.TwoWay
+                                                            )
+                                                            .Item
+                                                    )
+                                            )
                                             .AddChild(
                                                 new StackPanel()
                                                     .SetGridRow(2)
@@ -110,8 +142,11 @@ public static class StyleConstants
                                                             .SetContent("Check")
                                                             .BindBindingValue(
                                                                 Button.CommandProperty,
-                                                                (DailyGymnasticsViewModel vm) => vm.CheckCommand)
-                                                            .Item)
+                                                                (DailyGymnasticsViewModel vm) =>
+                                                                    vm.CheckCommand
+                                                            )
+                                                            .Item
+                                                    )
                                                     .AddChild(
                                                         new Button()
                                                             .SetHorizontalContentAlignmentCenter()
@@ -121,11 +156,16 @@ public static class StyleConstants
                                                             .SetContent("Stop")
                                                             .BindBindingValue(
                                                                 Button.CommandProperty,
-                                                                (DailyGymnasticsViewModel vm) => vm.StopCommand)
-                                                            .Item))))
-                            .AddItem(
-                                new TabItem()
-                                    .SetContent(
+                                                                (DailyGymnasticsViewModel vm) =>
+                                                                    vm.StopCommand
+                                                            )
+                                                            .Item
+                                                    )
+                                            )
+                                    )
+                                )
+                                .AddItem(
+                                    new TabItem().SetContent(
                                         new Grid()
                                             .AddRowDefinitions(GridLength.Star, GridLength.Auto)
                                             .AddChild(
@@ -140,9 +180,12 @@ public static class StyleConstants
                                                             .SetFontSize(60)
                                                             .BindBindingValue(
                                                                 TextBlock.TextProperty,
-                                                                (DailyGymnasticsViewModel vm) => vm.Statistic.Count,
-                                                                "Count: {0}")
-                                                            .Item)
+                                                                (DailyGymnasticsViewModel vm) =>
+                                                                    vm.Statistic.Count,
+                                                                "Count: {0}"
+                                                            )
+                                                            .Item
+                                                    )
                                                     .AddChild(
                                                         new TextBlock()
                                                             .SetHorizontalAlignmentCenter()
@@ -152,8 +195,11 @@ public static class StyleConstants
                                                                 TextBlock.TextProperty,
                                                                 (DailyGymnasticsViewModel vm) =>
                                                                     vm.Statistic.CalculationsPerSecond,
-                                                                "CalculationsPerSecond: {0}")
-                                                            .Item))
+                                                                "CalculationsPerSecond: {0}"
+                                                            )
+                                                            .Item
+                                                    )
+                                            )
                                             .AddChild(
                                                 new Button()
                                                     .SetGridRow(1)
@@ -165,9 +211,18 @@ public static class StyleConstants
                                                     .SetContent(
                                                         new TextBlock()
                                                             .SetFontSize(60)
-                                                            .SetText("Start"))
+                                                            .SetText("Start")
+                                                    )
                                                     .BindBindingValue(
                                                         Button.CommandProperty,
-                                                        (DailyGymnasticsViewModel vm) => vm.StartCommand)
-                                                    .Item))))));
+                                                        (DailyGymnasticsViewModel vm) =>
+                                                            vm.StartCommand
+                                                    )
+                                                    .Item
+                                            )
+                                    )
+                                )
+                    )
+                )
+        );
 }

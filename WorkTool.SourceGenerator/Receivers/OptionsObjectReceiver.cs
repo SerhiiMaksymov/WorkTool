@@ -2,7 +2,7 @@
 
 public class OptionsObjectReceiver : ISyntaxReceiver
 {
-    public readonly List<OptionsObjectParameters> Items = new ();
+    public readonly List<OptionsObjectParameters> Items = new();
 
     public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
     {
@@ -26,7 +26,10 @@ public class OptionsObjectReceiver : ISyntaxReceiver
             return;
         }
 
-        if (attribute.ArgumentList.Arguments[0].Expression is not TypeOfExpressionSyntax typeExpressionSyntax)
+        if (
+            attribute.ArgumentList.Arguments[0].Expression
+            is not TypeOfExpressionSyntax typeExpressionSyntax
+        )
         {
             return;
         }
@@ -39,6 +42,8 @@ public class OptionsObjectReceiver : ISyntaxReceiver
         Items.Add(
             new OptionsObjectParameters(
                 typeExpressionSyntax.Type,
-                name.Token.ValueText == "null" ? null : name.Token.ValueText));
+                name.Token.ValueText == "null" ? null : name.Token.ValueText
+            )
+        );
     }
 }

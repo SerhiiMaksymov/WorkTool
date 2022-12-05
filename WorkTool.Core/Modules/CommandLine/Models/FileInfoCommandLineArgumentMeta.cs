@@ -2,9 +2,7 @@
 
 public class FileInfoCommandLineArgumentMeta : CommandLineArgumentMeta<FileInfo>
 {
-    public FileInfoCommandLineArgumentMeta(string key, FileInfo file) : base(key, file)
-    {
-    }
+    public FileInfoCommandLineArgumentMeta(string key, FileInfo file) : base(key, file) { }
 
     public override FileInfo Parse(string value)
     {

@@ -3,15 +3,15 @@
 public class ViewModelBase : ReactiveObject
 {
     private readonly IHumanizing<Exception, object> humanizing;
-    private readonly IMessageBoxView                messageBoxView;
+    private readonly IMessageBoxView messageBoxView;
 
     public ReplaySubject<bool> CanExecute { get; }
 
     public ViewModelBase(IHumanizing<Exception, object> humanizing, IMessageBoxView messageBoxView)
     {
-        this.humanizing     = humanizing.ThrowIfNull();
+        this.humanizing = humanizing.ThrowIfNull();
         this.messageBoxView = messageBoxView.ThrowIfNull();
-        CanExecute          = new ReplaySubject<bool>(1);
+        CanExecute = new ReplaySubject<bool>(1);
         CanExecute.OnNext(true);
     }
 

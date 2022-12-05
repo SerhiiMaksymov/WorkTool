@@ -2,9 +2,7 @@
 
 public class UriCommandLineArgumentMeta : CommandLineArgumentMeta<Uri>
 {
-    public UriCommandLineArgumentMeta(string key, Uri @default) : base(key, @default)
-    {
-    }
+    public UriCommandLineArgumentMeta(string key, Uri @default) : base(key, @default) { }
 
     public override Uri Parse(string value)
     {

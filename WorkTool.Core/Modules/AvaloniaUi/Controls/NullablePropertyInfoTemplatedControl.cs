@@ -1,13 +1,17 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
-public class NullablePropertyInfoTemplatedControl<TValue, TControl> : PropertyInfoTemplatedControl<TValue, TControl>
-    where TControl : class, IAvaloniaObject, new() where TValue : class
+public class NullablePropertyInfoTemplatedControl<TValue, TControl>
+    : PropertyInfoTemplatedControl<TValue, TControl>
+    where TControl : class, IAvaloniaObject, new()
+    where TValue : class
 {
-    public static readonly DirectProperty<NullablePropertyInfoTemplatedControl<TValue, TControl>, bool> IsNullProperty =
-        AvaloniaProperty.RegisterDirect<NullablePropertyInfoTemplatedControl<TValue, TControl>, bool>(
-            nameof(IsNull),
-            o => o.IsNull,
-            (o, v) => o.IsNull = v);
+    public static readonly DirectProperty<
+        NullablePropertyInfoTemplatedControl<TValue, TControl>,
+        bool
+    > IsNullProperty = AvaloniaProperty.RegisterDirect<
+        NullablePropertyInfoTemplatedControl<TValue, TControl>,
+        bool
+    >(nameof(IsNull), o => o.IsNull, (o, v) => o.IsNull = v);
     private bool isNull;
 
     public bool IsNull
@@ -18,18 +22,23 @@ public class NullablePropertyInfoTemplatedControl<TValue, TControl> : PropertyIn
 
     static NullablePropertyInfoTemplatedControl()
     {
-        IsNullProperty.Changed.AddClassHandler<NullablePropertyInfoTemplatedControl<TValue, TControl>>(
-            (_, e) => IsNullChanged(e));
+        IsNullProperty.Changed.AddClassHandler<
+            NullablePropertyInfoTemplatedControl<TValue, TControl>
+        >((_, e) => IsNullChanged(e));
 
-        IObjectValue.ObjectProperty.AddOwner<NullablePropertyInfoTemplatedControl<TValue, TControl>>(x => x.Object);
+        IObjectValue.ObjectProperty.AddOwner<
+            NullablePropertyInfoTemplatedControl<TValue, TControl>
+        >(x => x.Object);
     }
 
     public NullablePropertyInfoTemplatedControl(
-    Action<PropertyInfoTemplatedControl<TValue, TControl>, TemplateAppliedEventArgs, TControl, TextBlock>
-        onApplyTemplate)
-        : base(onApplyTemplate)
-    {
-    }
+        Action<
+            PropertyInfoTemplatedControl<TValue, TControl>,
+            TemplateAppliedEventArgs,
+            TControl,
+            TextBlock
+        > onApplyTemplate
+    ) : base(onApplyTemplate) { }
 
     private static void IsNullChanged(AvaloniaPropertyChangedEventArgs e)
     {

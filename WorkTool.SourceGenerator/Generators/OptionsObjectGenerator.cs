@@ -45,10 +45,10 @@ public class OptionsObjectGenerator : ISourceGenerator
             foreach (var type in receiver.Items)
             {
                 var semanticModel = compilation.GetSemanticModel(type.Type.SyntaxTree);
-                var @namespace    = compilation.Assembly.MetadataName.ToNamespace();
-                var extension     = semanticModel.GetObjectOptions(type, @namespace);
-                var text          = extension.ToString();
-                var name          = this.GetGeneratedName(extension.Type.Name, index++);
+                var @namespace = compilation.Assembly.MetadataName.ToNamespace();
+                var extension = semanticModel.GetObjectOptions(type, @namespace);
+                var text = extension.ToString();
+                var name = this.GetGeneratedName(extension.Type.Name, index++);
                 context.AddSource(name, text);
                 context.CancellationToken.ThrowIfCancellationRequested();
             }

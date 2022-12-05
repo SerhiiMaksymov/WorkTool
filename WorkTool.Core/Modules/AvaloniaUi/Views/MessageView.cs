@@ -3,13 +3,13 @@
 public class MessageView : ReactiveMessageControl<ViewModelBase>
 {
     private readonly Dictionary<Type, ArgumentValue> argumentValues;
-    private readonly IInvoker                        invoker;
+    private readonly IInvoker invoker;
 
     public MessageView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
         argumentValues = new Dictionary<Type, ArgumentValue>();
-        DataContext    = viewModel;
-        this.invoker   = invoker.ThrowIfNull();
+        DataContext = viewModel;
+        this.invoker = invoker.ThrowIfNull();
         avaloniaUiContext.InitView(this);
     }
 
@@ -22,26 +22,27 @@ public class MessageView : ReactiveMessageControl<ViewModelBase>
 
     public ICommand CreateCommand(Delegate @delegate)
     {
-        return ViewModel.CreateCommand(
-            async () =>
+        return ViewModel.CreateCommand(async () =>
+        {
+            var result = invoker.Invoke(
+                @delegate,
+                argumentValues
+                    .Select(x => x.Value)
+                    .ToList()
+                    .AddItem(this.ToArgumentValue())
+                    .AddItem(this.As<ITabControlView>().ToArgumentValue())
+                    .ToArray()
+            );
+
+            if (result is null)
             {
-                var result = invoker.Invoke(
-                    @delegate,
-                    argumentValues.Select(x => x.Value)
-                        .ToList()
-                        .AddItem(this.ToArgumentValue())
-                        .AddItem(this.As<ITabControlView>().ToArgumentValue())
-                        .ToArray());
+                return;
+            }
 
-                if (result is null)
-                {
-                    return;
-                }
-
-                if (result is Task task)
-                {
-                    await task;
-                }
-            });
+            if (result is Task task)
+            {
+                await task;
+            }
+        });
     }
 }

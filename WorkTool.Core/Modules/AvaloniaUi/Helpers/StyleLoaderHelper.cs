@@ -22,15 +22,12 @@ public static class StyleLoaderHelper
 
     public static IEnumerable<IStyle> LoaStylesFromAssembly(Assembly assembly)
     {
-        var properties = assembly.GetTypes()
+        var properties = assembly
+            .GetTypes()
             .SelectMany(x => x.GetProperties())
-            .Where(
-                x => x.IsStatic()
-                && x.GetMethod is not null);
+            .Where(x => x.IsStatic() && x.GetMethod is not null);
 
-        var fields = assembly.GetTypes()
-            .SelectMany(x => x.GetFields())
-            .Where(x => x.IsStatic);
+        var fields = assembly.GetTypes().SelectMany(x => x.GetFields()).Where(x => x.IsStatic);
 
         foreach (var property in properties)
         {

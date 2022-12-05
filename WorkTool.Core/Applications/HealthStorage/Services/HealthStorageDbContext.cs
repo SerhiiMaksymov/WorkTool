@@ -2,12 +2,14 @@
 
 public class HealthStorageDbContext<TDbConnectionOptions, TDbContextOptions, TConnectionParameters>
     : DefaultDbContext<TDbConnectionOptions, TDbContextOptions, TConnectionParameters>
-    where TDbConnectionOptions : DbConnectionContextOptions<TDbContextOptions, TConnectionParameters>
+    where TDbConnectionOptions : DbConnectionContextOptions<
+            TDbContextOptions,
+            TConnectionParameters
+        >
     where TDbContextOptions : DbContextOptions
     where TConnectionParameters : IConnectionParameters
 {
-    public HealthStorageDbContext(TDbConnectionOptions dbSqLiteDbConnectionContextOptionsContextOptions)
-        : base(dbSqLiteDbConnectionContextOptionsContextOptions)
-    {
-    }
+    public HealthStorageDbContext(
+        TDbConnectionOptions dbSqLiteDbConnectionContextOptionsContextOptions
+    ) : base(dbSqLiteDbConnectionContextOptionsContextOptions) { }
 }

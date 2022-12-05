@@ -10,26 +10,37 @@ public static class PropertySymbolExtension
             propertySymbol.DeclaredAccessibility.ToAccessModifier(),
             propertySymbol.GetPropertyGetterOptions(),
             propertySymbol.GetPropertySetterOptions(),
-            null);
+            null
+        );
     }
 
-    public static PropertyGetterOptions? GetPropertyGetterOptions(this IPropertySymbol propertySymbol)
+    public static PropertyGetterOptions? GetPropertyGetterOptions(
+        this IPropertySymbol propertySymbol
+    )
     {
         if (propertySymbol.GetMethod is null)
         {
             return null;
         }
 
-        return new PropertyGetterOptions(propertySymbol.GetMethod.DeclaredAccessibility.ToAccessModifier(), null);
+        return new PropertyGetterOptions(
+            propertySymbol.GetMethod.DeclaredAccessibility.ToAccessModifier(),
+            null
+        );
     }
 
-    public static PropertySetterOptions? GetPropertySetterOptions(this IPropertySymbol propertySymbol)
+    public static PropertySetterOptions? GetPropertySetterOptions(
+        this IPropertySymbol propertySymbol
+    )
     {
         if (propertySymbol.SetMethod is null)
         {
             return null;
         }
 
-        return new PropertySetterOptions(propertySymbol.SetMethod.DeclaredAccessibility.ToAccessModifier(), null);
+        return new PropertySetterOptions(
+            propertySymbol.SetMethod.DeclaredAccessibility.ToAccessModifier(),
+            null
+        );
     }
 }

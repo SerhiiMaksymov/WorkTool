@@ -2,17 +2,25 @@
 
 public abstract class DefaultDbContextException : Exception
 {
-    public DefaultDbContextException(string message, Exception innerException) : base(message, innerException)
-    {
-    }
+    public DefaultDbContextException(string message, Exception innerException)
+        : base(message, innerException) { }
 }
 
-public class DefaultDbContextException<TDefaultDbContext,
+public class DefaultDbContextException<
+    TDefaultDbContext,
     TDbConnectionOptions,
     TDbContextOptions,
-    TConnectionParameters> : DefaultDbContextException
-    where TDefaultDbContext : DefaultDbContext<TDbConnectionOptions, TDbContextOptions, TConnectionParameters>
-    where TDbConnectionOptions : DbConnectionContextOptions<TDbContextOptions, TConnectionParameters>
+    TConnectionParameters
+> : DefaultDbContextException
+    where TDefaultDbContext : DefaultDbContext<
+            TDbConnectionOptions,
+            TDbContextOptions,
+            TConnectionParameters
+        >
+    where TDbConnectionOptions : DbConnectionContextOptions<
+            TDbContextOptions,
+            TConnectionParameters
+        >
     where TDbContextOptions : DbContextOptions
     where TConnectionParameters : IConnectionParameters
 {

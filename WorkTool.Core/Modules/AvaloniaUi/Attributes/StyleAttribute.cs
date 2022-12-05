@@ -5,9 +5,7 @@ public class StyleAttribute : Attribute
 {
     public string? Name { get; }
 
-    public StyleAttribute()
-    {
-    }
+    public StyleAttribute() { }
 
     public StyleAttribute(string name)
     {

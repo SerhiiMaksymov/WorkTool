@@ -13,10 +13,7 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
                 return nodes[key];
             }
 
-            var node = new TreeNodeBuilder<TKey, TValue>
-            {
-                Key = key
-            };
+            var node = new TreeNodeBuilder<TKey, TValue> { Key = key };
 
             nodes[key] = node;
 
@@ -24,9 +21,9 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
         }
         set
         {
-            nodes[key]        = value;
+            nodes[key] = value;
             nodes[key].Parent = this;
-            nodes[key].Key    = key;
+            nodes[key].Key = key;
         }
     }
 
@@ -39,11 +36,7 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
                 return nodes[key];
             }
 
-            var node = new TreeNodeBuilder<TKey, TValue>
-            {
-                Key   = key,
-                Value = defaultValue
-            };
+            var node = new TreeNodeBuilder<TKey, TValue> { Key = key, Value = defaultValue };
 
             nodes[key] = node;
 
@@ -73,9 +66,9 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
                 currentNode = currentNode[key, defaultValue];
             }
 
-            currentNode[keys[^1]]        = value;
+            currentNode[keys[^1]] = value;
             currentNode[keys[^1]].Parent = this;
-            currentNode[keys[^1]].Key    = keys[^1];
+            currentNode[keys[^1]].Key = keys[^1];
         }
     }
 
@@ -101,15 +94,15 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
                 currentNode = currentNode[key];
             }
 
-            currentNode[keys[^1]]        = value;
+            currentNode[keys[^1]] = value;
             currentNode[keys[^1]].Parent = this;
-            currentNode[keys[^1]].Key    = keys[^1];
+            currentNode[keys[^1]].Key = keys[^1];
         }
     }
 
     public TreeNodeBuilder<TKey, TValue> Parent { get; set; }
-    public TKey                          Key    { get; set; }
-    public TValue                        Value  { get; set; }
+    public TKey Key { get; set; }
+    public TValue Value { get; set; }
 
     public TreeNodeBuilder()
     {
@@ -129,8 +122,11 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
         return this;
     }
 
-    public TreeNodeBuilder<TKey, TValue> SetNode(TValue        defaultValue, TreeNodeBuilder<TKey, TValue> value,
-                                                 params TKey[] keys)
+    public TreeNodeBuilder<TKey, TValue> SetNode(
+        TValue defaultValue,
+        TreeNodeBuilder<TKey, TValue> value,
+        params TKey[] keys
+    )
     {
         this[defaultValue, keys] = value;
 

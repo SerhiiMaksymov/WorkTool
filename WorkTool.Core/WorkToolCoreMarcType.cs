@@ -1,5 +1,3 @@
 ﻿namespace WorkTool.Core;
 
-public struct WorkToolCoreMarcType
-{
-}
+public struct WorkToolCoreMarcType { }

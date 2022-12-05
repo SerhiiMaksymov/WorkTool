@@ -14,18 +14,23 @@ public static class TaskExtension
         await action.Invoke(input);
     }
 
-    public static async Task<TOutput> AfterAsync<TInput, TOutput>(this Task<TInput>           task,
-                                                                  Func<TInput, Task<TOutput>> action)
+    public static async Task<TOutput> AfterAsync<TInput, TOutput>(
+        this Task<TInput> task,
+        Func<TInput, Task<TOutput>> action
+    )
     {
-        var input  = await task;
+        var input = await task;
         var result = await action.Invoke(input);
 
         return result;
     }
 
-    public static async Task<TOutput> AfterAsync<TInput, TOutput>(this Task<TInput> task, Func<TInput, TOutput> action)
+    public static async Task<TOutput> AfterAsync<TInput, TOutput>(
+        this Task<TInput> task,
+        Func<TInput, TOutput> action
+    )
     {
-        var input  = await task;
+        var input = await task;
         var result = action.Invoke(input);
 
         return result;

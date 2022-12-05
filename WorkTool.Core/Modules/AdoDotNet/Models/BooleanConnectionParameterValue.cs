@@ -4,8 +4,7 @@ public record BooleanConnectionParameterValue : ConnectionParameterValue
 {
     public bool BooleanValue { get; }
 
-    public BooleanConnectionParameterValue(bool value)
-        : base(value.ToString())
+    public BooleanConnectionParameterValue(bool value) : base(value.ToString())
     {
         BooleanValue = value;
     }

@@ -9,7 +9,7 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
         get => root;
         set
         {
-            root        = value;
+            root = value;
             root.Parent = null;
         }
     }
@@ -20,10 +20,7 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
         {
             if (Root is null)
             {
-                Root = new TreeNodeBuilder<TKey, TValue>
-                {
-                    Key = key
-                };
+                Root = new TreeNodeBuilder<TKey, TValue> { Key = key };
 
                 return Root;
             }
@@ -33,18 +30,15 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
                 return Root;
             }
 
-            Root = new TreeNodeBuilder<TKey, TValue>
-            {
-                Key = key
-            };
+            Root = new TreeNodeBuilder<TKey, TValue> { Key = key };
 
             return Root;
         }
         set
         {
-            Root        = value;
+            Root = value;
             Root.Parent = null;
-            Root.Key    = key;
+            Root.Key = key;
         }
     }
 
@@ -54,11 +48,7 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
         {
             if (Root is null)
             {
-                Root = new TreeNodeBuilder<TKey, TValue>
-                {
-                    Key   = key,
-                    Value = defaultValue
-                };
+                Root = new TreeNodeBuilder<TKey, TValue> { Key = key, Value = defaultValue };
 
                 return Root;
             }
@@ -68,11 +58,7 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
                 return Root;
             }
 
-            Root = new TreeNodeBuilder<TKey, TValue>
-            {
-                Key   = key,
-                Value = defaultValue
-            };
+            Root = new TreeNodeBuilder<TKey, TValue> { Key = key, Value = defaultValue };
 
             return Root;
         }

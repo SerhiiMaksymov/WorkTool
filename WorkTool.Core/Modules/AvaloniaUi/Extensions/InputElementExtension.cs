@@ -2,8 +2,10 @@
 
 public static class InputElementExtension
 {
-    public static TInputElement SetCursor<TInputElement>(this TInputElement inputElement, StandardCursorType type)
-        where TInputElement : InputElement
+    public static TInputElement SetCursor<TInputElement>(
+        this TInputElement inputElement,
+        StandardCursorType type
+    ) where TInputElement : InputElement
     {
         var cursor = new Cursor(type);
 

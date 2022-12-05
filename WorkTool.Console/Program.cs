@@ -1,10 +1,7 @@
-﻿var setup                  = DependencyInjectorHelper.CreateIndexOperation();
+﻿var setup = DependencyInjectorHelper.CreateIndexOperation();
 var applicationCommandLine = setup.Resolve<IApplicationCommadLine>();
 
-var arguments = new List<string>
-{
-    "Root"
-};
+var arguments = new List<string> { "Root" };
 
 arguments.AddRange(args);
 var argsArray = arguments.ToArray();

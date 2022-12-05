@@ -2,12 +2,12 @@
 
 public class KeyboardKeyBinding
 {
-    public Delegate                        Command             { get; }
+    public Delegate Command { get; }
     public IEnumerable<KeyboardKeyGesture> KeyboardKeyGestures { get; }
 
     public KeyboardKeyBinding(Delegate command, IEnumerable<KeyboardKeyGesture> keyboardKeyGestures)
     {
-        Command             = command.ThrowIfNull();
+        Command = command.ThrowIfNull();
         KeyboardKeyGestures = keyboardKeyGestures.ThrowIfNullOrEmpty().ToArray();
     }
 }

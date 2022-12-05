@@ -11,12 +11,11 @@ public class SBytePropertyInfoTemplatedControl : PropertyInfoTemplatedControl<sb
         : base(
             (property, _, control, _) =>
             {
-                control.GetObservable(NumericUpDown.ValueProperty)
+                control
+                    .GetObservable(NumericUpDown.ValueProperty)
                     .Subscribe(x => property.Value = (sbyte)x);
 
-                property.GetObservable(ValueProperty)
-                    .Subscribe(x => control.Value = x);
-            })
-    {
-    }
+                property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
+            }
+        ) { }
 }

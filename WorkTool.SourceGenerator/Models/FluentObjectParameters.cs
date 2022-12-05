@@ -2,12 +2,12 @@
 
 public class FluentObjectParameters
 {
-    public TypeSyntax Type          { get; }
-    public string     ExtensionName { get; }
+    public TypeSyntax Type { get; }
+    public string ExtensionName { get; }
 
     public FluentObjectParameters(TypeSyntax type, string extensionName)
     {
-        Type          = type;
+        Type = type;
         ExtensionName = extensionName;
     }
 }

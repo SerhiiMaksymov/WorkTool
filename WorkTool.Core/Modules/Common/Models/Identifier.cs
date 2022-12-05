@@ -82,7 +82,7 @@ public class Identifier<TKey, TValue> : IIdentifier<TKey>
 
     public Identifier(TKey key, TValue value)
     {
-        Key   = key;
+        Key = key;
         Value = value;
     }
 

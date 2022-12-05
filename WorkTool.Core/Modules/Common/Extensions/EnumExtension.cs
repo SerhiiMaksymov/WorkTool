@@ -2,7 +2,8 @@
 
 public static class EnumExtension
 {
-    public static unsafe bool WorkToolHasAllFlags<T>(this T value, T flags) where T : unmanaged, Enum
+    public static unsafe bool WorkToolHasAllFlags<T>(this T value, T flags)
+        where T : unmanaged, Enum
     {
         if (sizeof(T) == 1)
         {
@@ -36,6 +37,8 @@ public static class EnumExtension
             return (longValue & longFlags) == longFlags;
         }
 
-        throw new NotSupportedException("Enum with size of " + Unsafe.SizeOf<T>() + " are not supported");
+        throw new NotSupportedException(
+            "Enum with size of " + Unsafe.SizeOf<T>() + " are not supported"
+        );
     }
 }

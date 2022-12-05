@@ -2,7 +2,5 @@
 
 public record StringConnectionParameterValue : ConnectionParameterValue
 {
-    public StringConnectionParameterValue(string value) : base(value)
-    {
-    }
+    public StringConnectionParameterValue(string value) : base(value) { }
 }

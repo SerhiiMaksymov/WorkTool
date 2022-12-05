@@ -2,6 +2,6 @@
 
 public interface IConnectionParameters
 {
-    IEnumerable<ConnectionParameter> Parameters     { get; }
+    IEnumerable<ConnectionParameter> Parameters { get; }
     IEnumerable<ConnectionParameter> SafeParameters { get; }
 }

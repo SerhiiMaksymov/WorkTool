@@ -40,8 +40,10 @@ public static class ControlExtension
         return control;
     }
 
-    public static TControl SetHorizontalScrollBarVisibility<TControl>(this TControl control, ScrollBarVisibility value)
-        where TControl : Control
+    public static TControl SetHorizontalScrollBarVisibility<TControl>(
+        this TControl control,
+        ScrollBarVisibility value
+    ) where TControl : Control
     {
         control.SetValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, value);
 
@@ -56,8 +58,10 @@ public static class ControlExtension
         return control;
     }
 
-    public static TControl SetVerticalScrollBarVisibility<TControl>(this TControl control, ScrollBarVisibility value)
-        where TControl : Control
+    public static TControl SetVerticalScrollBarVisibility<TControl>(
+        this TControl control,
+        ScrollBarVisibility value
+    ) where TControl : Control
     {
         control.SetValue(ScrollViewer.VerticalScrollBarVisibilityProperty, value);
 

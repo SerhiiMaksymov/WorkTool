@@ -1,16 +1,16 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
-public class ReactiveTabbedControl<TViewModel> : TabbedControl, IViewFor<TViewModel> where TViewModel : class
+public class ReactiveTabbedControl<TViewModel> : TabbedControl, IViewFor<TViewModel>
+    where TViewModel : class
 {
-    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty
-        .Register<ReactiveTabbedControl<TViewModel>, TViewModel>(nameof(ViewModel));
+    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty.Register<
+        ReactiveTabbedControl<TViewModel>,
+        TViewModel
+    >(nameof(ViewModel));
 
     public ReactiveTabbedControl()
     {
-        this.WhenActivated(
-            _ =>
-            {
-            });
+        this.WhenActivated(_ => { });
 
         this.GetObservable(ViewModelProperty).Subscribe(OnViewModelChanged);
     }

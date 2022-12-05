@@ -5,16 +5,18 @@ public class LanguageDictionary<TLanguage, TTranslate> : ILanguageDictionary<TLa
 {
     private readonly Dictionary<TLanguage, TranslateEnumerable<TTranslate>> _source;
 
-    public LanguageDictionary(IReadOnlyDictionary<TLanguage, TranslateEnumerable<TTranslate>> source)
+    public LanguageDictionary(
+        IReadOnlyDictionary<TLanguage, TranslateEnumerable<TTranslate>> source
+    )
     {
         _source = new Dictionary<TLanguage, TranslateEnumerable<TTranslate>>(source);
     }
 
     public TranslateEnumerable<TTranslate> this[TLanguage key] => _source[key];
 
-    public IEnumerable<TLanguage>                       Keys   => _source.Keys;
+    public IEnumerable<TLanguage> Keys => _source.Keys;
     public IEnumerable<TranslateEnumerable<TTranslate>> Values => _source.Values;
-    public int                                          Count  => _source.Count;
+    public int Count => _source.Count;
 
     public IEnumerator<KeyValuePair<TLanguage, TranslateEnumerable<TTranslate>>> GetEnumerator()
     {

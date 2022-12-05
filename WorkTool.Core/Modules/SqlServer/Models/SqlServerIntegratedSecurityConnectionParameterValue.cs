@@ -2,8 +2,6 @@
 
 public record SqlServerIntegratedSecurityConnectionParameterValue : ConnectionParameterValue
 {
-    public SqlServerIntegratedSecurityConnectionParameterValue(SqlServerIntegratedSecurity value) : base(
-        value.ToString())
-    {
-    }
+    public SqlServerIntegratedSecurityConnectionParameterValue(SqlServerIntegratedSecurity value)
+        : base(value.ToString()) { }
 }

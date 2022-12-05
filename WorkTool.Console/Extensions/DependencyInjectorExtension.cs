@@ -3,6 +3,6 @@
 public static class DependencyInjectorExtension
 {
 #region public
-  
+
 #endregion public
 }

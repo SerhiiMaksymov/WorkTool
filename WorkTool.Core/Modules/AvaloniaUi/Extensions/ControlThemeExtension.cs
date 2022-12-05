@@ -2,8 +2,10 @@
 
 public static class ControlThemeExtension
 {
-    public static TControlTheme SetBasedOn<TControlTheme>(this TControlTheme target, Type targetType)
-        where TControlTheme : ControlTheme
+    public static TControlTheme SetBasedOn<TControlTheme>(
+        this TControlTheme target,
+        Type targetType
+    ) where TControlTheme : ControlTheme
     {
         var resource = (ControlTheme)AvaloniaApplication.Current.FindResource(targetType);
 

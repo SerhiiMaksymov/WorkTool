@@ -1,39 +1,49 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
-public class PropertyInfoTemplatedControl<TValue, TControl> : TemplatedControl, IObjectValue, IDisposable
-    where TControl : class, IAvaloniaObject, new()
+public class PropertyInfoTemplatedControl<TValue, TControl>
+    : TemplatedControl,
+        IObjectValue,
+        IDisposable where TControl : class, IAvaloniaObject, new()
 {
-    public const string ElementControlName   = "PART_Control";
+    public const string ElementControlName = "PART_Control";
     public const string ElementTextBlockName = "PART_TextBlock";
 
-    public static readonly DirectProperty<PropertyInfoTemplatedControl<TValue, TControl>, string> TitleProperty =
-        AvaloniaProperty.RegisterDirect<PropertyInfoTemplatedControl<TValue, TControl>, string>(
-            nameof(Title),
-            o => o.Title,
-            (o, v) => o.Title = v);
+    public static readonly DirectProperty<
+        PropertyInfoTemplatedControl<TValue, TControl>,
+        string
+    > TitleProperty = AvaloniaProperty.RegisterDirect<
+        PropertyInfoTemplatedControl<TValue, TControl>,
+        string
+    >(nameof(Title), o => o.Title, (o, v) => o.Title = v);
 
-    public static readonly DirectProperty<PropertyInfoTemplatedControl<TValue, TControl>, PropertyInfo>
-        PropertyInfoProperty =
-            AvaloniaProperty.RegisterDirect<PropertyInfoTemplatedControl<TValue, TControl>, PropertyInfo>(
-                nameof(PropertyInfo),
-                o => o.PropertyInfo,
-                (o, v) => o.PropertyInfo = v);
+    public static readonly DirectProperty<
+        PropertyInfoTemplatedControl<TValue, TControl>,
+        PropertyInfo
+    > PropertyInfoProperty = AvaloniaProperty.RegisterDirect<
+        PropertyInfoTemplatedControl<TValue, TControl>,
+        PropertyInfo
+    >(nameof(PropertyInfo), o => o.PropertyInfo, (o, v) => o.PropertyInfo = v);
 
-    public static readonly DirectProperty<PropertyInfoTemplatedControl<TValue, TControl>, TValue> ValueProperty =
-        AvaloniaProperty.RegisterDirect<PropertyInfoTemplatedControl<TValue, TControl>, TValue>(
-            nameof(Value),
-            o => o.Value,
-            (o, v) => o.Value = v);
-    private readonly Action<PropertyInfoTemplatedControl<TValue, TControl>, TemplateAppliedEventArgs, TControl,
-            TextBlock>
-        onApplyTemplate;
+    public static readonly DirectProperty<
+        PropertyInfoTemplatedControl<TValue, TControl>,
+        TValue
+    > ValueProperty = AvaloniaProperty.RegisterDirect<
+        PropertyInfoTemplatedControl<TValue, TControl>,
+        TValue
+    >(nameof(Value), o => o.Value, (o, v) => o.Value = v);
+    private readonly Action<
+        PropertyInfoTemplatedControl<TValue, TControl>,
+        TemplateAppliedEventArgs,
+        TControl,
+        TextBlock
+    > onApplyTemplate;
     private readonly CompositeDisposable compositeDisposable;
-    private          TControl            control;
-    private          object              @object;
-    private          PropertyInfo        propertyInfo;
-    private          TextBlock           textBlock;
-    private          string              title;
-    private          TValue              value;
+    private TControl control;
+    private object @object;
+    private PropertyInfo propertyInfo;
+    private TextBlock textBlock;
+    private string title;
+    private TValue value;
 
     public string Title
     {
@@ -55,21 +65,29 @@ public class PropertyInfoTemplatedControl<TValue, TControl> : TemplatedControl, 
 
     static PropertyInfoTemplatedControl()
     {
-        PropertyInfoProperty.Changed.AddClassHandler<PropertyInfoTemplatedControl<TValue, TControl>>(
-            (_, e) => PropertyInfoChanged(e));
+        PropertyInfoProperty.Changed.AddClassHandler<
+            PropertyInfoTemplatedControl<TValue, TControl>
+        >((_, e) => PropertyInfoChanged(e));
 
-        IObjectValue.ObjectProperty.Changed.AddClassHandler<PropertyInfoTemplatedControl<TValue, TControl>>(
-            (_, e) => ObjectChanged(e));
+        IObjectValue.ObjectProperty.Changed.AddClassHandler<
+            PropertyInfoTemplatedControl<TValue, TControl>
+        >((_, e) => ObjectChanged(e));
 
-        ValueProperty.Changed
-            .AddClassHandler<PropertyInfoTemplatedControl<TValue, TControl>>((_, e) => ValueChanged(e));
+        ValueProperty.Changed.AddClassHandler<PropertyInfoTemplatedControl<TValue, TControl>>(
+            (_, e) => ValueChanged(e)
+        );
     }
 
     public PropertyInfoTemplatedControl(
-    Action<PropertyInfoTemplatedControl<TValue, TControl>, TemplateAppliedEventArgs, TControl, TextBlock>
-        onApplyTemplate)
+        Action<
+            PropertyInfoTemplatedControl<TValue, TControl>,
+            TemplateAppliedEventArgs,
+            TControl,
+            TextBlock
+        > onApplyTemplate
+    )
     {
-        compositeDisposable  = new CompositeDisposable();
+        compositeDisposable = new CompositeDisposable();
         this.onApplyTemplate = onApplyTemplate.ThrowIfNull();
     }
 
@@ -113,7 +131,7 @@ public class PropertyInfoTemplatedControl<TValue, TControl> : TemplatedControl, 
             return;
         }
 
-        var sender       = (PropertyInfoTemplatedControl<TValue, TControl>)e.Sender;
+        var sender = (PropertyInfoTemplatedControl<TValue, TControl>)e.Sender;
         var propertyInfo = (PropertyInfo)e.NewValue;
 
         if (sender.Object is null)
@@ -154,7 +172,7 @@ public class PropertyInfoTemplatedControl<TValue, TControl> : TemplatedControl, 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs templateAppliedEventArgs)
     {
         base.OnApplyTemplate(templateAppliedEventArgs);
-        control   = templateAppliedEventArgs.NameScope.Get<TControl>(ElementControlName);
+        control = templateAppliedEventArgs.NameScope.Get<TControl>(ElementControlName);
         textBlock = templateAppliedEventArgs.NameScope.Get<TextBlock>(ElementTextBlockName);
         onApplyTemplate.Invoke(this, templateAppliedEventArgs, control, textBlock);
     }

@@ -2,7 +2,7 @@
 
 public class ModelObjectReceiver : ISyntaxReceiver
 {
-    public readonly List<ModelObjectParameters> Items = new ();
+    public readonly List<ModelObjectParameters> Items = new();
 
     public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
     {
@@ -26,7 +26,10 @@ public class ModelObjectReceiver : ISyntaxReceiver
             return;
         }
 
-        if (attribute.ArgumentList.Arguments[0].Expression is not TypeOfExpressionSyntax typeExpressionSyntax)
+        if (
+            attribute.ArgumentList.Arguments[0].Expression
+            is not TypeOfExpressionSyntax typeExpressionSyntax
+        )
         {
             return;
         }

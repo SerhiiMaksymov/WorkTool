@@ -59,9 +59,10 @@ public static class EnumerableExtension
         return !enumerable.Any();
     }
 
-    public static IEnumerable<TItem> ThrowIfNullOrEmpty<TItem>(this IEnumerable<TItem> enumerable,
-                                                               [CallerArgumentExpression("enumerable")]
-                                                               string paramName = "")
+    public static IEnumerable<TItem> ThrowIfNullOrEmpty<TItem>(
+        this IEnumerable<TItem> enumerable,
+        [CallerArgumentExpression("enumerable")] string paramName = ""
+    )
     {
         enumerable.ThrowIfNull(paramName);
         enumerable.ThrowIfEmpty(paramName);
@@ -69,9 +70,10 @@ public static class EnumerableExtension
         return enumerable;
     }
 
-    public static IEnumerable<TItem> ThrowIfEmpty<TItem>(this IEnumerable<TItem> enumerable,
-                                                         [CallerArgumentExpression("enumerable")]
-                                                         string paramName = "")
+    public static IEnumerable<TItem> ThrowIfEmpty<TItem>(
+        this IEnumerable<TItem> enumerable,
+        [CallerArgumentExpression("enumerable")] string paramName = ""
+    )
     {
         return enumerable.IsEmpty() ? throw new EmptyEnumerableException(paramName) : enumerable;
     }
@@ -91,7 +93,7 @@ public static class EnumerableExtension
     public static DataTable ToDataTable<T>(this IEnumerable<T> items)
     {
         var result = new DataTable(typeof(T).Name);
-        var props  = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
         foreach (var prop in props)
         {

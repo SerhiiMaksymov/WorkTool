@@ -2,13 +2,21 @@
 
 public static class DefaultDbContextExtension
 {
-    public static void Execute<TDefaultDbContext,
+    public static void Execute<
+        TDefaultDbContext,
         TDbConnectionOptions,
         TDbContextOptions,
-        TConnectionParameters>(this TDefaultDbContext                           context,
-                               Action<TDefaultDbContext, IDbContextTransaction> execute)
-        where TDefaultDbContext : DefaultDbContext<TDbConnectionOptions, TDbContextOptions, TConnectionParameters>
-        where TDbConnectionOptions : DbConnectionContextOptions<TDbContextOptions, TConnectionParameters>
+        TConnectionParameters
+    >(this TDefaultDbContext context, Action<TDefaultDbContext, IDbContextTransaction> execute)
+        where TDefaultDbContext : DefaultDbContext<
+                TDbConnectionOptions,
+                TDbContextOptions,
+                TConnectionParameters
+            >
+        where TDbConnectionOptions : DbConnectionContextOptions<
+                TDbContextOptions,
+                TConnectionParameters
+            >
         where TDbContextOptions : DbContextOptions
         where TConnectionParameters : IConnectionParameters
     {
@@ -20,20 +28,30 @@ public static class DefaultDbContextExtension
         }
         catch (Exception exception)
         {
-            throw new DefaultDbContextException<TDefaultDbContext,
+            throw new DefaultDbContextException<
+                TDefaultDbContext,
                 TDbConnectionOptions,
                 TDbContextOptions,
-                TConnectionParameters>(exception, context);
+                TConnectionParameters
+            >(exception, context);
         }
     }
 
-    public static async Task ExecuteAsync<TDefaultDbContext,
+    public static async Task ExecuteAsync<
+        TDefaultDbContext,
         TDbConnectionOptions,
         TDbContextOptions,
-        TConnectionParameters>(this TDefaultDbContext        context,
-                               Func<TDefaultDbContext, Task> execute)
-        where TDefaultDbContext : DefaultDbContext<TDbConnectionOptions, TDbContextOptions, TConnectionParameters>
-        where TDbConnectionOptions : DbConnectionContextOptions<TDbContextOptions, TConnectionParameters>
+        TConnectionParameters
+    >(this TDefaultDbContext context, Func<TDefaultDbContext, Task> execute)
+        where TDefaultDbContext : DefaultDbContext<
+                TDbConnectionOptions,
+                TDbContextOptions,
+                TConnectionParameters
+            >
+        where TDbConnectionOptions : DbConnectionContextOptions<
+                TDbContextOptions,
+                TConnectionParameters
+            >
         where TDbContextOptions : DbContextOptions
         where TConnectionParameters : IConnectionParameters
     {
@@ -45,21 +63,34 @@ public static class DefaultDbContextExtension
         }
         catch (Exception exception)
         {
-            throw new DefaultDbContextException<TDefaultDbContext,
+            throw new DefaultDbContextException<
+                TDefaultDbContext,
                 TDbConnectionOptions,
                 TDbContextOptions,
-                TConnectionParameters>(exception, context);
+                TConnectionParameters
+            >(exception, context);
         }
     }
 
-    public static TResult Execute<TDefaultDbContext,
+    public static TResult Execute<
+        TDefaultDbContext,
         TDbConnectionOptions,
         TDbContextOptions,
         TConnectionParameters,
-        TResult>(this TDefaultDbContext                                  context,
-                 Func<TDefaultDbContext, IDbContextTransaction, TResult> execute)
-        where TDefaultDbContext : DefaultDbContext<TDbConnectionOptions, TDbContextOptions, TConnectionParameters>
-        where TDbConnectionOptions : DbConnectionContextOptions<TDbContextOptions, TConnectionParameters>
+        TResult
+    >(
+        this TDefaultDbContext context,
+        Func<TDefaultDbContext, IDbContextTransaction, TResult> execute
+    )
+        where TDefaultDbContext : DefaultDbContext<
+                TDbConnectionOptions,
+                TDbContextOptions,
+                TConnectionParameters
+            >
+        where TDbConnectionOptions : DbConnectionContextOptions<
+                TDbContextOptions,
+                TConnectionParameters
+            >
         where TDbContextOptions : DbContextOptions
         where TConnectionParameters : IConnectionParameters
     {
@@ -71,21 +102,31 @@ public static class DefaultDbContextExtension
         }
         catch (Exception exception)
         {
-            throw new DefaultDbContextException<TDefaultDbContext,
+            throw new DefaultDbContextException<
+                TDefaultDbContext,
                 TDbConnectionOptions,
                 TDbContextOptions,
-                TConnectionParameters>(exception, context);
+                TConnectionParameters
+            >(exception, context);
         }
     }
 
-    public static async Task<TResult> ExecuteAsync<TDefaultDbContext,
+    public static async Task<TResult> ExecuteAsync<
+        TDefaultDbContext,
         TDbConnectionOptions,
         TDbContextOptions,
         TConnectionParameters,
-        TResult>(this TDefaultDbContext                 context,
-                 Func<TDefaultDbContext, Task<TResult>> execute)
-        where TDefaultDbContext : DefaultDbContext<TDbConnectionOptions, TDbContextOptions, TConnectionParameters>
-        where TDbConnectionOptions : DbConnectionContextOptions<TDbContextOptions, TConnectionParameters>
+        TResult
+    >(this TDefaultDbContext context, Func<TDefaultDbContext, Task<TResult>> execute)
+        where TDefaultDbContext : DefaultDbContext<
+                TDbConnectionOptions,
+                TDbContextOptions,
+                TConnectionParameters
+            >
+        where TDbConnectionOptions : DbConnectionContextOptions<
+                TDbContextOptions,
+                TConnectionParameters
+            >
         where TDbContextOptions : DbContextOptions
         where TConnectionParameters : IConnectionParameters
     {
@@ -95,22 +136,32 @@ public static class DefaultDbContextExtension
         }
         catch (Exception exception)
         {
-            throw new DefaultDbContextException<TDefaultDbContext,
+            throw new DefaultDbContextException<
+                TDefaultDbContext,
                 TDbConnectionOptions,
                 TDbContextOptions,
-                TConnectionParameters>(exception, context);
+                TConnectionParameters
+            >(exception, context);
         }
     }
 
-    public static async Task<int> ExecuteNonQueryAsync<TDefaultDbContext,
+    public static async Task<int> ExecuteNonQueryAsync<
+        TDefaultDbContext,
         TDbConnectionOptions,
         TDbContextOptions,
         TConnectionParameters,
         TDbConnection,
-        TCommand>(this TDefaultDbContext context,
-                  string                 query)
-        where TDefaultDbContext : DefaultDbContext<TDbConnectionOptions, TDbContextOptions, TConnectionParameters>
-        where TDbConnectionOptions : DbConnectionContextOptions<TDbContextOptions, TConnectionParameters>
+        TCommand
+    >(this TDefaultDbContext context, string query)
+        where TDefaultDbContext : DefaultDbContext<
+                TDbConnectionOptions,
+                TDbContextOptions,
+                TConnectionParameters
+            >
+        where TDbConnectionOptions : DbConnectionContextOptions<
+                TDbContextOptions,
+                TConnectionParameters
+            >
         where TDbContextOptions : DbContextOptions
         where TConnectionParameters : IConnectionParameters
         where TDbConnection : DbConnection, new()
@@ -120,15 +171,20 @@ public static class DefaultDbContextExtension
         {
             query.ThrowIfNullOrWhiteSpace(nameof(query));
 
-            return await context.Connection.ConnectionParameters
-                .ExecuteNonQueryAsync<TConnectionParameters, TDbConnection, TCommand>(query);
+            return await context.Connection.ConnectionParameters.ExecuteNonQueryAsync<
+                TConnectionParameters,
+                TDbConnection,
+                TCommand
+            >(query);
         }
         catch (Exception exception)
         {
-            throw new DefaultDbContextException<TDefaultDbContext,
+            throw new DefaultDbContextException<
+                TDefaultDbContext,
                 TDbConnectionOptions,
                 TDbContextOptions,
-                TConnectionParameters>(exception, context);
+                TConnectionParameters
+            >(exception, context);
         }
     }
 }

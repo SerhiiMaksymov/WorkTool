@@ -5,8 +5,10 @@ public class ConnectionParametersException<TConnectionParameters> : Exception
 {
     public TConnectionParameters ConnectionParameters { get; }
 
-    public ConnectionParametersException(TConnectionParameters connectionParameters, Exception inner)
-        : base($"Exception in {connectionParameters.GetSafeConnectionString()}", inner)
+    public ConnectionParametersException(
+        TConnectionParameters connectionParameters,
+        Exception inner
+    ) : base($"Exception in {connectionParameters.GetSafeConnectionString()}", inner)
     {
         ConnectionParameters = connectionParameters;
     }

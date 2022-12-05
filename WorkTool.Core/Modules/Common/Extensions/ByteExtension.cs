@@ -54,9 +54,10 @@ public static class ByteExtension
     }
 
     public static IndexOfNeedlesResult IndexOf(
-    this Memory<byte>                    haystack,
-    ReadOnlyMemory<ReadOnlyMemory<byte>> needles,
-    int                                  start)
+        this Memory<byte> haystack,
+        ReadOnlyMemory<ReadOnlyMemory<byte>> needles,
+        int start
+    )
     {
         var result = new IndexOfNeedlesResult();
 
@@ -86,7 +87,10 @@ public static class ByteExtension
         return result;
     }
 
-    public static IndexOfNeedlesResult IndexOf(this Memory<byte> haystack, ReadOnlyMemory<ReadOnlyMemory<byte>> needles)
+    public static IndexOfNeedlesResult IndexOf(
+        this Memory<byte> haystack,
+        ReadOnlyMemory<ReadOnlyMemory<byte>> needles
+    )
     {
         return haystack.IndexOf(needles, 0);
     }

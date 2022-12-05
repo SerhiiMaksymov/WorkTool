@@ -2,5 +2,10 @@
 
 public interface IMessageBoxView
 {
-    Task ShowAsync(object title, object message, SystemColor background, IEnumerable<MessageBoxViewItem> messages);
+    Task ShowAsync(
+        object title,
+        object message,
+        SystemColor background,
+        IEnumerable<MessageBoxViewItem> messages
+    );
 }

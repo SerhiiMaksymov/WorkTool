@@ -2,8 +2,9 @@
 
 public static class NamedTypeSymbolExtension
 {
-    public static IEnumerable<IPropertySymbol> GetProperties<TNamedTypeSymbol>(this TNamedTypeSymbol symbol)
-        where TNamedTypeSymbol : INamedTypeSymbol
+    public static IEnumerable<IPropertySymbol> GetProperties<TNamedTypeSymbol>(
+        this TNamedTypeSymbol symbol
+    ) where TNamedTypeSymbol : INamedTypeSymbol
     {
         return symbol.GetMembers().OfType<IPropertySymbol>();
     }

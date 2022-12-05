@@ -1016,14 +1016,17 @@ public enum KeyboardKey
     ///     OSX Platform-specific Fn+Left key
     /// </summary>
     FnLeftArrow = 10001,
+
     /// <summary>
     ///     OSX Platform-specific Fn+Right key
     /// </summary>
     FnRightArrow = 10002,
+
     /// <summary>
     ///     OSX Platform-specific Fn+Up key
     /// </summary>
     FnUpArrow = 10003,
+
     /// <summary>
     ///     OSX Platform-specific Fn+Down key
     /// </summary>

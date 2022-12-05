@@ -2,44 +2,45 @@
 
 public readonly struct StructParameters
 {
-    private readonly List<GenericParameters>     generics;
-    private readonly List<PropertyParameters>    properties;
-    private readonly List<FieldParameters>       fields;
+    private readonly List<GenericParameters> generics;
+    private readonly List<PropertyParameters> properties;
+    private readonly List<FieldParameters> fields;
     private readonly List<ConstructorParameters> constructors;
-    private readonly List<MethodParameters>      methods;
-    private readonly List<OperatorParameters>    operators;
+    private readonly List<MethodParameters> methods;
+    private readonly List<OperatorParameters> operators;
 
     public StructParameters(
-    AccessModifier                     accessModifier,
-    StructIdentifier                   identifier,
-    TypeParameters                     type,
-    IEnumerable<GenericParameters>     generics,
-    IEnumerable<FieldParameters>       fields,
-    IEnumerable<ConstructorParameters> constructors,
-    IEnumerable<PropertyParameters>    properties,
-    IEnumerable<MethodParameters>      methods,
-    IEnumerable<OperatorParameters>    operators)
+        AccessModifier accessModifier,
+        StructIdentifier identifier,
+        TypeParameters type,
+        IEnumerable<GenericParameters> generics,
+        IEnumerable<FieldParameters> fields,
+        IEnumerable<ConstructorParameters> constructors,
+        IEnumerable<PropertyParameters> properties,
+        IEnumerable<MethodParameters> methods,
+        IEnumerable<OperatorParameters> operators
+    )
     {
         this.constructors = new List<ConstructorParameters>(constructors);
-        this.fields       = new List<FieldParameters>(fields);
-        this.properties   = new List<PropertyParameters>(properties);
-        AccessModifier    = accessModifier;
-        Identifier        = identifier;
-        Type              = type;
-        this.methods      = new List<MethodParameters>(methods);
-        this.generics     = new List<GenericParameters>(generics);
-        this.operators    = new List<OperatorParameters>(operators);
+        this.fields = new List<FieldParameters>(fields);
+        this.properties = new List<PropertyParameters>(properties);
+        AccessModifier = accessModifier;
+        Identifier = identifier;
+        Type = type;
+        this.methods = new List<MethodParameters>(methods);
+        this.generics = new List<GenericParameters>(generics);
+        this.operators = new List<OperatorParameters>(operators);
     }
 
-    public AccessModifier                     AccessModifier { get; }
-    public StructIdentifier                   Identifier     { get; }
-    public TypeParameters                     Type           { get; }
-    public IEnumerable<GenericParameters>     Generics       => generics;
-    public IEnumerable<FieldParameters>       Fields         => fields;
-    public IEnumerable<PropertyParameters>    Properties     => properties;
-    public IEnumerable<ConstructorParameters> Constructors   => constructors;
-    public IEnumerable<MethodParameters>      Methods        => methods;
-    public IEnumerable<OperatorParameters>    Operators      => operators;
+    public AccessModifier AccessModifier { get; }
+    public StructIdentifier Identifier { get; }
+    public TypeParameters Type { get; }
+    public IEnumerable<GenericParameters> Generics => generics;
+    public IEnumerable<FieldParameters> Fields => fields;
+    public IEnumerable<PropertyParameters> Properties => properties;
+    public IEnumerable<ConstructorParameters> Constructors => constructors;
+    public IEnumerable<MethodParameters> Methods => methods;
+    public IEnumerable<OperatorParameters> Operators => operators;
 
     private string GatTypeName()
     {
@@ -68,7 +69,8 @@ public readonly struct StructParameters
                 items.Add(Identifier.AsString());
 
                 break;
-            default: throw new ArgumentOutOfRangeException();
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
         items.Add("struct");
@@ -77,10 +79,12 @@ public readonly struct StructParameters
         if (Generics.Any())
         {
             items.Add(
-                Generics.Select(x => x.ToString())
+                Generics
+                    .Select(x => x.ToString())
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Select(x => $"where {x}")
-                    .JoinString(" "));
+                    .JoinString(" ")
+            );
         }
 
         return items.JoinString(" ");

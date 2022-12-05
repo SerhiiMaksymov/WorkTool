@@ -2,57 +2,56 @@
 
 public readonly struct MethodParameters
 {
-    private readonly List<GenericParameters>  generics;
+    private readonly List<GenericParameters> generics;
     private readonly List<ArgumentParameters> arguments;
 
     public MethodParameters(
-    AccessModifier                  accessModifier,
-    bool                            isStatic,
-    TypeParameters                  outType,
-    string                          name,
-    IEnumerable<GenericParameters>  generics,
-    IEnumerable<ArgumentParameters> arguments,
-    string                          body)
+        AccessModifier accessModifier,
+        bool isStatic,
+        TypeParameters outType,
+        string name,
+        IEnumerable<GenericParameters> generics,
+        IEnumerable<ArgumentParameters> arguments,
+        string body
+    )
     {
-        IsStatic       = isStatic;
+        IsStatic = isStatic;
         AccessModifier = accessModifier;
-        OutType        = outType;
-        Name           = name;
+        OutType = outType;
+        Name = name;
         this.arguments = new List<ArgumentParameters>(arguments);
-        this.generics  = new List<GenericParameters>(generics);
-        Body           = body;
+        this.generics = new List<GenericParameters>(generics);
+        Body = body;
     }
 
     public MethodParameters(
-    AccessModifier                  accessModifier,
-    bool                            isStatic,
-    TypeParameters                  outType,
-    string                          name,
-    GenericParameters               generic,
-    IEnumerable<ArgumentParameters> arguments,
-    string                          body)
+        AccessModifier accessModifier,
+        bool isStatic,
+        TypeParameters outType,
+        string name,
+        GenericParameters generic,
+        IEnumerable<ArgumentParameters> arguments,
+        string body
+    )
     {
-        IsStatic       = isStatic;
+        IsStatic = isStatic;
         AccessModifier = accessModifier;
-        OutType        = outType;
-        Name           = name;
+        OutType = outType;
+        Name = name;
         this.arguments = new List<ArgumentParameters>(arguments);
 
-        generics = new List<GenericParameters>
-        {
-            generic
-        };
+        generics = new List<GenericParameters> { generic };
 
         Body = body;
     }
 
-    public AccessModifier                  AccessModifier { get; }
-    public bool                            IsStatic       { get; }
-    public TypeParameters                  OutType        { get; }
-    public string                          Name           { get; }
-    public IEnumerable<GenericParameters>  Generics       => generics;
-    public IEnumerable<ArgumentParameters> Arguments      => arguments;
-    public string                          Body           { get; }
+    public AccessModifier AccessModifier { get; }
+    public bool IsStatic { get; }
+    public TypeParameters OutType { get; }
+    public string Name { get; }
+    public IEnumerable<GenericParameters> Generics => generics;
+    public IEnumerable<ArgumentParameters> Arguments => arguments;
+    public string Body { get; }
 
     private string GetTextName()
     {
@@ -81,10 +80,12 @@ public readonly struct MethodParameters
         if (Generics.Any())
         {
             items.Add(
-                Generics.Select(x => x.ToString())
+                Generics
+                    .Select(x => x.ToString())
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Select(x => $"where {x}")
-                    .JoinString(" "));
+                    .JoinString(" ")
+            );
         }
 
         return items.JoinString(" ");

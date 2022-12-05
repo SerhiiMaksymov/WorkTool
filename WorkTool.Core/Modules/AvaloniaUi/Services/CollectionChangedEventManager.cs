@@ -2,17 +2,18 @@
 
 public class CollectionChangedEventManager
 {
-    private readonly ConditionalWeakTable<INotifyCollectionChanged, Entry> _entries = new ();
-    public static    CollectionChangedEventManager                         Instance { get; } = new ();
+    private readonly ConditionalWeakTable<INotifyCollectionChanged, Entry> _entries = new();
+    public static CollectionChangedEventManager Instance { get; } = new();
 
-    private CollectionChangedEventManager()
-    {
-    }
+    private CollectionChangedEventManager() { }
 
-    public void AddListener(INotifyCollectionChanged collection, ICollectionChangedListener listener)
+    public void AddListener(
+        INotifyCollectionChanged collection,
+        ICollectionChangedListener listener
+    )
     {
         collection = collection ?? throw new ArgumentNullException(nameof(collection));
-        listener   = listener ?? throw new ArgumentNullException(nameof(listener));
+        listener = listener ?? throw new ArgumentNullException(nameof(listener));
         Dispatcher.UIThread.VerifyAccess();
 
         if (!_entries.TryGetValue(collection, out var entry))
@@ -26,23 +27,28 @@ public class CollectionChangedEventManager
             if (l.TryGetTarget(out var target) && target == listener)
             {
                 throw new InvalidOperationException(
-                    "Collection listener already added for this collection/listener combination.");
+                    "Collection listener already added for this collection/listener combination."
+                );
             }
         }
 
         entry.Listeners.Add(new WeakReference<ICollectionChangedListener>(listener));
     }
 
-    public void RemoveListener(INotifyCollectionChanged collection, ICollectionChangedListener listener)
+    public void RemoveListener(
+        INotifyCollectionChanged collection,
+        ICollectionChangedListener listener
+    )
     {
         collection = collection ?? throw new ArgumentNullException(nameof(collection));
-        listener   = listener ?? throw new ArgumentNullException(nameof(listener));
+        listener = listener ?? throw new ArgumentNullException(nameof(listener));
         Dispatcher.UIThread.VerifyAccess();
 
         if (!_entries.TryGetValue(collection, out var entry))
         {
             throw new InvalidOperationException(
-                "Collection listener not registered for this collection/listener combination.");
+                "Collection listener not registered for this collection/listener combination."
+            );
         }
 
         var listeners = entry.Listeners;
@@ -68,7 +74,8 @@ public class CollectionChangedEventManager
         }
 
         throw new InvalidOperationException(
-            "Collection listener not registered for this collection/listener combination.");
+            "Collection listener not registered for this collection/listener combination."
+        );
     }
 
     private class Entry : IWeakEventSubscriber<NotifyCollectionChangedEventArgs>, IDisposable
@@ -80,7 +87,7 @@ public class CollectionChangedEventManager
         public Entry(INotifyCollectionChanged collection)
         {
             _collection = collection;
-            Listeners   = new List<WeakReference<ICollectionChangedListener>>();
+            Listeners = new List<WeakReference<ICollectionChangedListener>>();
             WeakEvents.CollectionChanged.Subscribe(_collection, this);
         }
 
@@ -89,13 +96,17 @@ public class CollectionChangedEventManager
             WeakEvents.CollectionChanged.Unsubscribe(_collection, this);
         }
 
-        void IWeakEventSubscriber<NotifyCollectionChangedEventArgs>.
-            OnEvent(object? notifyCollectionChanged, WeakEvent ev, NotifyCollectionChangedEventArgs e)
+        void IWeakEventSubscriber<NotifyCollectionChangedEventArgs>.OnEvent(
+            object? notifyCollectionChanged,
+            WeakEvent ev,
+            NotifyCollectionChangedEventArgs e
+        )
         {
             static void Notify(
-            INotifyCollectionChanged                        incc,
-            NotifyCollectionChangedEventArgs                args,
-            List<WeakReference<ICollectionChangedListener>> listeners)
+                INotifyCollectionChanged incc,
+                NotifyCollectionChangedEventArgs args,
+                List<WeakReference<ICollectionChangedListener>> listeners
+            )
             {
                 foreach (var l in listeners)
                 {

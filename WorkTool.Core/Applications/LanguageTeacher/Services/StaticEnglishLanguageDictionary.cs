@@ -8,21 +8,15 @@ public class StaticEnglishLanguageDictionary : ILanguageDictionary<EnglishWord, 
     {
         _source = new Dictionary<EnglishWord, TranslateEnumerable<RussianWord>>
         {
-            {
-                new EnglishWord(), new TranslateEnumerable<RussianWord>(
-                    new[]
-                    {
-                        new RussianWord()
-                    })
-            }
+            { new EnglishWord(), new TranslateEnumerable<RussianWord>(new[] { new RussianWord() }) }
         };
     }
 
     public TranslateEnumerable<RussianWord> this[EnglishWord key] => _source[key];
 
-    public IEnumerable<EnglishWord>                      Keys   => _source.Keys;
+    public IEnumerable<EnglishWord> Keys => _source.Keys;
     public IEnumerable<TranslateEnumerable<RussianWord>> Values => _source.Values;
-    public int                                           Count  => _source.Count;
+    public int Count => _source.Count;
 
     public IEnumerator<KeyValuePair<EnglishWord, TranslateEnumerable<RussianWord>>> GetEnumerator()
     {

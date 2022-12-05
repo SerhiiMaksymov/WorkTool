@@ -2,34 +2,35 @@
 
 public class DependencyInjector : IDependencyInjector
 {
-    private readonly bool                                                    autoInject;
+    private readonly bool autoInject;
     private readonly Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>> constructorParameters;
-    private readonly Dictionary<ParameterInfo, object>                       constructorParametersValue;
-    private readonly Dictionary<Type, ConstructorInfo>                       constructors;
-    private readonly Dictionary<Delegate, ParameterInfo[]>                   methodParameters;
-    private readonly Dictionary<Delegate, MethodInfo>                        methods;
-    private readonly Dictionary<Type, Func<IResolver, object>>               singleton;
-    private readonly Dictionary<Type, LazyLoad<object>>                      singletonDefaults;
-    private readonly Dictionary<Type, Type>                                  singletonTypes;
-    private readonly Dictionary<Type, Func<IResolver, object>>               transient;
-    private readonly Dictionary<Type, Func<object>>                          transientDefaults;
-    private readonly Dictionary<Type, Type>                                  transientTypes;
-    private readonly Dictionary<Type, IEnumerable<PropertyInfo>>             typePublicSetters;
+    private readonly Dictionary<ParameterInfo, object> constructorParametersValue;
+    private readonly Dictionary<Type, ConstructorInfo> constructors;
+    private readonly Dictionary<Delegate, ParameterInfo[]> methodParameters;
+    private readonly Dictionary<Delegate, MethodInfo> methods;
+    private readonly Dictionary<Type, Func<IResolver, object>> singleton;
+    private readonly Dictionary<Type, LazyLoad<object>> singletonDefaults;
+    private readonly Dictionary<Type, Type> singletonTypes;
+    private readonly Dictionary<Type, Func<IResolver, object>> transient;
+    private readonly Dictionary<Type, Func<object>> transientDefaults;
+    private readonly Dictionary<Type, Type> transientTypes;
+    private readonly Dictionary<Type, IEnumerable<PropertyInfo>> typePublicSetters;
 
     public DependencyInjector(
-    bool                                                             autoInject,
-    IReadOnlyDictionary<Type, LazyLoad<object>>                      singletonDefaults,
-    IReadOnlyDictionary<Delegate, MethodInfo>                        methods,
-    IReadOnlyDictionary<Delegate, ParameterInfo[]>                   methodParameters,
-    IReadOnlyDictionary<Type, Func<object>>                          transientDefaults,
-    IReadOnlyDictionary<Type, ConstructorInfo>                       constructors,
-    IReadOnlyDictionary<ParameterInfo, object>                       constructorParametersValue,
-    IReadOnlyDictionary<ConstructorInfo, IEnumerable<ParameterInfo>> constructorParameters,
-    IReadOnlyDictionary<Type, IEnumerable<PropertyInfo>>             typePublicSetters,
-    IReadOnlyDictionary<Type, Func<IResolver, object>>               transient,
-    IReadOnlyDictionary<Type, Func<IResolver, object>>               singleton,
-    IReadOnlyDictionary<Type, Type>                                  singletonTypes,
-    IReadOnlyDictionary<Type, Type>                                  transientTypes)
+        bool autoInject,
+        IReadOnlyDictionary<Type, LazyLoad<object>> singletonDefaults,
+        IReadOnlyDictionary<Delegate, MethodInfo> methods,
+        IReadOnlyDictionary<Delegate, ParameterInfo[]> methodParameters,
+        IReadOnlyDictionary<Type, Func<object>> transientDefaults,
+        IReadOnlyDictionary<Type, ConstructorInfo> constructors,
+        IReadOnlyDictionary<ParameterInfo, object> constructorParametersValue,
+        IReadOnlyDictionary<ConstructorInfo, IEnumerable<ParameterInfo>> constructorParameters,
+        IReadOnlyDictionary<Type, IEnumerable<PropertyInfo>> typePublicSetters,
+        IReadOnlyDictionary<Type, Func<IResolver, object>> transient,
+        IReadOnlyDictionary<Type, Func<IResolver, object>> singleton,
+        IReadOnlyDictionary<Type, Type> singletonTypes,
+        IReadOnlyDictionary<Type, Type> transientTypes
+    )
     {
         this.autoInject = autoInject;
         this.singletonTypes = new Dictionary<Type, Type>(singletonTypes);
@@ -41,8 +42,12 @@ public class DependencyInjector : IDependencyInjector
         this.singleton = new Dictionary<Type, Func<IResolver, object>>(singleton);
         this.transient = new Dictionary<Type, Func<IResolver, object>>(transient);
         this.constructors = new Dictionary<Type, ConstructorInfo>(constructors);
-        this.constructorParametersValue = new Dictionary<ParameterInfo, object>(constructorParametersValue);
-        this.constructorParameters = new Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>>(constructorParameters);
+        this.constructorParametersValue = new Dictionary<ParameterInfo, object>(
+            constructorParametersValue
+        );
+        this.constructorParameters = new Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>>(
+            constructorParameters
+        );
         this.typePublicSetters = new Dictionary<Type, IEnumerable<PropertyInfo>>(typePublicSetters);
     }
 
@@ -67,7 +72,10 @@ public class DependencyInjector : IDependencyInjector
         return (Task)@delegate.DynamicInvoke(argumentsInvoke);
     }
 
-    public Task<TResult> InvokeAsync<TResult>(Delegate @delegate, IEnumerable<ArgumentValue> arguments)
+    public Task<TResult> InvokeAsync<TResult>(
+        Delegate @delegate,
+        IEnumerable<ArgumentValue> arguments
+    )
     {
         var argumentsInvoke = GetArgumentsInvoke(@delegate, arguments);
 
@@ -131,7 +139,9 @@ public class DependencyInjector : IDependencyInjector
             return properties;
         }
 
-        properties = type.GetProperties(BindingFlags.Instance | BindingFlags.SetProperty | BindingFlags.Public);
+        properties = type.GetProperties(
+            BindingFlags.Instance | BindingFlags.SetProperty | BindingFlags.Public
+        );
         typePublicSetters.Add(type, properties);
 
         return properties;
@@ -185,7 +195,7 @@ public class DependencyInjector : IDependencyInjector
         }
 
         var argumentsInvokeLenght = parameters.Length;
-        var parameterIndex        = 0;
+        var parameterIndex = 0;
 
         if (parameters[0].ParameterType.FullName.Equals("System.Runtime.CompilerServices.Closure"))
         {
@@ -199,8 +209,8 @@ public class DependencyInjector : IDependencyInjector
         }
 
         var argumentsInvokeIndex = 0;
-        var argumentsInvoke      = new object[argumentsInvokeLenght];
-        var argumentsDictionary  = new Dictionary<Type, object>();
+        var argumentsInvoke = new object[argumentsInvokeLenght];
+        var argumentsDictionary = new Dictionary<Type, object>();
 
         foreach (var argument in arguments)
         {
@@ -211,12 +221,16 @@ public class DependencyInjector : IDependencyInjector
         {
             if (argumentsDictionary.ContainsKey(parameters[parameterIndex].ParameterType))
             {
-                argumentsInvoke[argumentsInvokeIndex] = argumentsDictionary[parameters[parameterIndex].ParameterType];
+                argumentsInvoke[argumentsInvokeIndex] = argumentsDictionary[
+                    parameters[parameterIndex].ParameterType
+                ];
 
                 continue;
             }
 
-            argumentsInvoke[argumentsInvokeIndex] = Resolve(parameters[parameterIndex].ParameterType);
+            argumentsInvoke[argumentsInvokeIndex] = Resolve(
+                parameters[parameterIndex].ParameterType
+            );
         }
 
         return argumentsInvoke;
@@ -224,9 +238,9 @@ public class DependencyInjector : IDependencyInjector
 
     private object CreateByConstructor(ConstructorInfo constructor)
     {
-        var parameters      = GetConstructorParameters(constructor);
+        var parameters = GetConstructorParameters(constructor);
         var parameterValues = parameters.Select(x => GetParameterValue(x)).ToArray();
-        var result          = Activator.CreateInstance(constructor.DeclaringType, parameterValues);
+        var result = Activator.CreateInstance(constructor.DeclaringType, parameterValues);
 
         return result;
     }

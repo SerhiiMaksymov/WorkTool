@@ -2,8 +2,10 @@
 
 public static class MenuFlyoutExtension
 {
-    public static TMenuFlyout AddItems<TMenuFlyout>(this TMenuFlyout menuFlyout, IEnumerable<object> items)
-        where TMenuFlyout : MenuFlyout
+    public static TMenuFlyout AddItems<TMenuFlyout>(
+        this TMenuFlyout menuFlyout,
+        IEnumerable<object> items
+    ) where TMenuFlyout : MenuFlyout
     {
         if (menuFlyout.Items is ICollection<object> collection)
         {
@@ -15,15 +17,19 @@ public static class MenuFlyoutExtension
             return menuFlyout;
         }
 
-        var result = new AvaloniaList<object>(menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>());
+        var result = new AvaloniaList<object>(
+            menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>()
+        );
         result.AddRange(items);
         menuFlyout.Items = result;
 
         return menuFlyout;
     }
 
-    public static TMenuFlyout AddItems<TMenuFlyout>(this TMenuFlyout menuFlyout, params object[] items)
-        where TMenuFlyout : MenuFlyout
+    public static TMenuFlyout AddItems<TMenuFlyout>(
+        this TMenuFlyout menuFlyout,
+        params object[] items
+    ) where TMenuFlyout : MenuFlyout
     {
         if (menuFlyout.Items is ICollection<object> collection)
         {
@@ -35,7 +41,9 @@ public static class MenuFlyoutExtension
             return menuFlyout;
         }
 
-        var result = new AvaloniaList<object>(menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>());
+        var result = new AvaloniaList<object>(
+            menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>()
+        );
         result.AddRange(items);
         menuFlyout.Items = result;
 
@@ -52,7 +60,9 @@ public static class MenuFlyoutExtension
             return menuFlyout;
         }
 
-        var items = new AvaloniaList<object>(menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>())
+        var items = new AvaloniaList<object>(
+            menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>()
+        )
         {
             item
         };
@@ -72,7 +82,9 @@ public static class MenuFlyoutExtension
             return menuFlyout;
         }
 
-        var items = new AvaloniaList<object>(menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>());
+        var items = new AvaloniaList<object>(
+            menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>()
+        );
         items.Remove(item);
         menuFlyout.Items = items;
 

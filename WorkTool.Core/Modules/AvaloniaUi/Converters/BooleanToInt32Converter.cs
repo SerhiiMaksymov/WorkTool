@@ -7,7 +7,7 @@ public class BooleanToInt32Converter : IValueConverter
 
     public BooleanToInt32Converter(int trueValue, int falseValue)
     {
-        _trueValue  = trueValue;
+        _trueValue = trueValue;
         _falseValue = falseValue;
     }
 
@@ -21,7 +21,12 @@ public class BooleanToInt32Converter : IValueConverter
         return value;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object? ConvertBack(
+        object? value,
+        Type targetType,
+        object? parameter,
+        CultureInfo culture
+    )
     {
         if (targetType != typeof(bool) || value is not int int32Value)
         {

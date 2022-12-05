@@ -2,13 +2,13 @@
 
 public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISetParameter
 {
-    private readonly IInvoker            invoker;
+    private readonly IInvoker invoker;
     private readonly List<ArgumentValue> parameters;
 
     public TextBoxView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
-        parameters   = new List<ArgumentValue>();
-        DataContext  = viewModel;
+        parameters = new List<ArgumentValue>();
+        DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
         avaloniaUiContext.InitView(this);
     }
@@ -21,36 +21,46 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
         {
             contextFlyout = new MenuFlyout();
 
-            contextFlyout.AddItem(
+            contextFlyout
+                .AddItem(
                     new MenuItem()
                         .SetHeader("Cut")
                         .SetCommand(ReactiveCommand.Create(Cut))
                         .BindValue(
                             IsEnabledProperty,
-                            new Binding("CanCut")
-                                .SetRelativeSource(
-                                    new RelativeSource(RelativeSourceMode.TemplatedParent)
-                                        .SetAncestorType(typeof(TextBox)))))
+                            new Binding("CanCut").SetRelativeSource(
+                                new RelativeSource(
+                                    RelativeSourceMode.TemplatedParent
+                                ).SetAncestorType(typeof(TextBox))
+                            )
+                        )
+                )
                 .AddItem(
                     new MenuItem()
                         .SetHeader("Copy")
                         .SetCommand(ReactiveCommand.Create(Copy))
                         .BindValue(
                             IsEnabledProperty,
-                            new Binding("CanCopy")
-                                .SetRelativeSource(
-                                    new RelativeSource(RelativeSourceMode.TemplatedParent)
-                                        .SetAncestorType(typeof(TextBox)))))
+                            new Binding("CanCopy").SetRelativeSource(
+                                new RelativeSource(
+                                    RelativeSourceMode.TemplatedParent
+                                ).SetAncestorType(typeof(TextBox))
+                            )
+                        )
+                )
                 .AddItem(
                     new MenuItem()
                         .SetHeader("Paste")
                         .SetCommand(ReactiveCommand.Create(Paste))
                         .BindValue(
                             IsEnabledProperty,
-                            new Binding("CanPaste")
-                                .SetRelativeSource(
-                                    new RelativeSource(RelativeSourceMode.TemplatedParent)
-                                        .SetAncestorType(typeof(TextBox)))));
+                            new Binding("CanPaste").SetRelativeSource(
+                                new RelativeSource(
+                                    RelativeSourceMode.TemplatedParent
+                                ).SetAncestorType(typeof(TextBox))
+                            )
+                        )
+                );
         }
 
         var menuItem = ToMenuItem(node);
@@ -90,22 +100,18 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
             return menuItem;
         }
 
-        var command = ViewModel.CreateCommand(
-            async () =>
+        var command = ViewModel.CreateCommand(async () =>
+        {
+            var arguments = new List<ArgumentValue> { new(GetType(), this) };
+
+            arguments.AddRange(parameters);
+            var result = invoker.Invoke(node.Value.Task, arguments);
+
+            if (result is Task task)
             {
-                var arguments = new List<ArgumentValue>
-                {
-                    new (GetType(), this)
-                };
-
-                arguments.AddRange(parameters);
-                var result = invoker.Invoke(node.Value.Task, arguments);
-
-                if (result is Task task)
-                {
-                    await task;
-                }
-            });
+                await task;
+            }
+        });
 
         return menuItem.SetCommand(command);
     }

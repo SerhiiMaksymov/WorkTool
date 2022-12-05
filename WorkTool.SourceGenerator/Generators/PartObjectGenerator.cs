@@ -45,15 +45,15 @@ public class PartObjectGenerator : ISourceGenerator
             foreach (var type in receiver.Items)
             {
                 var semanticModel = compilation.GetSemanticModel(type.Type.SyntaxTree);
-                var @namespace    = compilation.Assembly.MetadataName.ToNamespace();
+                var @namespace = compilation.Assembly.MetadataName.ToNamespace();
 
                 switch (type.ObjectType)
                 {
                     case ObjectType.Class:
                     {
                         var extension = semanticModel.GetPartClass(type, @namespace);
-                        var text      = extension.ToString();
-                        var name      = this.GetGeneratedName(extension.Type.Name, index++);
+                        var text = extension.ToString();
+                        var name = this.GetGeneratedName(extension.Type.Name, index++);
                         context.AddSource(name, text);
                         context.CancellationToken.ThrowIfCancellationRequested();
 
@@ -62,8 +62,8 @@ public class PartObjectGenerator : ISourceGenerator
                     case ObjectType.Struct:
                     {
                         var extension = semanticModel.GetPartStruct(type, @namespace);
-                        var text      = extension.ToString();
-                        var name      = this.GetGeneratedName(extension.Type.Name, index++);
+                        var text = extension.ToString();
+                        var name = this.GetGeneratedName(extension.Type.Name, index++);
                         context.AddSource(name, text);
                         context.CancellationToken.ThrowIfCancellationRequested();
 

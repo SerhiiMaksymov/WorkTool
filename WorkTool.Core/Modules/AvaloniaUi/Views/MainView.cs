@@ -1,54 +1,54 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Views;
 
-public class MainView : ReactiveTabbedControl<ViewModelBase>, IMenuView, ITabControlView, IKeyBindingView
+public class MainView
+    : ReactiveTabbedControl<ViewModelBase>,
+        IMenuView,
+        ITabControlView,
+        IKeyBindingView
 {
     private readonly IInvoker invoker;
 
     public MainView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
-        DataContext  = viewModel;
+        DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
 
-        this.WhenActivated(
-            disposables =>
-            {
-                ViewModel.CanExecute.DisposeWith(disposables);
+        this.WhenActivated(disposables =>
+        {
+            ViewModel.CanExecute.DisposeWith(disposables);
 
-                Tabs.Bind(ItemsControl.ItemsProperty, new Binding("TabItems"))
-                    .DisposeWith(disposables);
-            });
+            Tabs.Bind(ItemsControl.ItemsProperty, new Binding("TabItems")).DisposeWith(disposables);
+        });
 
         avaloniaUiContext.InitView(this);
     }
 
     public void AddKeyBinding(KeyboardKeyGesture keyGesture, Delegate @delegate)
     {
-        var command = ViewModel.CreateCommand(
-            async () =>
+        var command = ViewModel.CreateCommand(async () =>
+        {
+            var arguments = new List<ArgumentValue>
             {
-                var arguments = new List<ArgumentValue>
-                {
-                    new (GetType(), this),
-                    new (typeof(ITabControlView), this)
-                };
+                new(GetType(), this),
+                new(typeof(ITabControlView), this)
+            };
 
-                var result = invoker.Invoke(@delegate, arguments);
+            var result = invoker.Invoke(@delegate, arguments);
 
-                if (result is null)
-                {
-                    return;
-                }
+            if (result is null)
+            {
+                return;
+            }
 
-                if (result is Task task)
-                {
-                    await task;
-                }
-            });
+            if (result is Task task)
+            {
+                await task;
+            }
+        });
 
         this.AddKeyBinding(
-            new KeyBinding()
-                .SetGesture(keyGesture.ToKeyGesture())
-                .SetCommand(command));
+            new KeyBinding().SetGesture(keyGesture.ToKeyGesture()).SetCommand(command)
+        );
     }
 
     public void AddMenuItem(TreeNode<string, MenuItemContext> node)
@@ -59,7 +59,7 @@ public class MainView : ReactiveTabbedControl<ViewModelBase>, IMenuView, ITabCon
 
     public void AddTabItem(TabItemContext tabItemContext)
     {
-        var header  = tabItemContext.Header.Invoke();
+        var header = tabItemContext.Header.Invoke();
         var content = tabItemContext.Content.Invoke();
         var tabItem = new TabItem();
 
@@ -69,18 +69,20 @@ public class MainView : ReactiveTabbedControl<ViewModelBase>, IMenuView, ITabCon
                     new Grid()
                         .AddColumnDefinition(GridLength.Star)
                         .AddColumnDefinition(GridLength.Auto)
-                        .AddChild(
-                            new ContentControl()
-                                .SetContent(header))
+                        .AddChild(new ContentControl().SetContent(header))
                         .AddChild(
                             new Button()
                                 .SetGridColumn(1)
                                 .SetContent(
                                     new AvaloniaPath()
                                         .SetData(GeometryConstants.Close)
-                                        .SetFill(Brushes.Black))
-                                .SetCommand(ViewModel.CreateCommand(() => Tabs.RemoveItem(tabItem)))))
-                .SetContent(content));
+                                        .SetFill(Brushes.Black)
+                                )
+                                .SetCommand(ViewModel.CreateCommand(() => Tabs.RemoveItem(tabItem)))
+                        )
+                )
+                .SetContent(content)
+        );
     }
 
     private MenuItem AddCommand(MenuItem menuItem, TreeNode<string, MenuItemContext> node)
@@ -90,21 +92,18 @@ public class MainView : ReactiveTabbedControl<ViewModelBase>, IMenuView, ITabCon
             return menuItem;
         }
 
-        var command = ViewModel.CreateCommand(
-            async () =>
-            {
-                var result = invoker.Invoke(
-                    node.Value.Task,
-                    new[]
-                    {
-                        new ArgumentValue(GetType(), this)
-                    });
+        var command = ViewModel.CreateCommand(async () =>
+        {
+            var result = invoker.Invoke(
+                node.Value.Task,
+                new[] { new ArgumentValue(GetType(), this) }
+            );
 
-                if (result is Task task)
-                {
-                    await task;
-                }
-            });
+            if (result is Task task)
+            {
+                await task;
+            }
+        });
 
         return menuItem.SetCommand(command);
     }

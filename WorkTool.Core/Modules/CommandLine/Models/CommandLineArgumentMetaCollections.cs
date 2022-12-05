@@ -1,9 +1,10 @@
 ﻿namespace WorkTool.Core.Modules.CommandLine.Models;
 
-public class CommandLineArgumentMetaCollections : IEnumerable<KeyValuePair<string, ICommandLineArgumentMeta<object>>>
+public class CommandLineArgumentMetaCollections
+    : IEnumerable<KeyValuePair<string, ICommandLineArgumentMeta<object>>>
 {
-    public static readonly CommandLineArgumentMetaCollections Empty = new (
-        Enumerable.Empty<ICommandLineArgumentMeta<object>>());
+    public static readonly CommandLineArgumentMetaCollections Empty =
+        new(Enumerable.Empty<ICommandLineArgumentMeta<object>>());
 
     private readonly Dictionary<string, ICommandLineArgumentMeta<object>> metas;
 

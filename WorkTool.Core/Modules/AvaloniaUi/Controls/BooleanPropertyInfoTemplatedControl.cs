@@ -11,12 +11,11 @@ public class BooleanPropertyInfoTemplatedControl : PropertyInfoTemplatedControl<
         : base(
             (property, _, control, _) =>
             {
-                control.GetObservable(ToggleButton.IsCheckedProperty)
+                control
+                    .GetObservable(ToggleButton.IsCheckedProperty)
                     .Subscribe(x => property.Value = x.HasValue ? x.Value : false);
 
-                property.GetObservable(ValueProperty)
-                    .Subscribe(x => control.IsChecked = x);
-            })
-    {
-    }
+                property.GetObservable(ValueProperty).Subscribe(x => control.IsChecked = x);
+            }
+        ) { }
 }

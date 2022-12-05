@@ -2,15 +2,14 @@
 
 public class ReactiveTextBox<TViewModel> : TextBox, IViewFor<TViewModel> where TViewModel : class
 {
-    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty
-        .Register<ReactiveTextBox<TViewModel>, TViewModel>(nameof(ViewModel));
+    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty.Register<
+        ReactiveTextBox<TViewModel>,
+        TViewModel
+    >(nameof(ViewModel));
 
     public ReactiveTextBox()
     {
-        this.WhenActivated(
-            _ =>
-            {
-            });
+        this.WhenActivated(_ => { });
 
         this.GetObservable(ViewModelProperty).Subscribe(OnViewModelChanged);
     }

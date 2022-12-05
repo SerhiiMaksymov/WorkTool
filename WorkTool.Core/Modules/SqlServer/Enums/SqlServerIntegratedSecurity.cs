@@ -3,6 +3,6 @@
 public enum SqlServerIntegratedSecurity : byte
 {
     False = 0,
-    True  = 1,
-    Sspi  = 2
+    True = 1,
+    Sspi = 2
 }

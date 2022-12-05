@@ -3,21 +3,22 @@
 [AttributeUsage(AttributeTargets.Assembly)]
 public class UiMenuItemFromTabItemAttribute : Attribute
 {
-    public Type     MenuViewType       { get; }
-    public string[] Path               { get; }
-    public Type     TabControlViewType { get; }
-    public Type     ContentType        { get; }
+    public Type MenuViewType { get; }
+    public string[] Path { get; }
+    public Type TabControlViewType { get; }
+    public Type ContentType { get; }
 
     public UiMenuItemFromTabItemAttribute(
-    Type            menuView,
-    Type            tabControlViewType,
-    Type            contentType,
-    params string[] path)
+        Type menuView,
+        Type tabControlViewType,
+        Type contentType,
+        params string[] path
+    )
     {
         MenuViewType = menuView.ThrowIfNull();
         path.ThrowIfNullOrEmpty();
-        Path               = path;
+        Path = path;
         TabControlViewType = tabControlViewType.ThrowIfNull();
-        ContentType        = contentType.ThrowIfNull();
+        ContentType = contentType.ThrowIfNull();
     }
 }

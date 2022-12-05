@@ -2,45 +2,47 @@
 
 public record SqlServerConnectionParameters : IConnectionParameters
 {
-    public const string                      DefaultKeyTrustedConnection          = "Trusted_Connection";
-    public const string                      DefaultKeyConnectionTimeout          = "Connection Timeout";
-    public const string                      DefaultKeyTrustServerCertificate     = "TrustServerCertificate";
-    public const string                      DefaultKeyPersistSecurityInfo        = "Persist Security Info";
-    public const string                      DefaultKeyInitialCatalog             = "Initial Catalog";
-    public const string                      DefaultKeyEncrypt                    = "Encrypt";
-    public const string                      DefaultKeyServer                     = "Server";
-    public const string                      DefaultKeyUserId                     = "User ID";
-    public const string                      DefaultKeyPassword                   = "Password";
-    public const string                      DefaultKeyIntegratedSecurity         = "Integrated Security";
-    public const string                      DefaultKeyMultipleActiveResultSets   = "MultipleActiveResultSets";
-    public const string                      DefaultValueInitialCatalog           = "";
-    public const string                      DefaultValueDataSource               = "";
-    public const string                      DefaultValueServer                   = "";
-    public const string                      DefaultValueDatabase                 = "";
-    public const string                      DefaultValueUserId                   = "";
-    public const string                      DefaultValuePassword                 = "";
-    public const int                         DefaultValueConnectionTimeout        = 15;
-    public const bool                        DefaultValueEncrypt                  = true;
-    public const bool                        DefaultValueMultipleActiveResultSets = false;
-    public const bool                        DefaultValueTrustedConnection        = false;
-    public const bool                        DefaultValuePersistSecurityInfo      = true;
-    public const bool                        DefaultValueTrustServerCertificate   = true;
-    public const SqlServerIntegratedSecurity DefaultValueIntegratedSecurity       = SqlServerIntegratedSecurity.False;
+    public const string DefaultKeyTrustedConnection = "Trusted_Connection";
+    public const string DefaultKeyConnectionTimeout = "Connection Timeout";
+    public const string DefaultKeyTrustServerCertificate = "TrustServerCertificate";
+    public const string DefaultKeyPersistSecurityInfo = "Persist Security Info";
+    public const string DefaultKeyInitialCatalog = "Initial Catalog";
+    public const string DefaultKeyEncrypt = "Encrypt";
+    public const string DefaultKeyServer = "Server";
+    public const string DefaultKeyUserId = "User ID";
+    public const string DefaultKeyPassword = "Password";
+    public const string DefaultKeyIntegratedSecurity = "Integrated Security";
+    public const string DefaultKeyMultipleActiveResultSets = "MultipleActiveResultSets";
+    public const string DefaultValueInitialCatalog = "";
+    public const string DefaultValueDataSource = "";
+    public const string DefaultValueServer = "";
+    public const string DefaultValueDatabase = "";
+    public const string DefaultValueUserId = "";
+    public const string DefaultValuePassword = "";
+    public const int DefaultValueConnectionTimeout = 15;
+    public const bool DefaultValueEncrypt = true;
+    public const bool DefaultValueMultipleActiveResultSets = false;
+    public const bool DefaultValueTrustedConnection = false;
+    public const bool DefaultValuePersistSecurityInfo = true;
+    public const bool DefaultValueTrustServerCertificate = true;
+    public const SqlServerIntegratedSecurity DefaultValueIntegratedSecurity =
+        SqlServerIntegratedSecurity.False;
 
-    public static readonly StringConnectionParameterInfo                      InitialCatalogParameterInfo;
-    public static readonly StringConnectionParameterInfo                      ServerParameterInfo;
-    public static readonly StringConnectionParameterInfo                      UserIdParameterInfo;
-    public static readonly StringConnectionParameterInfo                      PasswordParameterInfo;
-    public static readonly BooleanConnectionParameterInfo                     EncryptParameterInfo;
-    public static readonly BooleanConnectionParameterInfo                     PersistSecurityInfoInfo;
-    public static readonly BooleanConnectionParameterInfo                     TrustServerCertificateInfo;
+    public static readonly StringConnectionParameterInfo InitialCatalogParameterInfo;
+    public static readonly StringConnectionParameterInfo ServerParameterInfo;
+    public static readonly StringConnectionParameterInfo UserIdParameterInfo;
+    public static readonly StringConnectionParameterInfo PasswordParameterInfo;
+    public static readonly BooleanConnectionParameterInfo EncryptParameterInfo;
+    public static readonly BooleanConnectionParameterInfo PersistSecurityInfoInfo;
+    public static readonly BooleanConnectionParameterInfo TrustServerCertificateInfo;
     public static readonly SqlServerIntegratedSecurityConnectionParameterInfo IntegratedSecurityParameterInfo;
-    public static readonly BooleanConnectionParameterInfo                     MultipleActiveResultSetsParameterInfo;
-    public static readonly BooleanConnectionParameterInfo                     TrustedConnectionParameterInfo;
-    public static readonly Int32ConnectionParameterInfo                       TimeoutParameterInfo;
+    public static readonly BooleanConnectionParameterInfo MultipleActiveResultSetsParameterInfo;
+    public static readonly BooleanConnectionParameterInfo TrustedConnectionParameterInfo;
+    public static readonly Int32ConnectionParameterInfo TimeoutParameterInfo;
 
-    public static readonly ConnectionParameterInfo[]                                     ConnectionParameters;
-    private readonly       Dictionary<ConnectionParameterInfo, ConnectionParameterValue> parameters = new ();
+    public static readonly ConnectionParameterInfo[] ConnectionParameters;
+    private readonly Dictionary<ConnectionParameterInfo, ConnectionParameterValue> parameters =
+        new();
 
     public int ConnectionTimeout
     {
@@ -109,7 +111,8 @@ public record SqlServerConnectionParameters : IConnectionParameters
 
             return bool.Parse(TrustedConnectionParameterInfo.DefaultValue);
         }
-        init => parameters[TrustedConnectionParameterInfo] = new BooleanConnectionParameterValue(value);
+        init =>
+            parameters[TrustedConnectionParameterInfo] = new BooleanConnectionParameterValue(value);
     }
 
     public string InitialCatalog
@@ -137,7 +140,10 @@ public record SqlServerConnectionParameters : IConnectionParameters
 
             return bool.Parse(MultipleActiveResultSetsParameterInfo.DefaultValue);
         }
-        init => parameters[MultipleActiveResultSetsParameterInfo] = new BooleanConnectionParameterValue(value);
+        init =>
+            parameters[MultipleActiveResultSetsParameterInfo] = new BooleanConnectionParameterValue(
+                value
+            );
     }
 
     public SqlServerIntegratedSecurity IntegratedSecurity
@@ -146,10 +152,14 @@ public record SqlServerConnectionParameters : IConnectionParameters
         {
             if (parameters.ContainsKey(IntegratedSecurityParameterInfo))
             {
-                return Enum.Parse<SqlServerIntegratedSecurity>(parameters[IntegratedSecurityParameterInfo].Value);
+                return Enum.Parse<SqlServerIntegratedSecurity>(
+                    parameters[IntegratedSecurityParameterInfo].Value
+                );
             }
 
-            return Enum.Parse<SqlServerIntegratedSecurity>(IntegratedSecurityParameterInfo.DefaultValue);
+            return Enum.Parse<SqlServerIntegratedSecurity>(
+                IntegratedSecurityParameterInfo.DefaultValue
+            );
         }
         init =>
             parameters[IntegratedSecurityParameterInfo] =
@@ -202,92 +212,69 @@ public record SqlServerConnectionParameters : IConnectionParameters
     {
         ServerParameterInfo = new StringConnectionParameterInfo(
             DefaultKeyServer,
-            new[]
-            {
-                DefaultKeyServer
-            },
-            DefaultValueServer);
+            new[] { DefaultKeyServer },
+            DefaultValueServer
+        );
 
         UserIdParameterInfo = new StringConnectionParameterInfo(
             DefaultKeyUserId,
-            new[]
-            {
-                DefaultKeyUserId
-            },
-            DefaultValueUserId);
+            new[] { DefaultKeyUserId },
+            DefaultValueUserId
+        );
 
         PasswordParameterInfo = new StringConnectionParameterInfo(
             DefaultKeyPassword,
-            new[]
-            {
-                DefaultKeyPassword
-            },
-            DefaultValuePassword);
+            new[] { DefaultKeyPassword },
+            DefaultValuePassword
+        );
 
         IntegratedSecurityParameterInfo = new SqlServerIntegratedSecurityConnectionParameterInfo(
             DefaultKeyIntegratedSecurity,
-            new[]
-            {
-                DefaultKeyIntegratedSecurity
-            },
-            DefaultValueIntegratedSecurity);
+            new[] { DefaultKeyIntegratedSecurity },
+            DefaultValueIntegratedSecurity
+        );
 
         MultipleActiveResultSetsParameterInfo = new BooleanConnectionParameterInfo(
             DefaultKeyMultipleActiveResultSets,
-            new[]
-            {
-                DefaultKeyMultipleActiveResultSets
-            },
-            DefaultValueMultipleActiveResultSets);
+            new[] { DefaultKeyMultipleActiveResultSets },
+            DefaultValueMultipleActiveResultSets
+        );
 
         InitialCatalogParameterInfo = new StringConnectionParameterInfo(
             DefaultKeyInitialCatalog,
-            new[]
-            {
-                DefaultKeyInitialCatalog,
-                "Database"
-            },
-            DefaultValueInitialCatalog);
+            new[] { DefaultKeyInitialCatalog, "Database" },
+            DefaultValueInitialCatalog
+        );
 
         TrustedConnectionParameterInfo = new BooleanConnectionParameterInfo(
             DefaultKeyTrustedConnection,
-            new[]
-            {
-                DefaultKeyTrustedConnection
-            },
-            DefaultValueTrustedConnection);
+            new[] { DefaultKeyTrustedConnection },
+            DefaultValueTrustedConnection
+        );
 
         EncryptParameterInfo = new BooleanConnectionParameterInfo(
             DefaultKeyEncrypt,
-            new[]
-            {
-                DefaultKeyEncrypt
-            },
-            DefaultValueEncrypt);
+            new[] { DefaultKeyEncrypt },
+            DefaultValueEncrypt
+        );
 
         PersistSecurityInfoInfo = new BooleanConnectionParameterInfo(
             DefaultKeyPersistSecurityInfo,
-            new[]
-            {
-                DefaultKeyPersistSecurityInfo
-            },
-            DefaultValuePersistSecurityInfo);
+            new[] { DefaultKeyPersistSecurityInfo },
+            DefaultValuePersistSecurityInfo
+        );
 
         TrustServerCertificateInfo = new BooleanConnectionParameterInfo(
             DefaultKeyTrustServerCertificate,
-            new[]
-            {
-                DefaultKeyTrustServerCertificate
-            },
-            DefaultValueTrustServerCertificate);
+            new[] { DefaultKeyTrustServerCertificate },
+            DefaultValueTrustServerCertificate
+        );
 
         TimeoutParameterInfo = new Int32ConnectionParameterInfo(
             DefaultKeyConnectionTimeout,
-            new[]
-            {
-                DefaultKeyConnectionTimeout
-            },
-            DefaultValueConnectionTimeout);
+            new[] { DefaultKeyConnectionTimeout },
+            DefaultValueConnectionTimeout
+        );
 
         ConnectionParameters = new ConnectionParameterInfo[]
         {
@@ -307,17 +294,17 @@ public record SqlServerConnectionParameters : IConnectionParameters
 
     public SqlServerConnectionParameters()
     {
-        Server                   = DefaultValueServer;
-        UserId                   = DefaultValueUserId;
-        Password                 = DefaultValuePassword;
-        IntegratedSecurity       = DefaultValueIntegratedSecurity;
+        Server = DefaultValueServer;
+        UserId = DefaultValueUserId;
+        Password = DefaultValuePassword;
+        IntegratedSecurity = DefaultValueIntegratedSecurity;
         MultipleActiveResultSets = DefaultValueMultipleActiveResultSets;
-        InitialCatalog           = DefaultValueInitialCatalog;
-        TrustedConnection        = DefaultValueTrustedConnection;
-        Encrypt                  = DefaultValueEncrypt;
-        PersistSecurityInfo      = DefaultValuePersistSecurityInfo;
-        TrustServerCertificate   = DefaultValueTrustServerCertificate;
-        ConnectionTimeout        = DefaultValueConnectionTimeout;
+        InitialCatalog = DefaultValueInitialCatalog;
+        TrustedConnection = DefaultValueTrustedConnection;
+        Encrypt = DefaultValueEncrypt;
+        PersistSecurityInfo = DefaultValuePersistSecurityInfo;
+        TrustServerCertificate = DefaultValueTrustServerCertificate;
+        ConnectionTimeout = DefaultValueConnectionTimeout;
     }
 
     public IEnumerable<ConnectionParameter> Parameters =>
@@ -327,7 +314,9 @@ public record SqlServerConnectionParameters : IConnectionParameters
 
     public void Set(string key, string value)
     {
-        var connectionParameterInfo = ConnectionParameters.SingleOrDefault(x => x.Aliases.Contains(key));
+        var connectionParameterInfo = ConnectionParameters.SingleOrDefault(
+            x => x.Aliases.Contains(key)
+        );
 
         if (connectionParameterInfo is null)
         {
@@ -337,7 +326,10 @@ public record SqlServerConnectionParameters : IConnectionParameters
         parameters[connectionParameterInfo] = ParseValue(connectionParameterInfo, value);
     }
 
-    private ConnectionParameterValue ParseValue(ConnectionParameterInfo connectionParameterInfo, string value)
+    private ConnectionParameterValue ParseValue(
+        ConnectionParameterInfo connectionParameterInfo,
+        string value
+    )
     {
         switch (connectionParameterInfo)
         {
@@ -352,7 +344,8 @@ public record SqlServerConnectionParameters : IConnectionParameters
             case SqlServerIntegratedSecurityConnectionParameterInfo _:
             {
                 return new SqlServerIntegratedSecurityConnectionParameterValue(
-                    Enum.Parse<SqlServerIntegratedSecurity>(value));
+                    Enum.Parse<SqlServerIntegratedSecurity>(value)
+                );
             }
             case Int32ConnectionParameterInfo _:
             {

@@ -2,12 +2,12 @@
 
 public class CommandContext
 {
-    public Delegate     Task    { get; }
+    public Delegate Task { get; }
     public Func<object> Content { get; }
 
     public CommandContext(Delegate task, Func<object> content)
     {
-        Task    = task.ThrowIfNull();
+        Task = task.ThrowIfNull();
         Content = content.ThrowIfNull();
     }
 }

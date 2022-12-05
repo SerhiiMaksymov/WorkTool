@@ -2,8 +2,8 @@
 
 public class RandomEnum<TEnum> : IRandom<TEnum> where TEnum : struct, Enum
 {
-    public static readonly  RandomEnum<TEnum> Default = new (RandomArrayItem<TEnum>.ExcludeDefault);
-    private static readonly TEnum[]           Values  = EnumConstants<TEnum>.Values.ToArray();
+    public static readonly RandomEnum<TEnum> Default = new(RandomArrayItem<TEnum>.ExcludeDefault);
+    private static readonly TEnum[] Values = EnumConstants<TEnum>.Values.ToArray();
 
     public readonly IRandomArrayItem<TEnum> RandomArrayItemEnum;
 
@@ -22,8 +22,9 @@ public class RandomEnum<TEnum> : IRandom<TEnum> where TEnum : struct, Enum
 
 public class RandomNullableEnum<TEnum> : IRandom<TEnum?> where TEnum : struct, Enum
 {
-    public static readonly  RandomNullableEnum<TEnum> Default = new (RandomArrayItem<TEnum?>.IncludeDefault);
-    private static readonly TEnum?[]                  Values  = EnumConstants<TEnum>.NullableValues.ToArray();
+    public static readonly RandomNullableEnum<TEnum> Default =
+        new(RandomArrayItem<TEnum?>.IncludeDefault);
+    private static readonly TEnum?[] Values = EnumConstants<TEnum>.NullableValues.ToArray();
 
     public readonly IRandomArrayItem<TEnum?> RandomArrayItemEnum;
 

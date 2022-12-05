@@ -4,34 +4,48 @@ public class UiContextBuilder : IBuilder<UiContext>
 {
     private readonly Dictionary<Type, List<Func<object>>> children;
     private readonly Dictionary<Type, Dictionary<string, CommandContext>> commandContexts;
-    private readonly Dictionary<Type, Dictionary<string, List<KeyboardKeyGesture>>> commandKeyboardKeyGestures;
+    private readonly Dictionary<
+        Type,
+        Dictionary<string, List<KeyboardKeyGesture>>
+    > commandKeyboardKeyGestures;
     private readonly Dictionary<Type, Func<object>> contents;
-    private readonly Dictionary<Type, Dictionary<string, KeyValuePair<string, Func<object>>[]>> contextMenus;
+    private readonly Dictionary<
+        Type,
+        Dictionary<string, KeyValuePair<string, Func<object>>[]>
+    > contextMenus;
     private readonly Dictionary<string, FunctionsInfo> functions;
-    private readonly Dictionary<Type, Dictionary<string, KeyValuePair<string, Func<object>>[]>> menus;
-    private readonly Dictionary<ClassPropertyPath, List<PropertyDefaultValue>> propertyDefaultValues;
+    private readonly Dictionary<
+        Type,
+        Dictionary<string, KeyValuePair<string, Func<object>>[]>
+    > menus;
+    private readonly Dictionary<
+        ClassPropertyPath,
+        List<PropertyDefaultValue>
+    > propertyDefaultValues;
     private readonly IResolver resolver;
 
     public UiContextBuilder(IResolver resolver)
     {
-        this.resolver              = resolver.ThrowIfNull();
-        children                   = new Dictionary<Type, List<Func<object>>>();
-        contextMenus               = new Dictionary<Type, Dictionary<string, KeyValuePair<string, Func<object>>[]>>();
-        contents                   = new Dictionary<Type, Func<object>>();
-        functions                  = new Dictionary<string, FunctionsInfo>();
-        menus                      = new Dictionary<Type, Dictionary<string, KeyValuePair<string, Func<object>>[]>>();
-        commandKeyboardKeyGestures = new Dictionary<Type, Dictionary<string, List<KeyboardKeyGesture>>>();
-        commandContexts            = new Dictionary<Type, Dictionary<string, CommandContext>>();
-        propertyDefaultValues      = new Dictionary<ClassPropertyPath, List<PropertyDefaultValue>>();
+        this.resolver = resolver.ThrowIfNull();
+        children = new Dictionary<Type, List<Func<object>>>();
+        contextMenus =
+            new Dictionary<Type, Dictionary<string, KeyValuePair<string, Func<object>>[]>>();
+        contents = new Dictionary<Type, Func<object>>();
+        functions = new Dictionary<string, FunctionsInfo>();
+        menus = new Dictionary<Type, Dictionary<string, KeyValuePair<string, Func<object>>[]>>();
+        commandKeyboardKeyGestures =
+            new Dictionary<Type, Dictionary<string, List<KeyboardKeyGesture>>>();
+        commandContexts = new Dictionary<Type, Dictionary<string, CommandContext>>();
+        propertyDefaultValues = new Dictionary<ClassPropertyPath, List<PropertyDefaultValue>>();
     }
 
     public UiContext Build()
     {
-        var menu                  = BuildMenu();
-        var keyboardKeyBindings   = BuildKeyboardKeyBindings();
-        var commands              = BuildCommands();
-        var contextMenu           = BuildContextMenu();
-        var children              = BuildChildren();
+        var menu = BuildMenu();
+        var keyboardKeyBindings = BuildKeyboardKeyBindings();
+        var commands = BuildCommands();
+        var contextMenu = BuildContextMenu();
+        var children = BuildChildren();
         var propertyDefaultValues = BuildPropertyDefaultValues();
 
         return new UiContext(
@@ -41,27 +55,40 @@ public class UiContextBuilder : IBuilder<UiContext>
             commands,
             contextMenu,
             children,
-            propertyDefaultValues);
+            propertyDefaultValues
+        );
     }
 
     public UiContextBuilder AddPropertyDefaultValue(
-    Expression                                 expression,
-    object                                     value,
-    [CallerArgumentExpression("value")] string name = "")
+        Expression expression,
+        object value,
+        [CallerArgumentExpression("value")] string name = ""
+    )
     {
         return AddPropertyDefaultValues(expression, new PropertyDefaultValue(name, value));
     }
 
-    public UiContextBuilder AddPropertyDefaultValues(Expression expression, params PropertyDefaultValue[] values)
+    public UiContextBuilder AddPropertyDefaultValues(
+        Expression expression,
+        params PropertyDefaultValue[] values
+    )
     {
         var lambdaExpression = (LambdaExpression)expression;
         var memberExpression = (MemberExpression)lambdaExpression.Body;
-        var property         = memberExpression.Member.DeclaringType.GetProperty(memberExpression.Member.Name);
+        var property = memberExpression.Member.DeclaringType.GetProperty(
+            memberExpression.Member.Name
+        );
 
-        return AddPropertyDefaultValues(new ClassPropertyPath(memberExpression.Member.DeclaringType, property), values);
+        return AddPropertyDefaultValues(
+            new ClassPropertyPath(memberExpression.Member.DeclaringType, property),
+            values
+        );
     }
 
-    public UiContextBuilder AddPropertyDefaultValues(ClassPropertyPath path, params PropertyDefaultValue[] values)
+    public UiContextBuilder AddPropertyDefaultValues(
+        ClassPropertyPath path,
+        params PropertyDefaultValue[] values
+    )
     {
         if (!propertyDefaultValues.ContainsKey(path))
         {
@@ -78,7 +105,8 @@ public class UiContextBuilder : IBuilder<UiContext>
         return AddFunctionsFromService(typeof(T));
     }
 
-    public UiContextBuilder AddChild<TChildrenView>(Func<object> child) where TChildrenView : IChildrenView
+    public UiContextBuilder AddChild<TChildrenView>(Func<object> child)
+        where TChildrenView : IChildrenView
     {
         if (!children.ContainsKey(typeof(TChildrenView)))
         {
@@ -102,7 +130,8 @@ public class UiContextBuilder : IBuilder<UiContext>
         return this;
     }
 
-    public UiContextBuilder SetContent<TContentView>(Func<object> content) where TContentView : IContentView
+    public UiContextBuilder SetContent<TContentView>(Func<object> content)
+        where TContentView : IContentView
     {
         contents[typeof(TContentView)] = content;
 
@@ -118,8 +147,8 @@ public class UiContextBuilder : IBuilder<UiContext>
 
     public UiContextBuilder AddFunctionsFromMethod(string functionName, MethodInfo method)
     {
-        var call      = Expression.Call(method);
-        var lambda    = Expression.Lambda(call);
+        var call = Expression.Call(method);
+        var lambda = Expression.Lambda(call);
         var @delegate = lambda.Compile();
 
         return AddFunction(functionName, @delegate);
@@ -131,7 +160,7 @@ public class UiContextBuilder : IBuilder<UiContext>
 
         foreach (var method in methods)
         {
-            var parameters       = new List<ParameterExpression>();
+            var parameters = new List<ParameterExpression>();
             var serviceParameter = Expression.Parameter(serviceType);
             var methodParameters = method.GetParameters();
 
@@ -142,13 +171,10 @@ public class UiContextBuilder : IBuilder<UiContext>
 
             var call = Expression.Call(serviceParameter, method, parameters);
 
-            var rootParameters = new List<ParameterExpression>
-            {
-                serviceParameter
-            };
+            var rootParameters = new List<ParameterExpression> { serviceParameter };
 
             rootParameters.AddRange(parameters);
-            var @delegate    = call.ToLambda(rootParameters.ToArray()).Compile();
+            var @delegate = call.ToLambda(rootParameters.ToArray()).Compile();
             var nameFunction = NameHelper.GetNameFunction(serviceType, parameters, method);
             AddFunction(nameFunction, @delegate);
         }
@@ -240,11 +266,11 @@ public class UiContextBuilder : IBuilder<UiContext>
 
     public UiContextBuilder SetConfigurationsFromAssembly(Assembly assembly)
     {
-        var types = assembly.GetTypes()
+        var types = assembly
+            .GetTypes()
             .Where(
-                x => !x.IsInterface
-                && !x.IsAbstract
-                && x.IsAssignableTo(typeof(IUiConfiguration)));
+                x => !x.IsInterface && !x.IsAbstract && x.IsAssignableTo(typeof(IUiConfiguration))
+            );
 
         foreach (var type in types)
         {
@@ -278,7 +304,11 @@ public class UiContextBuilder : IBuilder<UiContext>
 
         foreach (var command in commands)
         {
-            SetCommandCore(command.Target, command.FunctionName, () => resolver.Resolve(command.Content));
+            SetCommandCore(
+                command.Target,
+                command.FunctionName,
+                () => resolver.Resolve(command.Content)
+            );
         }
 
         return this;
@@ -326,20 +356,30 @@ public class UiContextBuilder : IBuilder<UiContext>
         return this;
     }
 
-    public UiContextBuilder AddTabItemFunction<TTabControlView>(string functionName, TabItemContext tabItemContext)
-        where TTabControlView : ITabControlView
+    public UiContextBuilder AddTabItemFunction<TTabControlView>(
+        string functionName,
+        TabItemContext tabItemContext
+    ) where TTabControlView : ITabControlView
     {
-        var command = new FunctionsInfo(functionName, (TTabControlView view) => view.AddTabItem(tabItemContext));
+        var command = new FunctionsInfo(
+            functionName,
+            (TTabControlView view) => view.AddTabItem(tabItemContext)
+        );
 
         return AddFunction(command);
     }
 
-    public UiContextBuilder AddTabItemFunction<TTabControlView>(Expression   expression,
-                                                                Func<object> header,
-                                                                Func<object> content)
-        where TTabControlView : ITabControlView
+    public UiContextBuilder AddTabItemFunction<TTabControlView>(
+        Expression expression,
+        Func<object> header,
+        Func<object> content
+    ) where TTabControlView : ITabControlView
     {
-        return AddTabItemFunction<TTabControlView>(NameHelper.GetNameFunction(expression), header, content);
+        return AddTabItemFunction<TTabControlView>(
+            NameHelper.GetNameFunction(expression),
+            header,
+            content
+        );
     }
 
     public UiContextBuilder AddTabItemFunctionsFromAssemblies()
@@ -384,7 +424,8 @@ public class UiContextBuilder : IBuilder<UiContext>
         {
             var functionName = NameHelper.GetNameAddTabItemFunction(
                 uiMenuItemFromTabItem.TabControlViewType,
-                uiMenuItemFromTabItem.ContentType);
+                uiMenuItemFromTabItem.ContentType
+            );
 
             var path = GetMenuPath(uiMenuItemFromTabItem.Path);
             AddMenuItemCore(uiMenuItemFromTabItem.MenuViewType, functionName, path);
@@ -399,9 +440,15 @@ public class UiContextBuilder : IBuilder<UiContext>
 
         foreach (var tabItem in tabItems)
         {
-            var tabItemContext = new TabItemContext(() => tabItem.Header, () => resolver.Resolve(tabItem.ContentType));
-            var @delegate      = CreateTabItemFunction(tabItem.TabControlViewType, tabItemContext);
-            var functionName   = NameHelper.GetNameAddTabItemFunction(tabItem.TabControlViewType, tabItem.ContentType);
+            var tabItemContext = new TabItemContext(
+                () => tabItem.Header,
+                () => resolver.Resolve(tabItem.ContentType)
+            );
+            var @delegate = CreateTabItemFunction(tabItem.TabControlViewType, tabItemContext);
+            var functionName = NameHelper.GetNameAddTabItemFunction(
+                tabItem.TabControlViewType,
+                tabItem.ContentType
+            );
             AddFunction(functionName, @delegate);
         }
 
@@ -411,59 +458,74 @@ public class UiContextBuilder : IBuilder<UiContext>
     private Delegate CreateTabItemFunction(Type tabControlViewType, TabItemContext context)
     {
         var tabControlViewParameter = Expression.Parameter(tabControlViewType);
-        var method                  = typeof(ITabControlView).GetMethod(nameof(ITabControlView.AddTabItem));
-        var contextConstant         = Expression.Constant(context);
-        var call                    = Expression.Call(tabControlViewParameter, method, contextConstant);
+        var method = typeof(ITabControlView).GetMethod(nameof(ITabControlView.AddTabItem));
+        var contextConstant = Expression.Constant(context);
+        var call = Expression.Call(tabControlViewParameter, method, contextConstant);
 
         return call.ToLambda(tabControlViewParameter).Compile();
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>(
-    string       functionName,
-    Func<object> header)
-        where TTabControlView : ITabControlView
+        string functionName,
+        Func<object> header
+    ) where TTabControlView : ITabControlView
     {
-        return AddTabItemFunction<TTabControlView>(functionName, header, () => resolver.Resolve<TContent>());
+        return AddTabItemFunction<TTabControlView>(
+            functionName,
+            header,
+            () => resolver.Resolve<TContent>()
+        );
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>(Func<object> header)
         where TTabControlView : ITabControlView
     {
-        var functionName = NameHelper.GetNameAddTabItemFunction(typeof(TTabControlView), typeof(TContent));
+        var functionName = NameHelper.GetNameAddTabItemFunction(
+            typeof(TTabControlView),
+            typeof(TContent)
+        );
 
-        return AddTabItemFunction<TTabControlView>(functionName, header, () => resolver.Resolve<TContent>());
+        return AddTabItemFunction<TTabControlView>(
+            functionName,
+            header,
+            () => resolver.Resolve<TContent>()
+        );
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>()
         where TTabControlView : ITabControlView
     {
         return AddTabItemFunction<TTabControlView, TContent>(
-            () => NameHelper.GetNameAddTabItemFunction(typeof(TTabControlView), typeof(TContent)));
+            () => NameHelper.GetNameAddTabItemFunction(typeof(TTabControlView), typeof(TContent))
+        );
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView>(
-    string       functionName,
-    Func<object> header,
-    Func<object> content)
-        where TTabControlView : ITabControlView
+        string functionName,
+        Func<object> header,
+        Func<object> content
+    ) where TTabControlView : ITabControlView
     {
         var tabItemContext = new TabItemContext(header, content);
 
         return AddTabItemFunction<TTabControlView>(functionName, tabItemContext);
     }
 
-    public UiContextBuilder AddKeyboardKeyGesture<TKeyBindingView>(string             functionName,
-                                                                   KeyboardKeyGesture keyboardKeyGesture)
-        where TKeyBindingView : IKeyBindingView
+    public UiContextBuilder AddKeyboardKeyGesture<TKeyBindingView>(
+        string functionName,
+        KeyboardKeyGesture keyboardKeyGesture
+    ) where TKeyBindingView : IKeyBindingView
     {
         if (!commandKeyboardKeyGestures.ContainsKey(typeof(TKeyBindingView)))
         {
-            commandKeyboardKeyGestures[typeof(TKeyBindingView)] = new Dictionary<string, List<KeyboardKeyGesture>>();
+            commandKeyboardKeyGestures[typeof(TKeyBindingView)] =
+                new Dictionary<string, List<KeyboardKeyGesture>>();
         }
 
         if (!commandKeyboardKeyGestures[typeof(TKeyBindingView)].ContainsKey(functionName))
         {
-            commandKeyboardKeyGestures[typeof(TKeyBindingView)][functionName] = new List<KeyboardKeyGesture>();
+            commandKeyboardKeyGestures[typeof(TKeyBindingView)][functionName] =
+                new List<KeyboardKeyGesture>();
         }
 
         commandKeyboardKeyGestures[typeof(TKeyBindingView)][functionName].Add(keyboardKeyGesture);
@@ -471,36 +533,41 @@ public class UiContextBuilder : IBuilder<UiContext>
         return this;
     }
 
-    public UiContextBuilder AddContextMenuItem<TContextMenuView>(string functionName,
-                                                                 IEnumerable<KeyValuePair<string, Func<object>>>
-                                                                     menuPath)
-        where TContextMenuView : IContextMenuView
+    public UiContextBuilder AddContextMenuItem<TContextMenuView>(
+        string functionName,
+        IEnumerable<KeyValuePair<string, Func<object>>> menuPath
+    ) where TContextMenuView : IContextMenuView
     {
         AddContextMenuItemCore(typeof(TContextMenuView), functionName, menuPath);
 
         return this;
     }
 
-    public UiContextBuilder AddContextMenuItem<TContextMenuView>(string functionName, params string[] path)
-        where TContextMenuView : IContextMenuView
+    public UiContextBuilder AddContextMenuItem<TContextMenuView>(
+        string functionName,
+        params string[] path
+    ) where TContextMenuView : IContextMenuView
     {
         var menuPath = GetMenuPath(path);
 
         return AddContextMenuItem<TContextMenuView>(functionName, menuPath);
     }
 
-    public UiContextBuilder AddContextMenuItem<TContextMenuView>(Expression expression, params string[] path)
-        where TContextMenuView : IContextMenuView
+    public UiContextBuilder AddContextMenuItem<TContextMenuView>(
+        Expression expression,
+        params string[] path
+    ) where TContextMenuView : IContextMenuView
     {
         var functionName = NameHelper.GetNameFunction(expression);
-        var menuPath     = GetMenuPath(path);
+        var menuPath = GetMenuPath(path);
 
         return AddContextMenuItem<TContextMenuView>(functionName, menuPath);
     }
 
-    public UiContextBuilder AddMenuItem<TMenuView>(string                                          functionName,
-                                                   IEnumerable<KeyValuePair<string, Func<object>>> menuPath)
-        where TMenuView : IMenuView
+    public UiContextBuilder AddMenuItem<TMenuView>(
+        string functionName,
+        IEnumerable<KeyValuePair<string, Func<object>>> menuPath
+    ) where TMenuView : IMenuView
     {
         AddMenuItemCore(typeof(TMenuView), functionName, menuPath);
 
@@ -508,9 +575,10 @@ public class UiContextBuilder : IBuilder<UiContext>
     }
 
     private void AddMenuItemCore(
-    Type                                            menuViewType,
-    string                                          functionName,
-    IEnumerable<KeyValuePair<string, Func<object>>> menuPath)
+        Type menuViewType,
+        string functionName,
+        IEnumerable<KeyValuePair<string, Func<object>>> menuPath
+    )
     {
         if (!menus.ContainsKey(menuViewType))
         {
@@ -521,13 +589,15 @@ public class UiContextBuilder : IBuilder<UiContext>
     }
 
     private void AddContextMenuItemCore(
-    Type                                            menuViewType,
-    string                                          functionName,
-    IEnumerable<KeyValuePair<string, Func<object>>> menuPath)
+        Type menuViewType,
+        string functionName,
+        IEnumerable<KeyValuePair<string, Func<object>>> menuPath
+    )
     {
         if (!contextMenus.ContainsKey(menuViewType))
         {
-            contextMenus[menuViewType] = new Dictionary<string, KeyValuePair<string, Func<object>>[]>();
+            contextMenus[menuViewType] =
+                new Dictionary<string, KeyValuePair<string, Func<object>>[]>();
         }
 
         contextMenus[menuViewType][functionName] = menuPath.ToArray();
@@ -545,12 +615,15 @@ public class UiContextBuilder : IBuilder<UiContext>
         where TMenuView : IMenuView
     {
         var functionName = NameHelper.GetNameFunction(expression);
-        var menuPath     = GetMenuPath(path);
+        var menuPath = GetMenuPath(path);
 
         return AddMenuItem<TMenuView>(functionName, menuPath);
     }
 
-    private Dictionary<ClassPropertyPath, IEnumerable<PropertyDefaultValue>> BuildPropertyDefaultValues()
+    private Dictionary<
+        ClassPropertyPath,
+        IEnumerable<PropertyDefaultValue>
+    > BuildPropertyDefaultValues()
     {
         var result = new Dictionary<ClassPropertyPath, IEnumerable<PropertyDefaultValue>>();
 
@@ -646,8 +719,7 @@ public class UiContextBuilder : IBuilder<UiContext>
         return result;
     }
 
-    private MenuItemContext CreateMenuItem(Delegate     task,
-                                           Func<object> value)
+    private MenuItemContext CreateMenuItem(Delegate task, Func<object> value)
     {
         if (task is null)
         {
@@ -657,9 +729,11 @@ public class UiContextBuilder : IBuilder<UiContext>
         return new MenuItemContext(task, value);
     }
 
-    private void CreateMenu(Delegate                                       task,
-                            KeyValuePair<string, Func<object>>[]           menuPath,
-                            List<TreeNodeBuilder<string, MenuItemContext>> menu)
+    private void CreateMenu(
+        Delegate task,
+        KeyValuePair<string, Func<object>>[] menuPath,
+        List<TreeNodeBuilder<string, MenuItemContext>> menu
+    )
     {
         if (menuPath.IsEmpty())
         {

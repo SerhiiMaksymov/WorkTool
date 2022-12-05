@@ -3,11 +3,11 @@
 public class DisposableItem<TItem> : IDisposable
 {
     private readonly IDisposable disposable;
-    public           TItem       Item { get; }
+    public TItem Item { get; }
 
     public DisposableItem(TItem item, IDisposable disposable)
     {
-        Item            = item;
+        Item = item;
         this.disposable = disposable;
     }
 

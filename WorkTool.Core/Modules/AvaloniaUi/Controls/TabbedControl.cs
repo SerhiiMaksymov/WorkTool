@@ -2,7 +2,7 @@
 
 public class TabbedControl : ContentControl
 {
-    public readonly Menu       Menu;
+    public readonly Menu Menu;
     public readonly TabControl Tabs;
 
     public TabbedControl()

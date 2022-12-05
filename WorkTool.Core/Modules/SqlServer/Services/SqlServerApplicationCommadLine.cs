@@ -6,14 +6,15 @@ public class SqlServerApplicationCommadLine : IApplicationCommadLine
 
     public SqlServerApplicationCommadLine()
     {
-        var parser  = new CommandLineArgumentParser();
+        var parser = new CommandLineArgumentParser();
         var builder = new CommandLineContextBuilder(parser);
         commandLineContext = builder.Build();
     }
 
     public bool Contains(string[] args)
     {
-        var names = commandLineContext.GetTokens(args)
+        var names = commandLineContext
+            .GetTokens(args)
             .OfType<NameCommandLineToken>()
             .Select(x => x.Name)
             .ToArray();

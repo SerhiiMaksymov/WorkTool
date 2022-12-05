@@ -2,15 +2,17 @@
 
 public class ArrayStringCommandLineArgumentMeta : CommandLineArgumentMeta<string[]>
 {
-    public string             Separator    { get; }
+    public string Separator { get; }
     public StringSplitOptions SplitOptions { get; }
 
-    public ArrayStringCommandLineArgumentMeta(string             key,
-                                              string[]           @default,
-                                              string             separator,
-                                              StringSplitOptions splitOptions) : base(key, @default)
+    public ArrayStringCommandLineArgumentMeta(
+        string key,
+        string[] @default,
+        string separator,
+        StringSplitOptions splitOptions
+    ) : base(key, @default)
     {
-        Separator    = separator.ThrowIfNullOrWhiteSpace(nameof(separator));
+        Separator = separator.ThrowIfNullOrWhiteSpace(nameof(separator));
         SplitOptions = splitOptions;
     }
 

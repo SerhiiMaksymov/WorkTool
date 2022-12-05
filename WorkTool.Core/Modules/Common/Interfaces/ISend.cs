@@ -2,6 +2,6 @@
 
 public interface ISend<in TMessage>
 {
-    void Send(TMessage      message);
+    void Send(TMessage message);
     Task SendAsync(TMessage message, CancellationToken token);
 }

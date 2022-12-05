@@ -2,12 +2,12 @@
 
 public class FunctionsInfo
 {
-    public string   Name    { get; }
+    public string Name { get; }
     public Delegate Command { get; }
 
     public FunctionsInfo(string name, Delegate command)
     {
-        Name    = name.ThrowIfNullOrWhiteSpace();
+        Name = name.ThrowIfNullOrWhiteSpace();
         Command = command.ThrowIfNull();
     }
 }

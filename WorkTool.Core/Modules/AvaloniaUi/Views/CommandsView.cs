@@ -1,55 +1,51 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Views;
 
-public class CommandsView : ReactiveCommandsControl<ViewModelBase>, ICommandView, IContentView, ISetParameter
+public class CommandsView
+    : ReactiveCommandsControl<ViewModelBase>,
+        ICommandView,
+        IContentView,
+        ISetParameter
 {
     private readonly List<ArgumentValue> argumentValues;
-    private readonly IInvoker            invoker;
+    private readonly IInvoker invoker;
 
     public CommandsView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
         argumentValues = new List<ArgumentValue>();
-        DataContext    = viewModel;
-        this.invoker   = invoker.ThrowIfNull();
+        DataContext = viewModel;
+        this.invoker = invoker.ThrowIfNull();
 
-        this.WhenActivated(
-            disposables =>
-            {
-                ViewModel.CanExecute.DisposeWith(disposables);
-            });
+        this.WhenActivated(disposables =>
+        {
+            ViewModel.CanExecute.DisposeWith(disposables);
+        });
 
         avaloniaUiContext.InitView(this);
     }
 
     public void AddCommand(CommandContext commandContext)
     {
-        var command = ViewModel.CreateCommand(
-            async () =>
+        var command = ViewModel.CreateCommand(async () =>
+        {
+            var arguments = new List<ArgumentValue> { new(GetType(), this) };
+
+            arguments.AddRange(argumentValues);
+            var result = invoker.Invoke(commandContext.Task, arguments);
+
+            if (result is null)
             {
-                var arguments = new List<ArgumentValue>
-                {
-                    new (GetType(), this)
-                };
+                return;
+            }
 
-                arguments.AddRange(argumentValues);
-                var result = invoker.Invoke(commandContext.Task, arguments);
-
-                if (result is null)
-                {
-                    return;
-                }
-
-                if (result is Task task)
-                {
-                    await task;
-                }
-            });
+            if (result is Task task)
+            {
+                await task;
+            }
+        });
 
         var content = commandContext.Content.Invoke();
 
-        this.AddItem(
-            new Button()
-                .SetCommand(command)
-                .SetContent(content));
+        this.AddItem(new Button().SetCommand(command).SetContent(content));
     }
 
     public void AddContent(Func<object> content)

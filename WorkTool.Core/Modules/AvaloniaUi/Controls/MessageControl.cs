@@ -2,11 +2,15 @@
 
 public class MessageControl : ItemsControl
 {
-    public static readonly StyledProperty<object> ContentProperty =
-        AvaloniaProperty.Register<MessageControl, object>(nameof(Content));
+    public static readonly StyledProperty<object> ContentProperty = AvaloniaProperty.Register<
+        MessageControl,
+        object
+    >(nameof(Content));
 
-    public static readonly StyledProperty<object> TitleProperty =
-        AvaloniaProperty.Register<MessageControl, object>(nameof(Title));
+    public static readonly StyledProperty<object> TitleProperty = AvaloniaProperty.Register<
+        MessageControl,
+        object
+    >(nameof(Title));
 
     public static readonly StyledProperty<IDataTemplate> ContentTemplateProperty =
         AvaloniaProperty.Register<MessageControl, IDataTemplate>(nameof(ContentTemplate));

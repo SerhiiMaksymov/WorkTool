@@ -2,8 +2,10 @@
 
 public static class StringExtension
 {
-    public static string ThrowIfNullOrWhiteSpace(this                              string str,
-                                                 [CallerArgumentExpression("str")] string paramName = "")
+    public static string ThrowIfNullOrWhiteSpace(
+        this string str,
+        [CallerArgumentExpression("str")] string paramName = ""
+    )
     {
         str.ThrowIfNull(paramName);
 
@@ -39,7 +41,7 @@ public static class StringExtension
 
     public static async Task<MemoryStream> ToStreamAsync(this string str, Encoding encoding)
     {
-        var bytes  = str.ToByteArray(encoding);
+        var bytes = str.ToByteArray(encoding);
         var stream = new MemoryStream();
         await stream.WriteAsync(bytes);
 
@@ -69,7 +71,7 @@ public static class StringExtension
         }
 
         using var stream = file.Create();
-        var       bytes  = encoding.GetBytes(str);
+        var bytes = encoding.GetBytes(str);
         stream.Write(bytes);
 
         return str;

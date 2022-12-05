@@ -2,50 +2,51 @@
 
 public readonly struct ClassParameters
 {
-    private readonly List<GenericParameters>     generics;
-    private readonly List<PropertyParameters>    properties;
-    private readonly List<FieldParameters>       fields;
+    private readonly List<GenericParameters> generics;
+    private readonly List<PropertyParameters> properties;
+    private readonly List<FieldParameters> fields;
     private readonly List<ConstructorParameters> constructors;
-    private readonly List<MethodParameters>      methods;
-    private readonly List<TypeParameters>        parents;
+    private readonly List<MethodParameters> methods;
+    private readonly List<TypeParameters> parents;
 
     public ClassParameters(
-    AccessModifier                     accessModifier,
-    bool                               isStatic,
-    bool                               isPartial,
-    TypeParameters                     type,
-    bool                               isAbstract,
-    IEnumerable<GenericParameters>     generics,
-    IEnumerable<FieldParameters>       fields,
-    IEnumerable<PropertyParameters>    properties,
-    IEnumerable<ConstructorParameters> constructors,
-    IEnumerable<MethodParameters>      methods,
-    IEnumerable<TypeParameters>        parents)
+        AccessModifier accessModifier,
+        bool isStatic,
+        bool isPartial,
+        TypeParameters type,
+        bool isAbstract,
+        IEnumerable<GenericParameters> generics,
+        IEnumerable<FieldParameters> fields,
+        IEnumerable<PropertyParameters> properties,
+        IEnumerable<ConstructorParameters> constructors,
+        IEnumerable<MethodParameters> methods,
+        IEnumerable<TypeParameters> parents
+    )
     {
-        AccessModifier    = accessModifier;
-        IsStatic          = isStatic;
-        IsPartial         = isPartial;
-        IsAbstract        = isAbstract;
+        AccessModifier = accessModifier;
+        IsStatic = isStatic;
+        IsPartial = isPartial;
+        IsAbstract = isAbstract;
         this.constructors = new List<ConstructorParameters>(constructors);
-        this.methods      = new List<MethodParameters>(methods);
-        this.fields       = new List<FieldParameters>(fields);
-        this.generics     = new List<GenericParameters>(generics);
-        this.properties   = new List<PropertyParameters>(properties);
-        Type              = type;
-        this.parents      = new List<TypeParameters>(parents);
+        this.methods = new List<MethodParameters>(methods);
+        this.fields = new List<FieldParameters>(fields);
+        this.generics = new List<GenericParameters>(generics);
+        this.properties = new List<PropertyParameters>(properties);
+        Type = type;
+        this.parents = new List<TypeParameters>(parents);
     }
 
-    public AccessModifier                     AccessModifier { get; }
-    public bool                               IsStatic       { get; }
-    public bool                               IsPartial      { get; }
-    public TypeParameters                     Type           { get; }
-    public bool                               IsAbstract     { get; }
-    public IEnumerable<GenericParameters>     Generics       => generics;
-    public IEnumerable<FieldParameters>       Fields         => fields;
-    public IEnumerable<PropertyParameters>    Properties     => properties;
-    public IEnumerable<ConstructorParameters> Constructors   => constructors;
-    public IEnumerable<MethodParameters>      Methods        => methods;
-    public IEnumerable<TypeParameters>        Parents        => parents;
+    public AccessModifier AccessModifier { get; }
+    public bool IsStatic { get; }
+    public bool IsPartial { get; }
+    public TypeParameters Type { get; }
+    public bool IsAbstract { get; }
+    public IEnumerable<GenericParameters> Generics => generics;
+    public IEnumerable<FieldParameters> Fields => fields;
+    public IEnumerable<PropertyParameters> Properties => properties;
+    public IEnumerable<ConstructorParameters> Constructors => constructors;
+    public IEnumerable<MethodParameters> Methods => methods;
+    public IEnumerable<TypeParameters> Parents => parents;
 
     private string GetTypeName()
     {
@@ -59,10 +60,7 @@ public readonly struct ClassParameters
 
     private string GetHeader()
     {
-        var items = new List<string>
-        {
-            AccessModifier.AsString()
-        };
+        var items = new List<string> { AccessModifier.AsString() };
 
         if (IsAbstract)
         {
@@ -91,10 +89,12 @@ public readonly struct ClassParameters
         if (Generics.Any())
         {
             items.Add(
-                Generics.Select(x => x.ToString())
+                Generics
+                    .Select(x => x.ToString())
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Select(x => $"where {x}")
-                    .JoinString(" "));
+                    .JoinString(" ")
+            );
         }
 
         return items.JoinString(" ");

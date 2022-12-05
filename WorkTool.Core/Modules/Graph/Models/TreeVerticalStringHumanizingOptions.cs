@@ -3,8 +3,8 @@
 public class TreeVerticalStringHumanizingOptions
 {
     public ushort FirstIndent { get; set; }
-    public ushort Indent      { get; set; }
-    public string Format      { get; set; }
+    public ushort Indent { get; set; }
+    public string Format { get; set; }
 
     public TreeVerticalStringHumanizingOptions()
     {
