@@ -16,9 +16,9 @@ global using System.Windows.Input;
 global using System.Globalization;
 global using System.Xml.Serialization;
 global using System.Collections.Specialized;
-global using System.Diagnostics;
-global using System.Reactive.Linq;
 global using System;
+global using System.Net.Http.Json;
+global using System.Net.Http.Headers;
 
 global using Avalonia.Controls.Notifications;
 global using Avalonia.Threading;
@@ -40,7 +40,6 @@ global using Avalonia.Layout;
 global using Avalonia.Media;
 global using Avalonia.Metadata;
 global using Avalonia.Styling;
-global using Avalonia.ReactiveUI;
 
 global using EntityFrameworkCore.Triggers;
 
@@ -50,6 +49,9 @@ global using Microsoft.EntityFrameworkCore.Storage;
 
 global using ReactiveUI;
 
+global using WorkTool.Core.Modules.Http.Exceptions;
+global using WorkTool.Core.Modules.SmsClub.Extensions;
+global using WorkTool.Core.Modules.SmsClub.Models;
 global using WorkTool.Core.Modules.Pdf.Interfaces;
 global using WorkTool.Core.Modules.AdoDotNet.Extensions;
 global using WorkTool.Core.Modules.AdoDotNet.Helpers;
@@ -101,17 +103,9 @@ global using WorkTool.Core.Modules.AvaloniaUi.Converters;
 global using WorkTool.Core.Modules.DependencyInjector.Services;
 global using WorkTool.Core.Modules.AvaloniaUi.Services;
 global using WorkTool.SourceGenerator.Core.Models;
-global using WorkTool.Core.Applications.LanguageTeacher.Models;
-global using WorkTool.Core.Applications.HealthStorage.Models;
-global using WorkTool.Core.Applications.LanguageTeacher.Interfaces;
-global using WorkTool.Core.Applications.DailyGymnastics.ViewModels;
-global using WorkTool.Core.Applications.DailyGymnastics.Views;
-global using WorkTool.Core.Applications.DailyGymnastics.Models;
 global using WorkTool.Core.Modules.Pdf.Services;
-global using WorkTool.Core.Applications.CSharpParser.Interfaces;
 
 global using AvaloniaApplication = Avalonia.Application;
 global using AvaloniaPath = Avalonia.Controls.Shapes.Path;
 global using AvaloniaColor = Avalonia.Media.Color;
 global using SystemColor = System.Drawing.Color;
-global using CommonMemoryConstants = WorkTool.Core.Modules.Common.Helpers.MemoryConstants;
