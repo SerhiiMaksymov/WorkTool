@@ -31,5 +31,6 @@ global using WorkTool.Core.Modules.Common.Exceptions;
 global using WorkTool.Core.Modules.Common.Extensions;
 global using WorkTool.Core.Modules.Git.Exceptions;
 global using WorkTool.Core.Modules.LibGit2Sharp.Helpers;
+global using WorkTool.Core.Modules.LibGit2Sharp.Extensions;
 
 global using static NC.Nuke.Common.Tools.DotNet.DotNetTasks;

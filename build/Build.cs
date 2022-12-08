@@ -1,11 +1,3 @@
-extern alias NC;
-
-using NC::Nuke.Common;
-using NC::Nuke.Common.ProjectModel;
-using NC::Nuke.Common.Tools.GitVersion;
-
-using WorkTool.Core.Modules.LibGit2Sharp.Extensions;
-
 class Build : NukeBuild
 {
     [Solution]
