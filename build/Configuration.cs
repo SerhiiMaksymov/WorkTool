@@ -1,4 +1,8 @@
-[TypeConverter(typeof(TypeConverter<Configuration>))]
+extern alias NC;
+
+using NC.Nuke.Common.Tooling;
+
+[TypeConverter(typeof(Enumeration.TypeConverter<Configuration>))]
 public class Configuration : Enumeration
 {
     public static Configuration Debug = new Configuration { Value = nameof(Debug) };

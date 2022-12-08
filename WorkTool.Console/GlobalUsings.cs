@@ -9,7 +9,6 @@ global using Avalonia.Controls.Notifications;
 
 global using Azure.Storage.Blobs;
 
-global using WorkTool.Core.Modules.Common.Exceptions;
 global using WorkTool.Core;
 global using WorkTool.Core.Modules.Application.Interfaces;
 global using WorkTool.Core.Modules.AvaloniaUi.Controls;

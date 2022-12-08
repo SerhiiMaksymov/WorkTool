@@ -1,3 +1,12 @@
+extern alias NC;
+
+using NC.Nuke.Common;
+using NC.Nuke.Common.ProjectModel;
+using NC.Nuke.Common.Tools.DotNet;
+using NC.Nuke.Common.Tools.GitVersion;
+
+using static NC.Nuke.Common.Tools.DotNet.DotNetTasks;
+
 class Build : NukeBuild
 {
     [Solution]

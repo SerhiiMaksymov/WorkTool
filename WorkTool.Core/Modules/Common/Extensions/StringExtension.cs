@@ -4,7 +4,7 @@ public static class StringExtension
 {
     public static string ThrowIfNullOrWhiteSpace(
         [CanBeNull] this string str,
-        [CallerArgumentExpressionAttribute(nameof(str))] string paramName = ""
+        [CallerArgumentExpression(nameof(str))] string paramName = ""
     )
     {
         str.ThrowIfNull(paramName);
