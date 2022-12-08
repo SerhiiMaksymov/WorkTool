@@ -1,4 +1,6 @@
-﻿global using Avalonia;
+﻿global using System.Net.Http.Headers;
+
+global using Avalonia;
 global using Avalonia.Controls;
 global using Avalonia.Markup.Xaml.Styling;
 global using Avalonia.ReactiveUI;
@@ -9,6 +11,8 @@ global using Avalonia.Controls.Notifications;
 
 global using Azure.Storage.Blobs;
 
+global using WorkTool.Core.Modules.SmsClub.Models;
+global using WorkTool.Core.Modules.SmsClub.Services;
 global using WorkTool.Core;
 global using WorkTool.Core.Modules.Application.Interfaces;
 global using WorkTool.Core.Modules.AvaloniaUi.Controls;
@@ -29,3 +33,4 @@ global using WorkTool.Core.Modules.Ui.Services;
 global using WorkTool.Core.Modules.AvaloniaUi.Interfaces;
 global using WorkTool.Core.Modules.Common.Extensions;
 global using WorkTool.Console.Helpers;
+global using WorkTool.Core.Modules.SmsClub.Helpers;

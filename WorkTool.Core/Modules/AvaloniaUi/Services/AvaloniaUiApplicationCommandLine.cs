@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Services;
 
-public class AvaloniaUiApplicationCommandLine : IApplicationCommadLine
+public class AvaloniaUiApplicationCommandLine : IApplicationCommandLine
 {
     public const string CommandName = "AvaloniaUi";
     public static readonly CommandLineContextItem Default =

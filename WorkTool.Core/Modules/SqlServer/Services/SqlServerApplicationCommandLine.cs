@@ -1,10 +1,10 @@
 ﻿namespace WorkTool.Core.Modules.SqlServer.Services;
 
-public class SqlServerApplicationCommadLine : IApplicationCommadLine
+public class SqlServerApplicationCommandLine : IApplicationCommandLine
 {
     private readonly CommandLineContext commandLineContext;
 
-    public SqlServerApplicationCommadLine()
+    public SqlServerApplicationCommandLine()
     {
         var parser = new CommandLineArgumentParser();
         var builder = new CommandLineContextBuilder(parser);

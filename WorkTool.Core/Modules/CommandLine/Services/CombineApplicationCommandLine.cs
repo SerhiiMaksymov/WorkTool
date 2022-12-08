@@ -1,12 +1,12 @@
 ﻿namespace WorkTool.Core.Modules.CommandLine.Services;
 
-public class CombineApplicationCommadLine : IApplicationCommadLine
+public class CombineApplicationCommandLine : IApplicationCommandLine
 {
-    private readonly List<IApplicationCommadLine> applications;
+    private readonly List<IApplicationCommandLine> applications;
 
-    public CombineApplicationCommadLine(IEnumerable<IApplicationCommadLine> applications)
+    public CombineApplicationCommandLine(IEnumerable<IApplicationCommandLine> applications)
     {
-        this.applications = new List<IApplicationCommadLine>(applications);
+        this.applications = new List<IApplicationCommandLine>(applications);
     }
 
     public bool Contains(string[] args)

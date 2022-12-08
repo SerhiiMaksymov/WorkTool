@@ -88,9 +88,9 @@ public static class DependencyInjectorHelper
                         .UseReactiveUI()
                         .UsePlatformDetect()
             )
-            .RegisterTransient<IApplicationCommadLine, CombineApplicationCommadLine>()
-            .RegisterTransient<IEnumerable<IApplicationCommadLine>>(
-                r => new IApplicationCommadLine[] { r.Resolve<AvaloniaUiApplicationCommandLine>() }
+            .RegisterTransient<IApplicationCommandLine, CombineApplicationCommandLine>()
+            .RegisterTransient<IEnumerable<IApplicationCommandLine>>(
+                r => new IApplicationCommandLine[] { r.Resolve<AvaloniaUiApplicationCommandLine>() }
             )
             .RegisterTransient<AvaloniaUiApplicationCommandLine>()
             .RegisterTransient(

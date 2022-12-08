@@ -331,71 +331,49 @@ public static class TypeSymbolExtension
         );
     }
 
-    public static IEnumerable<MethodParameters> GetFluentExtensionMethods(this ITypeSymbol type)
+    public static IEnumerable<MethodParameters> GetFluentExtensionMethods(
+        this ITypeSymbol typeSymbol
+    )
     {
-        var outPutType = type.ToTypeParameters();
-        var argumentName = type.Name.PropertyNameToArgumentName();
-        var members = type.GetMembers();
+        var outPutType = typeSymbol.ToTypeParameters();
+        var argumentName = typeSymbol.Name.PropertyNameToArgumentName();
+        var members = typeSymbol.GetMembers();
 
         var setProperties = members
             .OfType<IPropertySymbol>()
-            .Where(
-                x =>
-                    x.DeclaredAccessibility == Accessibility.Public
-                    && x.SetMethod is not null
-                    && x.SetMethod.DeclaredAccessibility == Accessibility.Public
-                    && !x.IsStatic
-            );
+            .Where(x => HasPublicNotStaticSetter(x));
 
         var getProperties = members
             .OfType<IPropertySymbol>()
-            .Where(
-                x =>
-                    x.DeclaredAccessibility == Accessibility.Public
-                    && x.GetMethod is not null
-                    && x.GetMethod.DeclaredAccessibility == Accessibility.Public
-                    && !x.IsStatic
-            );
+            .Where(x => HasPublicNotStaticGetter(x));
 
         foreach (var property in setProperties)
         {
             var propertyArgumentName = property.Name.PropertyNameToArgumentName();
-            var generic = $"T{outPutType.Name}";
 
             if (property.Name.StartsWith("this["))
             {
                 continue;
             }
 
-            yield return new MethodParameters(
-                AccessModifier.Public,
-                true,
-                new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
-                $"Set{property.Name}",
-                new GenericParameters[]
-                {
-                    new(generic, false, GenericOptionsType.None, new[] { outPutType })
-                },
-                new ArgumentParameters[]
-                {
-                    new(
-                        true,
-                        new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
-                        argumentName
-                    ),
-                    new(false, property.Type.ToTypeParameters(), propertyArgumentName)
-                },
-                $@"{
-                    argumentName
-                }.{
-                    property.Name
-                } = {
+            if (typeSymbol.IsSealed)
+            {
+                yield return CreateFluentSetMethodParameters(
+                    property,
+                    outPutType,
+                    argumentName,
                     propertyArgumentName
-                };
-return {
-    argumentName
-};"
-            );
+                );
+            }
+            else
+            {
+                yield return CreateFluentSetGenericMethodParameters(
+                    property,
+                    outPutType,
+                    argumentName,
+                    propertyArgumentName
+                );
+            }
 
             if (property.Type.TypeKind == TypeKind.Enum)
             {
@@ -408,40 +386,24 @@ return {
                         continue;
                     }
 
-                    yield return new MethodParameters(
-                        AccessModifier.Public,
-                        true,
-                        new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
-                        $"Set{property.Name}{memberName}",
-                        new GenericParameters[]
-                        {
-                            new(generic, false, GenericOptionsType.None, new[] { outPutType })
-                        },
-                        new ArgumentParameters[]
-                        {
-                            new(
-                                true,
-                                new TypeParameters(
-                                    null,
-                                    generic,
-                                    Enumerable.Empty<TypeParameters>()
-                                ),
-                                argumentName
-                            )
-                        },
-                        $@"{
+                    if (typeSymbol.IsSealed)
+                    {
+                        yield return CreateFluentSetEnumMethodParameters(
+                            property,
+                            memberName,
+                            outPutType,
                             argumentName
-                        }.{
-                            property.Name
-                        } = {
-                            property.Type.ToTypeParameters()
-                        }.{
-                            memberName
-                        };
-return {
-    argumentName
-};"
-                    );
+                        );
+                    }
+                    else
+                    {
+                        yield return CreateFluentSetEnumGenericMethodParameters(
+                            property,
+                            memberName,
+                            outPutType,
+                            argumentName
+                        );
+                    }
                 }
             }
         }
@@ -461,80 +423,380 @@ return {
             }
 
             var itemType = collectionType.Value.Generics.Single();
-            var generic = $"T{outPutType.Name}";
             var itemArgumentName = "item";
 
-            yield return new MethodParameters(
-                AccessModifier.Public,
-                true,
-                new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
-                $"Add{property.Name.PropertyNameToSingle()}",
-                new GenericParameters[]
-                {
-                    new(generic, false, GenericOptionsType.None, new[] { outPutType })
-                },
-                new ArgumentParameters[]
-                {
-                    new(
-                        true,
-                        new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
-                        argumentName
-                    ),
-                    new(false, itemType, itemArgumentName)
-                },
-                $@"{
-                    argumentName
-                }.{
-                    property.Name
-                }.Add({
+            if (typeSymbol.IsSealed)
+            {
+                yield return CreateFluentAddItemMethodParameters(
+                    property,
+                    outPutType,
+                    argumentName,
+                    itemType,
                     itemArgumentName
-                });
+                );
+            }
+            else
+            {
+                yield return CreateFluentAddItemGenericMethodParameters(
+                    property,
+                    outPutType,
+                    argumentName,
+                    itemType,
+                    itemArgumentName
+                );
+            }
+
+            if (typeSymbol.IsSealed)
+            {
+                yield return CreateFluentAddItemsMethodParameters(
+                    property,
+                    outPutType,
+                    argumentName,
+                    itemType,
+                    itemArgumentName
+                );
+            }
+            else
+            {
+                yield return CreateFluentAddItemsGenericMethodParameters(
+                    property,
+                    outPutType,
+                    argumentName,
+                    itemType,
+                    itemArgumentName
+                );
+            }
+        }
+    }
+
+    private static bool HasPublicNotStaticSetter(IPropertySymbol propertySymbol)
+    {
+        return propertySymbol
+            is {
+                DeclaredAccessibility: Accessibility.Public,
+                SetMethod.DeclaredAccessibility: Accessibility.Public,
+                IsStatic: false
+            };
+    }
+
+    private static bool HasPublicNotStaticGetter(IPropertySymbol propertySymbol)
+    {
+        return propertySymbol
+            is {
+                DeclaredAccessibility: Accessibility.Public,
+                GetMethod.DeclaredAccessibility: Accessibility.Public,
+                IsStatic: false
+            };
+    }
+
+    private static MethodParameters CreateFluentSetMethodParameters(
+        IPropertySymbol propertySymbol,
+        TypeParameters outPutType,
+        string argumentName,
+        string propertyArgumentName
+    )
+    {
+        return new MethodParameters(
+            AccessModifier.Public,
+            true,
+            outPutType,
+            $"Set{propertySymbol.Name}",
+            Enumerable.Empty<GenericParameters>(),
+            new ArgumentParameters[]
+            {
+                new(true, outPutType, argumentName),
+                new(false, propertySymbol.Type.ToTypeParameters(), propertyArgumentName)
+            },
+            $@"{
+                argumentName
+            }.{
+                propertySymbol.Name
+            } = {
+                propertyArgumentName
+            };
 return {
     argumentName
 };"
-            );
+        );
+    }
 
-            yield return new MethodParameters(
-                AccessModifier.Public,
-                true,
-                new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
-                $"Add{property.Name}",
-                new GenericParameters[]
-                {
-                    new(generic, false, GenericOptionsType.None, new[] { outPutType })
-                },
-                new ArgumentParameters[]
-                {
-                    new(
-                        true,
-                        new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
-                        argumentName
+    private static MethodParameters CreateFluentSetGenericMethodParameters(
+        IPropertySymbol propertySymbol,
+        TypeParameters outPutType,
+        string argumentName,
+        string propertyArgumentName
+    )
+    {
+        var generic = $"T{outPutType.Name}";
+
+        return new MethodParameters(
+            AccessModifier.Public,
+            true,
+            new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+            $"Set{propertySymbol.Name}",
+            new GenericParameters[]
+            {
+                new(generic, false, GenericOptionsType.None, new[] { outPutType })
+            },
+            new ArgumentParameters[]
+            {
+                new(
+                    true,
+                    new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+                    argumentName
+                ),
+                new(false, propertySymbol.Type.ToTypeParameters(), propertyArgumentName)
+            },
+            $@"{
+                argumentName
+            }.{
+                propertySymbol.Name
+            } = {
+                propertyArgumentName
+            };
+return {
+    argumentName
+};"
+        );
+    }
+
+    private static MethodParameters CreateFluentSetEnumGenericMethodParameters(
+        IPropertySymbol propertySymbol,
+        string memberName,
+        TypeParameters outPutType,
+        string argumentName
+    )
+    {
+        var generic = $"T{outPutType.Name}";
+
+        return new MethodParameters(
+            AccessModifier.Public,
+            true,
+            new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+            $"Set{propertySymbol.Name}{memberName}",
+            new GenericParameters[]
+            {
+                new(generic, false, GenericOptionsType.None, new[] { outPutType })
+            },
+            new ArgumentParameters[]
+            {
+                new(
+                    true,
+                    new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+                    argumentName
+                )
+            },
+            $@"{
+                argumentName
+            }.{
+                propertySymbol.Name
+            } = {
+                propertySymbol.Type.ToTypeParameters()
+            }.{
+                memberName
+            };
+return {
+    argumentName
+};"
+        );
+    }
+
+    private static MethodParameters CreateFluentSetEnumMethodParameters(
+        IPropertySymbol propertySymbol,
+        string memberName,
+        TypeParameters outPutType,
+        string argumentName
+    )
+    {
+        return new MethodParameters(
+            AccessModifier.Public,
+            true,
+            outPutType,
+            $"Set{propertySymbol.Name}{memberName}",
+            Enumerable.Empty<GenericParameters>(),
+            new ArgumentParameters[] { new(true, outPutType, argumentName) },
+            $@"{
+                argumentName
+            }.{
+                propertySymbol.Name
+            } = {
+                propertySymbol.Type.ToTypeParameters()
+            }.{
+                memberName
+            };
+return {
+    argumentName
+};"
+        );
+    }
+
+    private static MethodParameters CreateFluentAddItemGenericMethodParameters(
+        IPropertySymbol propertySymbol,
+        TypeParameters outPutType,
+        string argumentName,
+        TypeParameters itemType,
+        string itemArgumentName
+    )
+    {
+        var generic = $"T{outPutType.Name}";
+
+        return new MethodParameters(
+            AccessModifier.Public,
+            true,
+            new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+            $"Add{propertySymbol.Name.PropertyNameToSingle()}",
+            new GenericParameters[]
+            {
+                new(generic, false, GenericOptionsType.None, new[] { outPutType })
+            },
+            new ArgumentParameters[]
+            {
+                new(
+                    true,
+                    new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+                    argumentName
+                ),
+                new(false, itemType, itemArgumentName)
+            },
+            $@"{
+                argumentName
+            }.{
+                propertySymbol.Name
+            }.Add({
+                itemArgumentName
+            });
+return {
+    argumentName
+};"
+        );
+    }
+
+    private static MethodParameters CreateFluentAddItemMethodParameters(
+        IPropertySymbol propertySymbol,
+        TypeParameters outPutType,
+        string argumentName,
+        TypeParameters itemType,
+        string itemArgumentName
+    )
+    {
+        return new MethodParameters(
+            AccessModifier.Public,
+            true,
+            outPutType,
+            $"Add{propertySymbol.Name.PropertyNameToSingle()}",
+            Enumerable.Empty<GenericParameters>(),
+            new ArgumentParameters[]
+            {
+                new(true, outPutType, argumentName),
+                new(false, itemType, itemArgumentName)
+            },
+            $@"{
+                argumentName
+            }.{
+                propertySymbol.Name
+            }.Add({
+                itemArgumentName
+            });
+return {
+    argumentName
+};"
+        );
+    }
+
+    private static MethodParameters CreateFluentAddItemsGenericMethodParameters(
+        IPropertySymbol propertySymbol,
+        TypeParameters outPutType,
+        string argumentName,
+        TypeParameters itemType,
+        string itemArgumentName
+    )
+    {
+        var generic = $"T{outPutType.Name}";
+
+        return new MethodParameters(
+            AccessModifier.Public,
+            true,
+            new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+            $"Add{propertySymbol.Name}",
+            new GenericParameters[]
+            {
+                new(generic, false, GenericOptionsType.None, new[] { outPutType })
+            },
+            new ArgumentParameters[]
+            {
+                new(
+                    true,
+                    new TypeParameters(null, generic, Enumerable.Empty<TypeParameters>()),
+                    argumentName
+                ),
+                new(
+                    false,
+                    typeof(IEnumerable<object>).ToTypeOptions(
+                        new[] { itemType },
+                        new[] { typeof(object).ToTypeOptions() }
                     ),
-                    new(
-                        false,
-                        typeof(IEnumerable<object>).ToTypeOptions(
-                            new[] { itemType },
-                            new[] { typeof(object).ToTypeOptions() }
-                        ),
-                        $"{itemArgumentName}s"
-                    )
-                },
-                $@"foreach(var {
-                    itemArgumentName
-                } in {
-                    itemArgumentName
-                }s)
+                    $"{itemArgumentName}s"
+                )
+            },
+            $@"foreach(var {
+                itemArgumentName
+            } in {
+                itemArgumentName
+            }s)
     {
         argumentName
     }.{
-        property.Name
+        propertySymbol.Name
     }.Add({
         itemArgumentName
     });
 return {
     argumentName
 };"
-            );
-        }
+        );
+    }
+
+    private static MethodParameters CreateFluentAddItemsMethodParameters(
+        IPropertySymbol propertySymbol,
+        TypeParameters outPutType,
+        string argumentName,
+        TypeParameters itemType,
+        string itemArgumentName
+    )
+    {
+        return new MethodParameters(
+            AccessModifier.Public,
+            true,
+            outPutType,
+            $"Add{propertySymbol.Name}",
+            Enumerable.Empty<GenericParameters>(),
+            new ArgumentParameters[]
+            {
+                new(true, outPutType, argumentName),
+                new(
+                    false,
+                    typeof(IEnumerable<object>).ToTypeOptions(
+                        new[] { itemType },
+                        new[] { typeof(object).ToTypeOptions() }
+                    ),
+                    $"{itemArgumentName}s"
+                )
+            },
+            $@"foreach(var {
+                itemArgumentName
+            } in {
+                itemArgumentName
+            }s)
+    {
+        argumentName
+    }.{
+        propertySymbol.Name
+    }.Add({
+        itemArgumentName
+    });
+return {
+    argumentName
+};"
+        );
     }
 }

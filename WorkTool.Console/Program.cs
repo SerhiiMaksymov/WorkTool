@@ -1,5 +1,5 @@
 ﻿var setup = DependencyInjectorHelper.CreateIndexOperation();
-var applicationCommandLine = setup.Resolve<IApplicationCommadLine>();
+var applicationCommandLine = setup.Resolve<IApplicationCommandLine>();
 
 var arguments = new List<string> { "Root" };
 

@@ -8,9 +8,9 @@ public class SmsClubSenderTests : IDisposable
     private IReadOnlyDictionary<string, string>? endpoints;
     private SmsClubSender<object>? smsClubSender;
     private SendSmsClubRequest? successClubRequest;
-    private SendSmsClubResponse? successClubResponse;
+    private SmsClubResponse? successClubResponse;
     private SendSmsClubRequest? faultClubRequest;
-    private SendSmsClubResponse? faultClubResponse;
+    private SmsClubResponse? faultClubResponse;
     private SmsClubSenderOptions? options;
     private int id;
     private string? faultPhoneNumber;
@@ -37,7 +37,7 @@ public class SmsClubSenderTests : IDisposable
             Recipient = "VashZakaz"
         };
 
-        successClubResponse = new SendSmsClubResponse()
+        successClubResponse = new SmsClubResponse()
         {
             SuccessRequest = new SuccessRequest()
             {
@@ -52,7 +52,7 @@ public class SmsClubSenderTests : IDisposable
             Recipient = "VashZakaz"
         };
 
-        faultClubResponse = new SendSmsClubResponse()
+        faultClubResponse = new SmsClubResponse()
         {
             SuccessRequest = new SuccessRequest()
             {

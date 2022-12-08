@@ -23,6 +23,4 @@ global using WorkTool.SourceGenerator.Models;
 global using WorkTool.SourceGenerator.Receivers;
 global using WorkTool.SourceGenerator.Core.Models;
 
-global using JetBrains.Annotations;
-
 global using CodeAnalysisTypeInfo = Microsoft.CodeAnalysis.TypeInfo;

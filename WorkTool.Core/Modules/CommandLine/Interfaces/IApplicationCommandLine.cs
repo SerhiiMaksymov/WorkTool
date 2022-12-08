@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.CommandLine.Interfaces;
 
-public interface IApplicationCommadLine : IApplication
+public interface IApplicationCommandLine : IApplication
 {
     bool Contains(string[] args);
 }

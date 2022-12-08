@@ -19,6 +19,7 @@ global using System.Collections.Specialized;
 global using System;
 global using System.Net.Http.Json;
 global using System.Net.Http.Headers;
+global using System.Text.Json.Serialization;
 
 global using Avalonia.Controls.Notifications;
 global using Avalonia.Threading;
@@ -104,8 +105,7 @@ global using WorkTool.Core.Modules.AvaloniaUi.Services;
 global using WorkTool.SourceGenerator.Core.Models;
 global using WorkTool.Core.Modules.Git.Exceptions;
 global using WorkTool.Core.Modules.LibGit2Sharp.Helpers;
-
-global using JetBrains.Annotations;
+global using WorkTool.Core.Modules.Http.Extensions;
 
 global using LibGit2Sharp;
 
