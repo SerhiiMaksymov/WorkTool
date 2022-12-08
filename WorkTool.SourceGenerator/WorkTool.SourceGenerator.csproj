@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
     </ItemGroup>
 
@@ -14,8 +15,8 @@
         <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\EmptyEnumerableException.cs">
             <Link>Links\EmptyEnumerableException.cs</Link>
         </Compile>
-        <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\NotEqualsExtension.cs">
-            <Link>Links\NotEqualsExtension.cs</Link>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\NotEqualsException.cs">
+            <Link>Links\NotEqualsException.cs</Link>
         </Compile>
         <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\TypeInvalidCastException.cs">
           <Link>Links\TypeInvalidCastException.cs</Link>

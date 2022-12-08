@@ -1,3 +1,11 @@
+extern alias NC;
+
+using NC::Nuke.Common;
+using NC::Nuke.Common.ProjectModel;
+using NC::Nuke.Common.Tools.GitVersion;
+
+using WorkTool.Core.Modules.LibGit2Sharp.Extensions;
+
 class Build : NukeBuild
 {
     [Solution]
@@ -13,6 +21,24 @@ class Build : NukeBuild
         ? Configuration.Debug
         : Configuration.Release;
 
+    [Parameter("GIT message commit.")]
+    readonly string CommitMessage;
+
+    Target GitCommit =>
+        _ =>
+            _.DependsOn(Refactoring)
+                .Executes(() =>
+                {
+                    var solutionDirectory = new DirectoryInfo(Solution.Directory.ThrowIfNull());
+                    CommitMessage.ThrowIfNullOrWhiteSpace();
+                    using var repository = new Repository(solutionDirectory.FullName);
+                    var signature = repository.GetCurrentSignature();
+                    repository
+                        .ThrowIfNotHasChanges(solutionDirectory)
+                        .Stage("*")
+                        .Commit(CommitMessage, signature, signature);
+                });
+
     Target Refactoring =>
         _ =>
             _.Executes(async () =>
@@ -21,10 +47,7 @@ class Build : NukeBuild
                 output.Append(Environment.NewLine);
                 var errorOutput = new StringBuilder();
                 errorOutput.Append(Environment.NewLine);
-                var errorMassage = $"{nameof(Solution)}.{nameof(Solution.Directory)}";
-
-                var directory =
-                    Solution.Directory ?? throw new NullReferenceException(errorMassage);
+                var directory = Solution.Directory.ThrowIfNull();
 
                 await Cli.Wrap("dotnet")
                     .WithWorkingDirectory(directory)

@@ -11,12 +11,49 @@
 
   <ItemGroup>
     <PackageReference Include="CliWrap" Version="3.5.0" />
-    <PackageReference Include="Nuke.Common" Version="6.2.1" />
+    <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
+    <PackageReference Include="Nuke.Common" Version="6.2.1" Aliases="NC" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageDownload Include="GitVersion.CommandLine" Version="[5.11.1]" />
     <PackageDownload Include="GitVersion.Tool" Version="[5.11.1]" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\EmptyEnumerableException.cs">
+      <Link>Links\EmptyEnumerableException.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\NotEqualsException.cs">
+      <Link>Links\NotEqualsException.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\TypeInvalidCastException.cs">
+      <Link>Links\TypeInvalidCastException.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\WhiteSpaceException.cs">
+      <Link>Links\WhiteSpaceException.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\Common\Extensions\EnumerableExtension.cs">
+      <Link>Links\EnumerableExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\Common\Extensions\ObjectExtension.cs">
+      <Link>Links\ObjectExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\Common\Extensions\StringExtension.cs">
+      <Link>Links\StringExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\Git\Exceptions\GitNotHaveChangesException.cs">
+      <Link>Links\GitNotHaveChangesException.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\LibGit2Sharp\Extensions\RepositoryExtension.cs">
+      <Link>Links\RepositoryExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\LibGit2Sharp\Extensions\RepositoryStatusExtension.cs">
+      <Link>Links\RepositoryStatusExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\LibGit2Sharp\Helpers\ConfigPaths.cs">
+      <Link>Links\ConfigPaths.cs</Link>
+    </Compile>
   </ItemGroup>
 
 </Project>

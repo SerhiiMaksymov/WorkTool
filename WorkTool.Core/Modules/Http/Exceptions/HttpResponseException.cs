@@ -12,7 +12,7 @@ public class HttpResponseException : Exception
     }
 
     public string? ReasonPhrase { get; }
-    public Version Version { get; }
+    public SystemVersion Version { get; }
     public HttpStatusCode StatusCode { get; }
     public HttpResponseHeaders Headers { get; }
 

@@ -40,6 +40,6 @@ public static class ObjectExtension
             return obj;
         }
 
-        throw new NotEqualsExtension<TObj>(name, obj, expected);
+        throw new NotEqualsException<TObj>(name, obj, expected);
     }
 }

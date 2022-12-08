@@ -3,8 +3,8 @@
 public static class StringExtension
 {
     public static string ThrowIfNullOrWhiteSpace(
-        this string str,
-        [CallerArgumentExpression("str")] string paramName = ""
+        [CanBeNull] this string str,
+        [CallerArgumentExpressionAttribute(nameof(str))] string paramName = ""
     )
     {
         str.ThrowIfNull(paramName);

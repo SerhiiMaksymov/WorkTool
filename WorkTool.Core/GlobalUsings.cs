@@ -102,8 +102,15 @@ global using WorkTool.Core.Modules.AvaloniaUi.Converters;
 global using WorkTool.Core.Modules.DependencyInjector.Services;
 global using WorkTool.Core.Modules.AvaloniaUi.Services;
 global using WorkTool.SourceGenerator.Core.Models;
+global using WorkTool.Core.Modules.Git.Exceptions;
+global using WorkTool.Core.Modules.LibGit2Sharp.Helpers;
+
+global using JetBrains.Annotations;
+
+global using LibGit2Sharp;
 
 global using AvaloniaApplication = Avalonia.Application;
 global using AvaloniaPath = Avalonia.Controls.Shapes.Path;
 global using AvaloniaColor = Avalonia.Media.Color;
 global using SystemColor = System.Drawing.Color;
+global using SystemVersion = System.Version;
