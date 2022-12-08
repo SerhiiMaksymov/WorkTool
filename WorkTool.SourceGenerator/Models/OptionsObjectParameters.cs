@@ -2,8 +2,8 @@
 
 public class OptionsObjectParameters
 {
-    public TypeSyntax Type    { get; }
-    public string?    Postfix { get; }
+    public TypeSyntax Type { get; }
+    public string? Postfix { get; }
 
     public OptionsObjectParameters(TypeSyntax type, string? postfix)
     {

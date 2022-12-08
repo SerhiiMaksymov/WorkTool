@@ -1,4 +1,10 @@
 ﻿global using System.ComponentModel;
+global using System;
+global using System.Text;
+
+global using CliWrap;
+
+global using Serilog;
 
 global using Nuke.Common;
 global using Nuke.Common.ProjectModel;

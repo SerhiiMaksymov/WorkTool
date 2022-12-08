@@ -142,8 +142,8 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
 
     public TreeNode<TKey, TValue> Build()
     {
-        var key      = Key.ThrowIfNull();
-        var value    = Value.ThrowIfNull();
+        var key = Key.ThrowIfNull();
+        var value = Value.ThrowIfNull();
         var newNodes = nodes.Values.Select(x => x.ThrowIfNull().Build());
 
         return new TreeNode<TKey, TValue>(key, value, newNodes!);

@@ -10,7 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CliWrap" Version="3.5.0" />
     <PackageReference Include="Nuke.Common" Version="6.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageDownload Include="GitVersion.CommandLine" Version="[5.11.1]" />
+    <PackageDownload Include="GitVersion.Tool" Version="[5.11.1]" />
   </ItemGroup>
 
 </Project>

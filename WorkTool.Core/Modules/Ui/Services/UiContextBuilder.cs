@@ -458,11 +458,11 @@ public class UiContextBuilder : IBuilder<UiContext>
     private Delegate CreateTabItemFunction(Type tabControlViewType, TabItemContext context)
     {
         var tabControlViewParameter = Expression.Parameter(tabControlViewType);
-        
+
         var method = typeof(ITabControlView)
             .GetMethod(nameof(ITabControlView.AddTabItem))
             .ThrowIfNull();
-        
+
         var contextConstant = Expression.Constant(context);
         var call = Expression.Call(tabControlViewParameter, method, contextConstant);
 
@@ -472,7 +472,9 @@ public class UiContextBuilder : IBuilder<UiContext>
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>(
         string functionName,
         Func<object> header
-    ) where TTabControlView : ITabControlView where TContent : notnull
+    )
+        where TTabControlView : ITabControlView
+        where TContent : notnull
     {
         return AddTabItemFunction<TTabControlView>(
             functionName,
@@ -482,7 +484,8 @@ public class UiContextBuilder : IBuilder<UiContext>
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>(Func<object> header)
-        where TTabControlView : ITabControlView where TContent : notnull
+        where TTabControlView : ITabControlView
+        where TContent : notnull
     {
         var functionName = NameHelper.GetNameAddTabItemFunction(
             typeof(TTabControlView),
@@ -497,7 +500,8 @@ public class UiContextBuilder : IBuilder<UiContext>
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>()
-        where TTabControlView : ITabControlView where TContent : notnull
+        where TTabControlView : ITabControlView
+        where TContent : notnull
     {
         return AddTabItemFunction<TTabControlView, TContent>(
             () => NameHelper.GetNameAddTabItemFunction(typeof(TTabControlView), typeof(TContent))

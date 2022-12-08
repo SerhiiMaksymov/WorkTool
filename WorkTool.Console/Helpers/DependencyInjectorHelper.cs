@@ -7,9 +7,10 @@ public static class DependencyInjectorHelper
         return new DependencyInjectorBuilder()
             .RegisterTransient<IManagedNotificationManager>(() =>
             {
-                var currentApplication  = Application.Current.ThrowIfNull();
+                var currentApplication = Application.Current.ThrowIfNull();
                 var applicationLifetime = currentApplication.ApplicationLifetime.ThrowIfNull();
-                var classicDesktopStyleApplicationLifetime = applicationLifetime.ThrowIfIsNot<IClassicDesktopStyleApplicationLifetime>();
+                var classicDesktopStyleApplicationLifetime =
+                    applicationLifetime.ThrowIfIsNot<IClassicDesktopStyleApplicationLifetime>();
                 var mainWindow = classicDesktopStyleApplicationLifetime.MainWindow.ThrowIfNull();
 
                 return new WindowNotificationManager(mainWindow);

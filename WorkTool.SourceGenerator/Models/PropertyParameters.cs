@@ -34,7 +34,7 @@ public readonly struct PropertyParameters
             Type.ToText(),
             Name,
             "{",
-            Getter.ToString()??string.Empty,
+            Getter.ToString() ?? string.Empty,
             Setter.ToString() ?? string.Empty,
             "}"
         };

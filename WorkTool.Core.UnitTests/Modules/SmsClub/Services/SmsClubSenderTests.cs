@@ -87,8 +87,9 @@ public class SmsClubSenderTests : IDisposable
         await foreach (var massageItem in smsClubSender.SendsSmsesAsync(messageItemsCollection2))
         {
             SetupSuccess();
-            massageItem.SuccessRequest.ThrowIfNull().Info
-                .Should()
+            massageItem.SuccessRequest
+                .ThrowIfNull()
+                .Info.Should()
                 .HaveCount(1)
                 .And.ContainKey(id.ToString())
                 .And.ContainValue(successPhoneNumber);
@@ -112,8 +113,9 @@ public class SmsClubSenderTests : IDisposable
         await foreach (var massageItem in smsClubSender.SendsSmsesAsync(messageItemsCollection15))
         {
             SetupSuccess();
-            massageItem.SuccessRequest.ThrowIfNull().Info
-                .Should()
+            massageItem.SuccessRequest
+                .ThrowIfNull()
+                .Info.Should()
                 .HaveCount(1)
                 .And.ContainKey(id.ToString())
                 .And.ContainValue(successPhoneNumber);
@@ -133,8 +135,9 @@ public class SmsClubSenderTests : IDisposable
         SetupSuccess();
         var response = await smsClubSender.SendSmsAsync(successClubRequest);
 
-        response.SuccessRequest.ThrowIfNull().Info
-            .Should()
+        response.SuccessRequest
+            .ThrowIfNull()
+            .Info.Should()
             .HaveCount(1)
             .And.ContainKey(id.ToString())
             .And.ContainValue(successPhoneNumber);
@@ -158,14 +161,16 @@ public class SmsClubSenderTests : IDisposable
 
         var response = await smsClubSender.SendSmsAsync(faultClubRequest);
 
-        response.SuccessRequest.ThrowIfNull().Info
-            .Should()
+        response.SuccessRequest
+            .ThrowIfNull()
+            .Info.Should()
             .HaveCount(1)
             .And.ContainKey(id.ToString())
             .And.ContainValue(successPhoneNumber);
 
-        response.SuccessRequest.ThrowIfNull().AddInfo
-            .Should()
+        response.SuccessRequest
+            .ThrowIfNull()
+            .AddInfo.Should()
             .HaveCount(1)
             .And.ContainKey(faultPhoneNumber)
             .And.ContainValue(errorMessage);

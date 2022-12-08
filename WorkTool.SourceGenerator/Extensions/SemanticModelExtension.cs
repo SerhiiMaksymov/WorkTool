@@ -65,7 +65,7 @@ public static class SemanticModelExtension
     )
     {
         Log.Send.SendAsync(@namespace.ToString(), cancellationToken);
-        var type    = typeInfo.Type.ThrowIfNull();
+        var type = typeInfo.Type.ThrowIfNull();
         var methods = type.GetFluentExtensionMethods().ToArray();
 
         foreach (var method in methods)
@@ -109,7 +109,7 @@ public static class SemanticModelExtension
     )
     {
         var typeInfo = semanticModel.GetTypeInfo(parameters.Type);
-        var type     = typeInfo.Type.ThrowIfNull();
+        var type = typeInfo.Type.ThrowIfNull();
         var name =
             $"{type.Name}{(parameters.Postfix.IsNullOrWhiteSpace() ? "Options" : parameters.Postfix)}";
         var properties = type.GetObjectOptionsParameters();
@@ -135,14 +135,14 @@ public static class SemanticModelExtension
         NamespaceOptions @namespace
     )
     {
-        var typeInfo               = semanticModel.GetTypeInfo(parameters.Type);
-        var type                   = typeInfo.Type.ThrowIfNull();
-        var name                   = type.Name.OptionsTypeNameToModelTypeName();
-        var properties             = type.GetObjectOptionsParameters().ToArray();
-        var constructors           = type.GetObjectOptionsConstructors(properties);
-        var typeParameters         = type.ToTypeParameters(name);
+        var typeInfo = semanticModel.GetTypeInfo(parameters.Type);
+        var type = typeInfo.Type.ThrowIfNull();
+        var name = type.Name.OptionsTypeNameToModelTypeName();
+        var properties = type.GetObjectOptionsParameters().ToArray();
+        var constructors = type.GetObjectOptionsConstructors(properties);
+        var typeParameters = type.ToTypeParameters(name);
         var genericsTypeParameters = type.GetGenericsParameters();
-        var methods                = type.GetObjectOptionsMethods(properties);
+        var methods = type.GetObjectOptionsMethods(properties);
 
         return new StructParameters(
             AccessModifier.Public,

@@ -17,6 +17,9 @@
         <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\NotEqualsExtension.cs">
             <Link>Links\NotEqualsExtension.cs</Link>
         </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\TypeInvalidCastException.cs">
+          <Link>Links\TypeInvalidCastException.cs</Link>
+        </Compile>
         <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\WhiteSpaceException.cs">
             <Link>Links\WhiteSpaceException.cs</Link>
         </Compile>

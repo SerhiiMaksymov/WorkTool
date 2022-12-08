@@ -2,7 +2,7 @@
 
 public static class ObjectExtension
 {
-    public static T ThrowIfIsNot<T>(this  object obj)
+    public static T ThrowIfIsNot<T>(this object obj)
     {
         if (obj is not T result)
         {

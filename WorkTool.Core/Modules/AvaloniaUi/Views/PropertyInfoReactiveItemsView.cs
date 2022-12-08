@@ -1,6 +1,7 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Views;
 
-public class PropertyInfoReactiveItemsView<TType> : PropertyInfoReactiveItemsView where TType: notnull
+public class PropertyInfoReactiveItemsView<TType> : PropertyInfoReactiveItemsView
+    where TType : notnull
 {
     public PropertyInfoReactiveItemsView(
         UiContext avaloniaUiContext,

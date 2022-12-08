@@ -10,7 +10,7 @@ public static class TypeInfoExtension
     public static bool EqualsType(this CodeAnalysisTypeInfo typeInfo, ITypeSymbol symbol)
     {
         var type = typeInfo.Type.ThrowIfNull();
-        
+
         if (type.Name != symbol.Name)
         {
             return false;

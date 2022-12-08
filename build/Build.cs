@@ -13,6 +13,40 @@ class Build : NukeBuild
         ? Configuration.Debug
         : Configuration.Release;
 
+    Target Refactoring =>
+        _ =>
+            _.Executes(async () =>
+            {
+                var output = new StringBuilder();
+                output.Append(Environment.NewLine);
+                var errorOutput = new StringBuilder();
+                errorOutput.Append(Environment.NewLine);
+                var errorMassage = $"{nameof(Solution)}.{nameof(Solution.Directory)}";
+
+                var directory =
+                    Solution.Directory ?? throw new NullReferenceException(errorMassage);
+
+                await Cli.Wrap("dotnet")
+                    .WithWorkingDirectory(directory)
+                    .WithArguments("csharpier ./")
+                    .WithStandardOutputPipe(PipeTarget.ToStringBuilder(output))
+                    .WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorOutput))
+                    .ExecuteAsync();
+
+                var errorOutputString = errorOutput.ToString();
+                var outputString = output.ToString();
+
+                if (!string.IsNullOrWhiteSpace(errorOutputString))
+                {
+                    Log.Error(errorOutputString);
+                }
+
+                if (!string.IsNullOrWhiteSpace(outputString))
+                {
+                    Log.Information(outputString);
+                }
+            });
+
     Target Clean =>
         _ =>
             _.DependsOn(Restore)
@@ -23,10 +57,11 @@ class Build : NukeBuild
 
     Target Restore =>
         _ =>
-            _.Executes(() =>
-            {
-                DotNetRestore();
-            });
+            _.DependsOn(Refactoring)
+                .Executes(() =>
+                {
+                    DotNetRestore();
+                });
 
     Target Test =>
         _ =>

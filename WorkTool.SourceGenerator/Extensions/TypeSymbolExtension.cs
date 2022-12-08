@@ -15,7 +15,9 @@ public static class TypeSymbolExtension
                 .GetAttributes()
                 .FirstOrDefault(
                     x =>
-                        x.AttributeClass.ThrowIfNull().MetadataName.Equals(nameof(PartPropertyAttribute))
+                        x.AttributeClass
+                            .ThrowIfNull()
+                            .MetadataName.Equals(nameof(PartPropertyAttribute))
                         && x.ConstructorArguments[0].Value.ThrowIfNull().Equals(parameters.Name)
                 );
 
