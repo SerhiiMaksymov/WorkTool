@@ -3,11 +3,11 @@
 public static class StringExtension
 {
     public static string ThrowIfNullOrWhiteSpace(
-        [CanBeNull] this string str,
+        this string? str,
         [CallerArgumentExpression(nameof(str))] string paramName = ""
     )
     {
-        str.ThrowIfNull(paramName);
+        str = str.ThrowIfNull(paramName);
 
         if (str.IsNullOrWhiteSpace())
         {

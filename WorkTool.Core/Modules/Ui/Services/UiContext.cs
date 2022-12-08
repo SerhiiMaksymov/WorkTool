@@ -2,13 +2,13 @@
 
 public class UiContext
 {
-    protected readonly Dictionary<Type, IEnumerable<Func<object>>> children;
-    protected readonly Dictionary<Type, IEnumerable<CommandContext>> commands;
-    protected readonly Dictionary<Type, Func<object>> contents;
-    protected readonly Dictionary<Type, TreeNode<string, MenuItemContext>[]> contextMenus;
-    protected readonly Dictionary<Type, IEnumerable<KeyboardKeyBinding>> keyboardKeyGestures;
-    protected readonly Dictionary<Type, TreeNode<string, MenuItemContext>[]> menu;
-    protected readonly Dictionary<
+    private readonly Dictionary<Type, IEnumerable<Func<object>>> children;
+    private readonly Dictionary<Type, IEnumerable<CommandContext>> commands;
+    private readonly Dictionary<Type, Func<object>> contents;
+    private readonly Dictionary<Type, TreeNode<string, MenuItemContext>[]> contextMenus;
+    private readonly Dictionary<Type, IEnumerable<KeyboardKeyBinding>> keyboardKeyGestures;
+    private readonly Dictionary<Type, TreeNode<string, MenuItemContext>[]> menu;
+    private readonly Dictionary<
         ClassPropertyPath,
         IEnumerable<PropertyDefaultValue>
     > propertyDefaultValues;
