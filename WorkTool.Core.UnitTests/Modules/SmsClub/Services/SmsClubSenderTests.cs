@@ -109,10 +109,9 @@ public class SmsClubSenderTests : IDisposable
         httpMessageHandlerMock
             .SetupRequest(HttpMethod.Post, getSmsStatusUrl)
             .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successClubResponse));
+        var ids = new[] { smsId.ToString(), smsId.ToString() };
 
-        var response = await smsClubSender.GetSmsStatusAsync(
-            new[] { smsId.ToString(), smsId.ToString() }
-        );
+        var response = await smsClubSender.GetSmsStatusAsync(ids);
 
         response.SuccessRequest
             .ThrowIfNull()
