@@ -1,7 +1,4 @@
-﻿using WorkTool.Core.Modules.Common.Extensions;
-using WorkTool.Core.Modules.Common.Interfaces;
-
-namespace WorkTool.Core.UnitTests.Modules.SmsClub.Services;
+﻿namespace WorkTool.Core.UnitTests.Modules.SmsClub.Services;
 
 public class SmsClubSenderTests : IDisposable
 {
