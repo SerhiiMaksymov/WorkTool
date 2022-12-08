@@ -8,3 +8,4 @@ bin/
 *.vsidx
 *.v2
 .vs/
+.*

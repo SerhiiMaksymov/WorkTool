@@ -32,11 +32,13 @@ class Build : NukeBuild
                     var solutionDirectory = new DirectoryInfo(Solution.Directory.ThrowIfNull());
                     CommitMessage.ThrowIfNullOrWhiteSpace();
                     using var repository = new Repository(solutionDirectory.FullName);
+                    var status = repository.RetrieveStatus();
+                    status.ThrowIfNotHasChanges(solutionDirectory);
+                    status.LogStatus();
                     var signature = repository.GetCurrentSignature();
-                    repository
-                        .ThrowIfNotHasChanges(solutionDirectory)
-                        .Stage("*")
-                        .Commit(CommitMessage, signature, signature);
+                    repository.Stage("*").Commit(CommitMessage, signature, signature);
+                    Log.Information("Commited");
+                    status.LogStatus();
                 });
 
     Target Refactoring =>

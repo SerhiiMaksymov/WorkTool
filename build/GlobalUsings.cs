@@ -11,6 +11,7 @@ global using System.Collections;
 global using System.Data;
 global using System.Linq;
 global using System.Reflection;
+global using System.Linq.Expressions;
 
 global using LibGit2Sharp;
 
