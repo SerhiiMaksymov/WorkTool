@@ -12,11 +12,12 @@ public class SmsClubSenderTests : IDisposable
     private SendSmsClubRequest? faultClubRequest;
     private SmsClubResponse? faultClubResponse;
     private SmsClubSenderOptions? options;
-    private int id;
+    private int smsId;
     private string? faultPhoneNumber;
     private string? successPhoneNumber;
     private string? errorMessage;
     private string? sendUrl;
+    private string? getSmsStatusUrl;
     private MessageItemsCollection<object> messageItemsCollection2;
     private MessageItemsCollection<object> messageItemsCollection15;
 
@@ -26,7 +27,7 @@ public class SmsClubSenderTests : IDisposable
         delayMock = new();
         httpMessageHandlerMock = new();
         errorMessage = "Данный номер находится в черном списке";
-        id = 106;
+        smsId = 106;
         successPhoneNumber = "380989361131";
         faultPhoneNumber = "380989361130";
 
@@ -41,7 +42,7 @@ public class SmsClubSenderTests : IDisposable
         {
             SuccessRequest = new SuccessRequest()
             {
-                Info = new Dictionary<string, string>() { { id.ToString(), successPhoneNumber } }
+                Info = new Dictionary<string, string>() { { smsId.ToString(), successPhoneNumber } }
             }
         };
 
@@ -56,7 +57,10 @@ public class SmsClubSenderTests : IDisposable
         {
             SuccessRequest = new SuccessRequest()
             {
-                Info = new Dictionary<string, string>() { { id.ToString(), successPhoneNumber } },
+                Info = new Dictionary<string, string>()
+                {
+                    { smsId.ToString(), successPhoneNumber }
+                },
                 AddInfo = new Dictionary<string, string>() { { faultPhoneNumber, errorMessage } }
             }
         };
@@ -64,6 +68,8 @@ public class SmsClubSenderTests : IDisposable
         messageItemsCollection2 = CreateMessageItemsCollection<object>(2);
         messageItemsCollection15 = CreateMessageItemsCollection<object>(15);
         sendUrl = $"{SmsClubSender.DefaultHost}{SmsClubSenderEndpoints.DefaultSmsSendEndpoint}";
+        getSmsStatusUrl =
+            $"{SmsClubSender.DefaultHost}{SmsClubSenderEndpoints.DefaultSmsStatusEndpoint}";
         var httpClient = httpMessageHandlerMock
             .CreateClient()
             .SetBaseAddress(SmsClubSender.DefaultHost);
@@ -73,22 +79,68 @@ public class SmsClubSenderTests : IDisposable
     }
 
     [Test]
+    public async Task GetSmsStatusAsync_GetStatus1Sms_SuccessOneRequest()
+    {
+        faultClubRequest = faultClubRequest.ThrowIfNull();
+        smsClubSender = smsClubSender.ThrowIfNull();
+        successPhoneNumber = successPhoneNumber.ThrowIfNull();
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Post, getSmsStatusUrl)
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successClubResponse));
+
+        var response = await smsClubSender.GetSmsStatusAsync(new[] { smsId.ToString() });
+
+        response.SuccessRequest
+            .ThrowIfNull()
+            .Info.Should()
+            .HaveCount(1)
+            .And.ContainKey(smsId.ToString())
+            .And.ContainValue(successPhoneNumber);
+
+        httpMessageHandlerMock.VerifyRequest(r => true, Times.Once());
+    }
+
+    [Test]
+    public async Task GetSmsStatusAsync_GetStatus2Sms_SuccessOneRequest()
+    {
+        faultClubRequest = faultClubRequest.ThrowIfNull();
+        smsClubSender = smsClubSender.ThrowIfNull();
+        successPhoneNumber = successPhoneNumber.ThrowIfNull();
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Post, getSmsStatusUrl)
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successClubResponse));
+
+        var response = await smsClubSender.GetSmsStatusAsync(
+            new[] { smsId.ToString(), smsId.ToString() }
+        );
+
+        response.SuccessRequest
+            .ThrowIfNull()
+            .Info.Should()
+            .HaveCount(1)
+            .And.ContainKey(smsId.ToString())
+            .And.ContainValue(successPhoneNumber);
+
+        httpMessageHandlerMock.VerifyRequest(r => true, Times.Once());
+    }
+
+    [Test]
     public async Task SendsSmsesAsync_Send2Sms_2ResponsesWithoutWait()
     {
         delayMock = delayMock.ThrowIfNull();
         smsClubSender = smsClubSender.ThrowIfNull();
         successPhoneNumber = successPhoneNumber.ThrowIfNull();
         var times = Times.Exactly(messageItemsCollection2.Count);
-        SetupSuccess();
+        SetupSuccessSend();
 
         await foreach (var massageItem in smsClubSender.SendsSmsesAsync(messageItemsCollection2))
         {
-            SetupSuccess();
+            SetupSuccessSend();
             massageItem.SuccessRequest
                 .ThrowIfNull()
                 .Info.Should()
                 .HaveCount(1)
-                .And.ContainKey(id.ToString())
+                .And.ContainKey(smsId.ToString())
                 .And.ContainValue(successPhoneNumber);
         }
 
@@ -105,16 +157,16 @@ public class SmsClubSenderTests : IDisposable
         delayMock = delayMock.ThrowIfNull();
         var httpMessageHandlerTimes = Times.Exactly(messageItemsCollection15.Count);
         var delayMockTimes = Times.Exactly(messageItemsCollection15.Count / options.Count);
-        SetupSuccess();
+        SetupSuccessSend();
 
         await foreach (var massageItem in smsClubSender.SendsSmsesAsync(messageItemsCollection15))
         {
-            SetupSuccess();
+            SetupSuccessSend();
             massageItem.SuccessRequest
                 .ThrowIfNull()
                 .Info.Should()
                 .HaveCount(1)
-                .And.ContainKey(id.ToString())
+                .And.ContainKey(smsId.ToString())
                 .And.ContainValue(successPhoneNumber);
         }
 
@@ -129,14 +181,14 @@ public class SmsClubSenderTests : IDisposable
         successClubRequest = successClubRequest.ThrowIfNull();
         successPhoneNumber = successPhoneNumber.ThrowIfNull();
         delayMock = delayMock.ThrowIfNull();
-        SetupSuccess();
+        SetupSuccessSend();
         var response = await smsClubSender.SendSmsAsync(successClubRequest);
 
         response.SuccessRequest
             .ThrowIfNull()
             .Info.Should()
             .HaveCount(1)
-            .And.ContainKey(id.ToString())
+            .And.ContainKey(smsId.ToString())
             .And.ContainValue(successPhoneNumber);
 
         httpMessageHandlerMock.VerifyRequest(_ => true, Times.Once());
@@ -162,7 +214,7 @@ public class SmsClubSenderTests : IDisposable
             .ThrowIfNull()
             .Info.Should()
             .HaveCount(1)
-            .And.ContainKey(id.ToString())
+            .And.ContainKey(smsId.ToString())
             .And.ContainValue(successPhoneNumber);
 
         response.SuccessRequest
@@ -192,7 +244,7 @@ public class SmsClubSenderTests : IDisposable
 
             var func = () => smsClubSender.SendSmsAsync(faultClubRequest);
 
-            await func.Should().ThrowAsync<HttpResponseException>();
+            await func.Should().ThrowAsync<HttpResponseException>("");
         }
 
         httpMessageHandlerMock.VerifyRequest(_ => true, times);
@@ -204,7 +256,7 @@ public class SmsClubSenderTests : IDisposable
         httpMessageHandlerMock?.Object?.Dispose();
     }
 
-    private void SetupSuccess()
+    private void SetupSuccessSend()
     {
         httpMessageHandlerMock
             .SetupRequest(HttpMethod.Post, sendUrl)
