@@ -30,10 +30,11 @@ public static class TypeExtension
         Ref<byte> index
     )
     {
-        var nameMatch = TypeName.Match(type.Name);
+        var nameMatch  = TypeName.Match(type.Name);
+        var @namespace = type.Namespace.ThrowIfNull();
 
         var result = new TypeParameters(
-            type.Namespace.ToNamespace(),
+            @namespace.ToNamespace(),
             nameMatch.Groups["name"].Value,
             type.GenericTypeArguments.Select(x => x.ToTypeOptions(generics, ignores, index))
         );

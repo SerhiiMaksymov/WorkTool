@@ -2,5 +2,5 @@
 
 public interface IRandomArrayItem<TValue>
 {
-    TValue GetRandom(TValue[] values);
+    TValue? GetRandom(TValue[] values);
 }

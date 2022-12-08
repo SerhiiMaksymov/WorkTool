@@ -21,12 +21,12 @@ public static class SqlCommandExtension
         return command.ExecuteNonQuery<SqlCommand>(query);
     }
 
-    public static Task<object> ExecuteScalarAsync(this SqlCommand command, string query)
+    public static Task<object?> ExecuteScalarAsync(this SqlCommand command, string query)
     {
         return command.ExecuteScalarAsync<SqlCommand>(query);
     }
 
-    public static Task<object> ExecuteScalarAsync(
+    public static Task<object?> ExecuteScalarAsync(
         this SqlCommand command,
         string query,
         IEnumerable<SqlParameter> parameters

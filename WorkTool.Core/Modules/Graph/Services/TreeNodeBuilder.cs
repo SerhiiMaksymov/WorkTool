@@ -2,9 +2,9 @@
 
 public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> where TKey : notnull
 {
-    private readonly Dictionary<TKey, TreeNodeBuilder<TKey, TValue>> nodes;
+    private readonly Dictionary<TKey, TreeNodeBuilder<TKey, TValue?>?> nodes;
 
-    public TreeNodeBuilder<TKey, TValue> this[TKey key]
+    public TreeNodeBuilder<TKey, TValue?>? this[TKey key]
     {
         get
         {
@@ -13,7 +13,7 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
                 return nodes[key];
             }
 
-            var node = new TreeNodeBuilder<TKey, TValue> { Key = key };
+            var node = new TreeNodeBuilder<TKey, TValue?> { Key = key };
 
             nodes[key] = node;
 
@@ -22,12 +22,19 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
         set
         {
             nodes[key] = value;
-            nodes[key].Parent = this;
-            nodes[key].Key = key;
+            var node = nodes[key];
+
+            if (node is null)
+            {
+                return;
+            }
+
+            node.Parent = this!;
+            node.Key = key;
         }
     }
 
-    public TreeNodeBuilder<TKey, TValue> this[TKey key, TValue defaultValue]
+    public TreeNodeBuilder<TKey, TValue?>? this[TKey key, TValue defaultValue]
     {
         get
         {
@@ -36,7 +43,7 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
                 return nodes[key];
             }
 
-            var node = new TreeNodeBuilder<TKey, TValue> { Key = key, Value = defaultValue };
+            var node = new TreeNodeBuilder<TKey, TValue?> { Key = key, Value = defaultValue };
 
             nodes[key] = node;
 
@@ -44,87 +51,116 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
         }
     }
 
-    public TreeNodeBuilder<TKey, TValue> this[TValue defaultValue, params TKey[] keys]
+    public TreeNodeBuilder<TKey, TValue?>? this[TValue defaultValue, params TKey[] keys]
     {
         get
         {
-            var currentNode = this;
+            TreeNodeBuilder<TKey, TValue?>? currentNode = this!;
 
             foreach (var key in keys)
             {
-                currentNode = currentNode[key, defaultValue];
+                currentNode = currentNode?[key, defaultValue];
             }
 
             return currentNode;
         }
         set
         {
-            var currentNode = this;
+            TreeNodeBuilder<TKey, TValue?>? currentNode = this!;
 
             foreach (var key in keys[..^1])
             {
-                currentNode = currentNode[key, defaultValue];
+                currentNode = currentNode?[key, defaultValue];
+            }
+
+            if (currentNode is null)
+            {
+                return;
             }
 
             currentNode[keys[^1]] = value;
-            currentNode[keys[^1]].Parent = this;
-            currentNode[keys[^1]].Key = keys[^1];
+            var node = currentNode[keys[^1]];
+
+            if (node is null)
+            {
+                return;
+            }
+
+            node.Parent = this!;
+            node.Key = keys[^1];
         }
     }
 
-    public TreeNodeBuilder<TKey, TValue> this[params TKey[] keys]
+    public TreeNodeBuilder<TKey, TValue?>? this[params TKey[] keys]
     {
         get
         {
-            var currentNode = this;
+            TreeNodeBuilder<TKey, TValue?>? currentNode = this!;
 
             foreach (var key in keys)
             {
-                currentNode = currentNode[key];
+                currentNode = currentNode?[key];
             }
 
             return currentNode;
         }
         set
         {
-            var currentNode = this;
+            TreeNodeBuilder<TKey, TValue?>? currentNode = this!;
 
             foreach (var key in keys[..^1])
             {
-                currentNode = currentNode[key];
+                currentNode = currentNode?[key];
+            }
+
+            if (currentNode is null)
+            {
+                return;
             }
 
             currentNode[keys[^1]] = value;
-            currentNode[keys[^1]].Parent = this;
-            currentNode[keys[^1]].Key = keys[^1];
+            var node = currentNode[keys[^1]];
+
+            if (node is null)
+            {
+                return;
+            }
+
+            node.Parent = this!;
+            node.Key = keys[^1];
         }
     }
 
-    public TreeNodeBuilder<TKey, TValue> Parent { get; set; }
-    public TKey Key { get; set; }
-    public TValue Value { get; set; }
+    public TreeNodeBuilder<TKey, TValue?>? Parent { get; set; }
+    public TKey? Key { get; set; }
+    public TValue? Value { get; set; }
 
     public TreeNodeBuilder()
     {
-        nodes = new Dictionary<TKey, TreeNodeBuilder<TKey, TValue>>();
+        nodes = new Dictionary<TKey, TreeNodeBuilder<TKey, TValue?>?>();
     }
 
     public TreeNode<TKey, TValue> Build()
     {
-        return new TreeNode<TKey, TValue>(Key, Value, nodes.Values.Select(x => x.Build()));
+        var key      = Key.ThrowIfNull();
+        var value    = Value.ThrowIfNull();
+        var newNodes = nodes.Values.Select(x => x.ThrowIfNull().Build());
+
+        return new TreeNode<TKey, TValue>(key, value, newNodes!);
     }
 
-    public TreeNodeBuilder<TKey, TValue> Add(TreeNodeBuilder<TKey, TValue> node)
+    public TreeNodeBuilder<TKey, TValue> Add(TreeNodeBuilder<TKey, TValue?> node)
     {
-        nodes.Add(node.Key, node);
-        node.Parent = this;
+        var key = node.Key.ThrowIfNull();
+        nodes.Add(key, node);
+        node.Parent = this!;
 
         return this;
     }
 
     public TreeNodeBuilder<TKey, TValue> SetNode(
         TValue defaultValue,
-        TreeNodeBuilder<TKey, TValue> value,
+        TreeNodeBuilder<TKey, TValue?> value,
         params TKey[] keys
     )
     {

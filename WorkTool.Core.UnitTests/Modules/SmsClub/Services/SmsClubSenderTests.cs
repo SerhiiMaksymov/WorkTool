@@ -87,7 +87,7 @@ public class SmsClubSenderTests : IDisposable
         await foreach (var massageItem in smsClubSender.SendsSmsesAsync(messageItemsCollection2))
         {
             SetupSuccess();
-            massageItem.SuccessRequest.Info
+            massageItem.SuccessRequest.ThrowIfNull().Info
                 .Should()
                 .HaveCount(1)
                 .And.ContainKey(id.ToString())
@@ -112,7 +112,7 @@ public class SmsClubSenderTests : IDisposable
         await foreach (var massageItem in smsClubSender.SendsSmsesAsync(messageItemsCollection15))
         {
             SetupSuccess();
-            massageItem.SuccessRequest.Info
+            massageItem.SuccessRequest.ThrowIfNull().Info
                 .Should()
                 .HaveCount(1)
                 .And.ContainKey(id.ToString())
@@ -133,7 +133,7 @@ public class SmsClubSenderTests : IDisposable
         SetupSuccess();
         var response = await smsClubSender.SendSmsAsync(successClubRequest);
 
-        response.SuccessRequest.Info
+        response.SuccessRequest.ThrowIfNull().Info
             .Should()
             .HaveCount(1)
             .And.ContainKey(id.ToString())
@@ -158,13 +158,13 @@ public class SmsClubSenderTests : IDisposable
 
         var response = await smsClubSender.SendSmsAsync(faultClubRequest);
 
-        response.SuccessRequest.Info
+        response.SuccessRequest.ThrowIfNull().Info
             .Should()
             .HaveCount(1)
             .And.ContainKey(id.ToString())
             .And.ContainValue(successPhoneNumber);
 
-        response.SuccessRequest.AddInfo
+        response.SuccessRequest.ThrowIfNull().AddInfo
             .Should()
             .HaveCount(1)
             .And.ContainKey(faultPhoneNumber)

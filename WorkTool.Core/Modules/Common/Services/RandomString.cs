@@ -20,7 +20,7 @@ public class RandomString : IRandom<string>
         this.randomInt32 = randomInt32.ThrowIfNull();
     }
 
-    public string GetRandom()
+    public string? GetRandom()
     {
         var value = randomInt32.GetRandom(size);
 

@@ -156,7 +156,7 @@ public static class ConnectionParametersExtension
         return await dDConnection.ExecuteNonQueryAsync<TCommand, TDbConnection>(query);
     }
 
-    public static async Task<object> ExecuteScalarAsync<
+    public static async Task<object?> ExecuteScalarAsync<
         TConnectionParameters,
         TDbConnection,
         TCommand
@@ -173,7 +173,7 @@ public static class ConnectionParametersExtension
         return await dDConnection.ExecuteScalarAsync<TCommand, TDbConnection>(query);
     }
 
-    public static async Task<object> ExecuteScalarAsync<
+    public static async Task<object?> ExecuteScalarAsync<
         TConnectionParameters,
         TDbConnection,
         TCommand,

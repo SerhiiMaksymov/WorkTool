@@ -15,8 +15,8 @@ public class MainView
 
         this.WhenActivated(disposables =>
         {
-            ViewModel.CanExecute.DisposeWith(disposables);
-
+            var currentViewModel = ViewModel.ThrowIfNull();
+            currentViewModel.CanExecute.DisposeWith(disposables);
             Tabs.Bind(ItemsControl.ItemsProperty, new Binding("TabItems")).DisposeWith(disposables);
         });
 
@@ -25,7 +25,8 @@ public class MainView
 
     public void AddKeyBinding(KeyboardKeyGesture keyGesture, Delegate @delegate)
     {
-        var command = ViewModel.CreateCommand(async () =>
+        var currentViewModel = ViewModel.ThrowIfNull();
+        var command = currentViewModel.CreateCommand(async () =>
         {
             var arguments = new List<ArgumentValue>
             {
@@ -59,6 +60,7 @@ public class MainView
 
     public void AddTabItem(TabItemContext tabItemContext)
     {
+        var currentViewModel = ViewModel.ThrowIfNull();
         var header = tabItemContext.Header.Invoke();
         var content = tabItemContext.Content.Invoke();
         var tabItem = new TabItem();
@@ -78,7 +80,9 @@ public class MainView
                                         .SetData(GeometryConstants.Close)
                                         .SetFill(Brushes.Black)
                                 )
-                                .SetCommand(ViewModel.CreateCommand(() => Tabs.RemoveItem(tabItem)))
+                                .SetCommand(
+                                    currentViewModel.CreateCommand(() => Tabs.RemoveItem(tabItem))
+                                )
                         )
                 )
                 .SetContent(content)
@@ -87,17 +91,11 @@ public class MainView
 
     private MenuItem AddCommand(MenuItem menuItem, TreeNode<string, MenuItemContext> node)
     {
-        if (node.Value.Task is null)
+        var currentViewModel = ViewModel.ThrowIfNull();
+        var command = currentViewModel.CreateCommand(async () =>
         {
-            return menuItem;
-        }
-
-        var command = ViewModel.CreateCommand(async () =>
-        {
-            var result = invoker.Invoke(
-                node.Value.Task,
-                new[] { new ArgumentValue(GetType(), this) }
-            );
+            var @delegate = node.Value.Task.ThrowIfNull();
+            var result = invoker.Invoke(@delegate, new[] { new ArgumentValue(GetType(), this) });
 
             if (result is Task task)
             {

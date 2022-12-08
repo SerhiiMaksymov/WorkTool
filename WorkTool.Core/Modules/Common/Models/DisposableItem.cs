@@ -13,6 +13,6 @@ public class DisposableItem<TItem> : IDisposable
 
     public void Dispose()
     {
-        disposable?.Dispose();
+        disposable.Dispose();
     }
 }

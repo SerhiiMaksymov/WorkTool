@@ -2,12 +2,12 @@
 
 public class MenuItemContext
 {
-    public Delegate Task { get; }
+    public Delegate?    Task   { get; }
     public Func<object> Header { get; }
 
-    public MenuItemContext(Delegate task, Func<object> header)
+    public MenuItemContext(Delegate? task, Func<object> header)
     {
         Task = task;
-        Header = header.ThrowIfNull();
+        Header = header;
     }
 }

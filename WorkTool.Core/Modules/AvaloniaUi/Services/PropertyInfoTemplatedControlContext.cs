@@ -10,7 +10,7 @@ public class PropertyInfoTemplatedControlContext
         Func<object, PropertyInfo, IObjectValue> defaultTypeMatch
     )
     {
-        this.defaultTypeMatch = defaultTypeMatch.ThrowIfNull();
+        this.defaultTypeMatch = defaultTypeMatch;
         this.typeMatchs = new Dictionary<Type, Func<object, PropertyInfo, IObjectValue>>(
             typeMatchs
         );

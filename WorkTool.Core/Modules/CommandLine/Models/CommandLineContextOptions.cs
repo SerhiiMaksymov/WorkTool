@@ -2,5 +2,5 @@
 
 public class CommandLineContextOptions
 {
-    public string RootKey { get; set; }
+    public string? RootKey { get; set; }
 }

@@ -4,7 +4,7 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
 {
     private readonly Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>> constructorParameters;
     private readonly Dictionary<ParameterInfo, object> constructorParametersValue;
-    private readonly Dictionary<Type, ConstructorInfo> constructors;
+    private readonly Dictionary<Type, ConstructorInfo> cacheConstructors;
     private readonly Dictionary<Delegate, ParameterInfo[]> methodParameters;
     private readonly Dictionary<Delegate, MethodInfo> methods;
     private readonly Dictionary<Type, Func<IResolver, object>> singleton;
@@ -23,7 +23,7 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
         methods = new Dictionary<Delegate, MethodInfo>();
         singletonDefaults = new Dictionary<Type, LazyLoad<object>>();
         transientDefaults = new Dictionary<Type, Func<object>>();
-        constructors = new Dictionary<Type, ConstructorInfo>();
+        cacheConstructors = new Dictionary<Type, ConstructorInfo>();
         constructorParametersValue = new Dictionary<ParameterInfo, object>();
         constructorParameters = new Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>>();
         typePublicSetters = new Dictionary<Type, IEnumerable<PropertyInfo>>();
@@ -41,7 +41,7 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
             methods,
             methodParameters,
             transientDefaults,
-            constructors,
+            cacheConstructors,
             constructorParametersValue,
             constructorParameters,
             typePublicSetters,
@@ -67,21 +67,6 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
         RegisterTransient(type, func);
     }
 
-    private IEnumerable<PropertyInfo> GetTypePublicSetters(Type type)
-    {
-        if (typePublicSetters.TryGetValue(type, out var properties))
-        {
-            return properties;
-        }
-
-        properties = type.GetProperties(
-            BindingFlags.Instance | BindingFlags.SetProperty | BindingFlags.Public
-        );
-        typePublicSetters.Add(type, properties);
-
-        return properties;
-    }
-
     private IEnumerable<ParameterInfo> GetConstructorParameters(ConstructorInfo constructor)
     {
         if (constructorParameters.TryGetValue(constructor, out var parameters))
@@ -93,31 +78,6 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
         constructorParameters.Add(constructor, parameters);
 
         return parameters;
-    }
-
-    private MethodInfo GetMethodInfo(Delegate @delegate)
-    {
-        if (methods.ContainsKey(@delegate))
-        {
-            return methods[@delegate];
-        }
-
-        methods[@delegate] = @delegate.GetMethodInfo();
-
-        return methods[@delegate];
-    }
-
-    private ParameterInfo[] GetParameterInfos(Delegate @delegate)
-    {
-        if (methodParameters.ContainsKey(@delegate))
-        {
-            return methodParameters[@delegate];
-        }
-
-        var methodInfo = GetMethodInfo(@delegate);
-        methodParameters[@delegate] = methodInfo.GetParameters();
-
-        return methodParameters[@delegate];
     }
 
     public DependencyInjectorBuilder Reserve(Type type, Type parameterType, object value)
@@ -145,6 +105,7 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
     }
 
     public DependencyInjectorBuilder Reserve<TObject, TParameter>(TParameter value)
+        where TParameter : notnull
     {
         return Reserve<TObject>(typeof(TParameter), value);
     }
@@ -187,11 +148,13 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
     }
 
     public DependencyInjectorBuilder RegisterTransient<TObject>(Func<TObject> func)
+        where TObject : notnull
     {
         return RegisterTransient(typeof(TObject), () => func.Invoke());
     }
 
     public DependencyInjectorBuilder RegisterTransient<TObject>(Func<IResolver, TObject> func)
+        where TObject : notnull
     {
         return RegisterTransient(typeof(TObject), r => func.Invoke(r));
     }
@@ -214,6 +177,7 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
     }
 
     public DependencyInjectorBuilder RegisterSingleton<TValue>(Func<TValue> func)
+        where TValue : notnull
     {
         return RegisterSingleton(typeof(TValue), () => func.Invoke());
     }
@@ -248,7 +212,7 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
 
     private ConstructorInfo GetSingleConstructor(Type type)
     {
-        if (this.constructors.TryGetValue(type, out var constructor))
+        if (this.cacheConstructors.TryGetValue(type, out var constructor))
         {
             return constructor;
         }
@@ -266,7 +230,7 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
         }
 
         constructor = constructors[0];
-        this.constructors.Add(type, constructor);
+        this.cacheConstructors.Add(type, constructor);
 
         return constructor;
     }

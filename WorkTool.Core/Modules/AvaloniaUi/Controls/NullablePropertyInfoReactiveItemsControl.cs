@@ -9,8 +9,13 @@ public class NullablePropertyInfoReactiveItemsControl : PropertyInfoReactiveItem
         NullablePropertyInfoReactiveItemsControl,
         bool
     >(nameof(IsNull), o => o.IsNull, (o, v) => o.IsNull = v);
-    private object cache;
+    private object? cache;
     private bool isNull;
+
+    public NullablePropertyInfoReactiveItemsControl()
+    {
+        CheckBox = new CheckBox();
+    }
 
     public CheckBox CheckBox { get; }
 
@@ -31,14 +36,14 @@ public class NullablePropertyInfoReactiveItemsControl : PropertyInfoReactiveItem
             {
                 var sender = (NullablePropertyInfoReactiveItemsControl)e.Sender;
 
-                if ((bool)e.NewValue)
-                {
-                    sender.Value = null;
-                }
-                else
+                if (e.NewValue is not bool value)
                 {
                     sender.Value = sender.cache;
+
+                    return;
                 }
+
+                sender.Value = value ? null : sender.cache;
             }
         );
 
@@ -55,10 +60,5 @@ public class NullablePropertyInfoReactiveItemsControl : PropertyInfoReactiveItem
                 sender.cache = sender.Value;
             }
         );
-    }
-
-    public NullablePropertyInfoReactiveItemsControl()
-    {
-        CheckBox = new CheckBox();
     }
 }

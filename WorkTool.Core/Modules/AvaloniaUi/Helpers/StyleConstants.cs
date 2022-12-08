@@ -395,7 +395,7 @@ public static class StyleConstants
                 .SetProperty(TemplatedControl.TemplateProperty)
                 .SetValue(
                     new FuncControlTemplate<PropertyInfoReactiveItemsControl>(
-                        (templated, nameScope) =>
+                        (_, nameScope) =>
                             new Expander()
                                 .SetVerticalContentAlignmentStretch()
                                 .SetHorizontalContentAlignmentStretch()
@@ -473,7 +473,7 @@ public static class StyleConstants
         .AddSetter(
             TemplatedControl.TemplateProperty,
             new FuncControlTemplate<StringNullablePropertyInfoTemplatedControl>(
-                (templated, name) =>
+                (_, name) =>
                     new Grid()
                         .AddColumnDefinitions(GridLength.Star, GridLength.Auto, GridLength.Star)
                         .AddChild(

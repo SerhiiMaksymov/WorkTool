@@ -2,11 +2,11 @@
 
 public class StreamHumanizing : IHumanizing<Stream, string>
 {
-    private readonly string _breakString;
-    private readonly ulong _charSize;
-    private readonly Encoding _encoding;
-    private readonly ushort _encodingCharSize;
-    private readonly string _splitString;
+    private readonly string breakString;
+    private readonly ulong charSize;
+    private readonly Encoding encoding;
+    private readonly ushort encodingCharSize;
+    private readonly string splitString;
 
     public StreamHumanizing(
         string splitString,
@@ -16,11 +16,11 @@ public class StreamHumanizing : IHumanizing<Stream, string>
         ushort encodingCharSize
     )
     {
-        _splitString = splitString;
-        _charSize = charSize;
-        _breakString = breakStrings;
-        _encoding = encoding.ThrowIfNull();
-        _encodingCharSize = encodingCharSize;
+        this.splitString = splitString;
+        this.charSize = charSize;
+        breakString = breakStrings;
+        this.encoding = encoding.ThrowIfNull();
+        this.encodingCharSize = encodingCharSize;
     }
 
     public StreamHumanizing() : this(" ", 2, Environment.NewLine, Encoding.UTF8, 4) { }
@@ -28,18 +28,18 @@ public class StreamHumanizing : IHumanizing<Stream, string>
     public string Humanize(Stream stream)
     {
         var stringBuilder = new StringBuilder();
-        var buffer = new Span<byte>(new byte[_encodingCharSize * _charSize]);
+        var buffer = new Span<byte>(new byte[encodingCharSize * charSize]);
 
         while (stream.Read(buffer) != 0)
         {
             for (var index = 0; index < buffer.Length; index++)
             {
                 stringBuilder.Append(buffer[index].ToString("X2"));
-                stringBuilder.Append(_splitString);
+                stringBuilder.Append(splitString);
             }
 
-            stringBuilder.Append(_encoding.GetString(buffer));
-            stringBuilder.Append(_breakString);
+            stringBuilder.Append(encoding.GetString(buffer));
+            stringBuilder.Append(breakString);
         }
 
         return stringBuilder.ToString();

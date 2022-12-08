@@ -1,23 +1,19 @@
-﻿using WorkTool.Core.Modules.Pdf.Configurations;
-
-namespace WorkTool.Console.Helpers;
+﻿namespace WorkTool.Console.Helpers;
 
 public static class DependencyInjectorHelper
 {
-#region public
-
     public static IDependencyInjector CreateIndexOperation()
     {
         return new DependencyInjectorBuilder()
-            .AddConfiguration(new PdfDependencyInjectorConfiguration())
-            .RegisterTransient<IManagedNotificationManager>(
-                () =>
-                    new WindowNotificationManager(
-                        Application.Current.ApplicationLifetime
-                            .As<IClassicDesktopStyleApplicationLifetime>()
-                            .MainWindow
-                    )
-            )
+            .RegisterTransient<IManagedNotificationManager>(() =>
+            {
+                var currentApplication  = Application.Current.ThrowIfNull();
+                var applicationLifetime = currentApplication.ApplicationLifetime.ThrowIfNull();
+                var classicDesktopStyleApplicationLifetime = applicationLifetime.ThrowIfIsNot<IClassicDesktopStyleApplicationLifetime>();
+                var mainWindow = classicDesktopStyleApplicationLifetime.MainWindow.ThrowIfNull();
+
+                return new WindowNotificationManager(mainWindow);
+            })
             .RegisterTransient<MainView>()
             .RegisterTransient<IMessageBoxView, AvaloniaMessageBoxView>()
             .RegisterTransient<IHumanizing<Exception, object>, ExceptionHumanizing>()
@@ -107,6 +103,4 @@ public static class DependencyInjectorHelper
             .RegisterTransient<IRandom<int, Interval<int>>, RandomInt32InInterval>()
             .Build();
     }
-
-#endregion public
 }

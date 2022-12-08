@@ -3,10 +3,10 @@
 public class ReactiveCommandsControl<TViewModel> : CommandsControl, IViewFor<TViewModel>
     where TViewModel : class
 {
-    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty.Register<
-        ReactiveCommandsControl<TViewModel>,
-        TViewModel
-    >(nameof(ViewModel));
+    public static readonly StyledProperty<TViewModel?> ViewModelProperty =
+        AvaloniaProperty.Register<ReactiveCommandsControl<TViewModel>, TViewModel?>(
+            nameof(ViewModel)
+        );
 
     public ReactiveCommandsControl()
     {
@@ -24,7 +24,22 @@ public class ReactiveCommandsControl<TViewModel> : CommandsControl, IViewFor<TVi
     object? IViewFor.ViewModel
     {
         get => ViewModel;
-        set => ViewModel = (TViewModel)value;
+        set
+        {
+            switch (value)
+            {
+                case null:
+                    ViewModel = null;
+
+                    return;
+                case TViewModel viewModel:
+                    ViewModel = viewModel;
+
+                    return;
+                default:
+                    throw new TypeInvalidCastException(typeof(TViewModel), value.GetType());
+            }
+        }
     }
 
     protected override void OnDataContextChanged(EventArgs e)
@@ -33,9 +48,9 @@ public class ReactiveCommandsControl<TViewModel> : CommandsControl, IViewFor<TVi
         ViewModel = DataContext as TViewModel;
     }
 
-    private void OnViewModelChanged(object value)
+    private void OnViewModelChanged(object? value)
     {
-        if (value == null)
+        if (value is null)
         {
             ClearValue(DataContextProperty);
         }

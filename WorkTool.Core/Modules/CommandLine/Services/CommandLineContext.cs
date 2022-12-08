@@ -3,20 +3,19 @@
 public class CommandLineContext
 {
     public const string DefaultRoot = "Root";
-    private readonly CommandLineContextOptions options;
 
     private readonly IStreamParser<ICommandLineToken, string> parser;
-    public Tree<string, CommandLineContextItem> Tree { get; }
+    public Tree<string, CommandLineContextItem?> Tree { get; }
 
     public CommandLineContext(
-        Tree<string, CommandLineContextItem> tree,
+        Tree<string, CommandLineContextItem?> tree,
         IStreamParser<ICommandLineToken, string> parser,
         CommandLineContextOptions options
     )
     {
         Tree = tree.ThrowIfNull();
         this.parser = parser.ThrowIfNull();
-        this.options = options.ThrowIfNull();
+        options.ThrowIfNull();
     }
 
     public Task RunAsync(params string[] args)
@@ -32,20 +31,21 @@ public class CommandLineContext
 
         for (var index = 0; index < parameterTokens.Length; index += 2)
         {
-            var name = parameterTokens[index] as ArgumentNameCommandLineToken;
-            var value = parameterTokens[index + 1] as ArgumentValueCommandLineToken;
+            var name = (parameterTokens[index] as ArgumentNameCommandLineToken).ThrowIfNull();
+            var value = (parameterTokens[index + 1] as ArgumentValueCommandLineToken).ThrowIfNull();
             parameters[name] = value;
         }
 
         var values = new Dictionary<string, object>();
+        var itemValue = item.Value.ThrowIfNull();
 
         foreach (var parameter in parameters)
         {
-            var value = item.Value.Arguments[parameter.Key.Name].Parse(parameter.Value.Value);
+            var value = itemValue.Arguments[parameter.Key.Name].Parse(parameter.Value.Value);
             values[parameter.Key.Name] = value;
         }
 
-        foreach (var argument in item.Value.Arguments)
+        foreach (var argument in itemValue.Arguments)
         {
             if (values.ContainsKey(argument.Key))
             {
@@ -55,7 +55,7 @@ public class CommandLineContext
             values[argument.Key] = argument.Value.Default;
         }
 
-        return item.Value.Action.Invoke(values);
+        return itemValue.Action.Invoke(values);
     }
 
     public bool Contains(string[] keys)

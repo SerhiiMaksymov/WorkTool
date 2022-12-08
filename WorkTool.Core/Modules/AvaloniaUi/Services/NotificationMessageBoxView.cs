@@ -2,16 +2,15 @@
 
 public class NotificationMessageBoxView : IMessageBoxView
 {
-    private readonly IManagedNotificationManager _managedNotificationManager;
-    private readonly IResolver _resolver;
+    private readonly IManagedNotificationManager managedNotificationManager;
 
     public NotificationMessageBoxView(
         IManagedNotificationManager managedNotificationManager,
         IResolver resolver
     )
     {
-        _resolver = resolver.ThrowIfNull();
-        _managedNotificationManager = managedNotificationManager.ThrowIfNull();
+        resolver.ThrowIfNull();
+        this.managedNotificationManager = managedNotificationManager.ThrowIfNull();
     }
 
     public Task ShowAsync(
@@ -21,7 +20,7 @@ public class NotificationMessageBoxView : IMessageBoxView
         IEnumerable<MessageBoxViewItem> messages
     )
     {
-        _managedNotificationManager.Show(
+        managedNotificationManager.Show(
             new Notification("Test", message.ToString(), NotificationType.Warning)
         );
 

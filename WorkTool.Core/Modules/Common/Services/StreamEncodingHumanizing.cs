@@ -2,11 +2,11 @@
 
 public class StreamEncodingHumanizing : IHumanizing<Stream, string>
 {
-    private readonly Encoding _encoding;
+    private readonly Encoding encoding;
 
     public StreamEncodingHumanizing(Encoding encoding)
     {
-        _encoding = encoding.ThrowIfNull();
+        this.encoding = encoding.ThrowIfNull();
     }
 
     public StreamEncodingHumanizing() : this(Encoding.UTF8) { }
@@ -14,7 +14,7 @@ public class StreamEncodingHumanizing : IHumanizing<Stream, string>
     public string Humanize(Stream input)
     {
         var bytes = input.ReadAll();
-        var result = _encoding.GetString(bytes);
+        var result = encoding.GetString(bytes);
 
         return result;
     }

@@ -2,10 +2,10 @@
 
 public interface IRandom<out TValue>
 {
-    TValue GetRandom();
+    TValue? GetRandom();
 }
 
 public interface IRandom<out TValue, in TOptions>
 {
-    TValue GetRandom(TOptions options);
+    TValue? GetRandom(TOptions options);
 }

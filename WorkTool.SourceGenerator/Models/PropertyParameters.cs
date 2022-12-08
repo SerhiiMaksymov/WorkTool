@@ -28,14 +28,16 @@ public readonly struct PropertyParameters
 
     public override string ToString()
     {
-        var items = new List<string>();
-        items.Add(AccessModifier.AsString());
-        items.Add(Type.ToText());
-        items.Add(Name);
-        items.Add("{");
-        items.Add(Getter.ToString());
-        items.Add(Setter.ToString());
-        items.Add("}");
+        var items = new List<string>
+        {
+            AccessModifier.AsString(),
+            Type.ToText(),
+            Name,
+            "{",
+            Getter.ToString()??string.Empty,
+            Setter.ToString() ?? string.Empty,
+            "}"
+        };
 
         if (!string.IsNullOrWhiteSpace(Next))
         {

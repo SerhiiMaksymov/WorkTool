@@ -10,11 +10,6 @@ public class CommandLineArgumentParser : IStreamParser<ICommandLineToken, string
         {
             var token = Parse(value, context);
 
-            if (token is null)
-            {
-                continue;
-            }
-
             yield return token;
         }
     }

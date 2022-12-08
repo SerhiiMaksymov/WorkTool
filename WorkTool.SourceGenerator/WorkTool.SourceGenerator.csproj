@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,6 +22,9 @@
         </Compile>
         <Compile Include="..\WorkTool.Core\Modules\Common\Extensions\EnumerableExtension.cs">
             <Link>Links\EnumerableExtension.cs</Link>
+        </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Extensions\ObjectExtension.cs">
+          <Link>Links\ObjectExtension.cs</Link>
         </Compile>
         <Compile Include="..\WorkTool.Core\Modules\Common\Extensions\StringExtension.cs">
             <Link>Links\StringExtension.cs</Link>

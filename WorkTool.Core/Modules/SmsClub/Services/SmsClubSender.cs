@@ -6,10 +6,10 @@ namespace WorkTool.Core.Modules.SmsClub.Services;
 
 public class SmsClubSender<TParameters> where TParameters : notnull
 {
-    private readonly HttpClient _httpClient;
-    private readonly IReadOnlyDictionary<string, string> _endpoints;
-    private readonly SmsClubSenderOptions _options;
-    private readonly IDelay _delay;
+    private readonly HttpClient httpClient;
+    private readonly IReadOnlyDictionary<string, string> endpoints;
+    private readonly SmsClubSenderOptions options;
+    private readonly IDelay delay;
 
     public SmsClubSender(
         HttpClient httpClient,
@@ -18,20 +18,23 @@ public class SmsClubSender<TParameters> where TParameters : notnull
         IDelay delay
     )
     {
-        _delay = delay.ThrowIfNull();
-        _options = options.ThrowIfNull();
-        _endpoints = new Dictionary<string, string>(endpoints);
-        _httpClient = httpClient.ThrowIfNull();
+        this.delay = delay.ThrowIfNull();
+        this.options = options.ThrowIfNull();
+        this.endpoints = new Dictionary<string, string>(endpoints);
+        this.httpClient = httpClient.ThrowIfNull();
     }
 
     public async Task<SendSmsClubResponse> SendSmsAsync(SendSmsClubRequest clubRequest)
     {
         using var content = clubRequest.ToJsonHttpContent();
-        var url = _endpoints[Constants.SmsSendEndpointId];
-        using var httpResponseMessage = await _httpClient.PostAsync(url, content);
+        var url = endpoints[Constants.SmsSendEndpointId];
+        using var httpResponseMessage = await httpClient.PostAsync(url, content);
         httpResponseMessage.ThrowIfNotSuccess();
+        var sendSmsClubResponse =
+            await httpResponseMessage.Content.ReadFromJsonAsync<SendSmsClubResponse>();
+        sendSmsClubResponse = sendSmsClubResponse.ThrowIfNull();
 
-        return await httpResponseMessage.Content.ReadFromJsonAsync<SendSmsClubResponse>();
+        return sendSmsClubResponse;
     }
 
     public async IAsyncEnumerable<SendSmsClubResponse> SendsSmsesAsync(
@@ -51,10 +54,10 @@ public class SmsClubSender<TParameters> where TParameters : notnull
             };
             yield return await SendSmsAsync(request);
 
-            if (currentCount == _options.Count)
+            if (currentCount == options.Count)
             {
                 currentCount = 0;
-                await _delay.DelayAsync(_options.Wait);
+                await delay.DelayAsync(options.Wait);
             }
         }
     }

@@ -2,6 +2,7 @@
 
 public class TreeNodeStringHumanizing<TKey, TValue> : IHumanizing<TreeNode<TKey, TValue>, string>
     where TKey : notnull
+    where TValue : notnull
 {
     private readonly IHumanizing<TKey, string> humanizingKey;
     private readonly IHumanizing<TValue, string> humanizingValue;

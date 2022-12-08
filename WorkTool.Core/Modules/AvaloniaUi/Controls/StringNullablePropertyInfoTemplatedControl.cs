@@ -16,6 +16,6 @@ public class StringNullablePropertyInfoTemplatedControl
             TemplateAppliedEventArgs,
             TextBox,
             TextBlock
-        >? onApplyTemplate
+        > onApplyTemplate
     ) : base(onApplyTemplate) { }
 }

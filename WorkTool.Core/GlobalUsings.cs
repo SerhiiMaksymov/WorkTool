@@ -52,7 +52,6 @@ global using ReactiveUI;
 global using WorkTool.Core.Modules.Http.Exceptions;
 global using WorkTool.Core.Modules.SmsClub.Extensions;
 global using WorkTool.Core.Modules.SmsClub.Models;
-global using WorkTool.Core.Modules.Pdf.Interfaces;
 global using WorkTool.Core.Modules.AdoDotNet.Extensions;
 global using WorkTool.Core.Modules.AdoDotNet.Helpers;
 global using WorkTool.Core.Modules.AdoDotNet.Interfaces;
@@ -103,7 +102,6 @@ global using WorkTool.Core.Modules.AvaloniaUi.Converters;
 global using WorkTool.Core.Modules.DependencyInjector.Services;
 global using WorkTool.Core.Modules.AvaloniaUi.Services;
 global using WorkTool.SourceGenerator.Core.Models;
-global using WorkTool.Core.Modules.Pdf.Services;
 
 global using AvaloniaApplication = Avalonia.Application;
 global using AvaloniaPath = Avalonia.Controls.Shapes.Path;

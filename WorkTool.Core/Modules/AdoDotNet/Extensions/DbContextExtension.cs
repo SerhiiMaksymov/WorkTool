@@ -36,7 +36,7 @@ public static class DbContextExtension
         return command.ExecuteNonQuery();
     }
 
-    public static object ExecuteScalarCommand<TCommand, TParameter>(
+    public static object? ExecuteScalarCommand<TCommand, TParameter>(
         this DbContext context,
         string query,
         IEnumerable<TParameter> parameters
@@ -49,7 +49,7 @@ public static class DbContextExtension
         return command.ExecuteScalar();
     }
 
-    public static object ExecuteScalarCommand<TCommand>(this DbContext context, string query)
+    public static object? ExecuteScalarCommand<TCommand>(this DbContext context, string query)
         where TCommand : DbCommand, new()
     {
         using var command = context.CreateCommand<TCommand>(query);

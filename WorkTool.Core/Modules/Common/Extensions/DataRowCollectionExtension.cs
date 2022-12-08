@@ -18,7 +18,7 @@ public static class DataRowCollectionExtension
             result.Add(
                 columnCollection
                     .OfType<DataColumn>()
-                    .Select(x => row[x]?.ToString() ?? string.Empty)
+                    .Select(x => row[x].ToString() ?? string.Empty)
                     .JoinString(separator)
             );
         }

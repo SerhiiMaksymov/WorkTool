@@ -40,7 +40,7 @@ public class AvaloniaUiApplicationCommandLine : IApplicationCommadLine
     {
         builder[Default, CommandLineContext.DefaultRoot, CommandName] = new TreeNodeBuilder<
             string,
-            CommandLineContextItem
+            CommandLineContextItem?
         >
         {
             Value = new CommandLineContextItem(

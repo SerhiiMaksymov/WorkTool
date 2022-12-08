@@ -17,7 +17,8 @@ public class CommandsView
 
         this.WhenActivated(disposables =>
         {
-            ViewModel.CanExecute.DisposeWith(disposables);
+            var currentViewModel = ViewModel.ThrowIfNull();
+            currentViewModel.CanExecute.DisposeWith(disposables);
         });
 
         avaloniaUiContext.InitView(this);
@@ -25,7 +26,8 @@ public class CommandsView
 
     public void AddCommand(CommandContext commandContext)
     {
-        var command = ViewModel.CreateCommand(async () =>
+        var currentViewModel = ViewModel.ThrowIfNull();
+        var command = currentViewModel.CreateCommand(async () =>
         {
             var arguments = new List<ArgumentValue> { new(GetType(), this) };
 

@@ -17,7 +17,10 @@ public class AvaloniaMessageBoxView : IMessageBoxView
         IEnumerable<MessageBoxViewItem> messages
     )
     {
-        switch (AvaloniaApplication.Current.ApplicationLifetime)
+        var avaloniaApplicationCurrent = AvaloniaApplication.Current.ThrowIfNull();
+        var applicationLifetime = avaloniaApplicationCurrent.ApplicationLifetime.ThrowIfNull();
+
+        switch (applicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
             {
@@ -26,24 +29,46 @@ public class AvaloniaMessageBoxView : IMessageBoxView
                     ?? desktop.MainWindow
                     ?? desktop.Windows.First();
 
-                var dialogControl = window.Content.As<DialogControl>();
+                var content = window.Content.ThrowIfNull();
+
+                if (content is not DialogControl dialogControl)
+                {
+                    throw new TypeInvalidCastException(typeof(DialogControl), content.GetType());
+                }
+
                 UpdateDialogControl(dialogControl, title, message, background, messages);
 
                 return dialogControl.ShowAsync();
             }
             case ISingleViewApplicationLifetime single:
             {
-                var dialogControl = single.MainView
-                    .As<ContentControl>()
-                    .Content.As<DialogControl>();
+                var mainView = single.MainView.ThrowIfNull();
+
+                if (mainView is not ContentControl contentControl)
+                {
+                    throw new TypeInvalidCastException(typeof(ContentControl), mainView.GetType());
+                }
+
+                var content = contentControl.Content.ThrowIfNull();
+
+                if (content is not DialogControl dialogControl)
+                {
+                    throw new TypeInvalidCastException(typeof(DialogControl), content.GetType());
+                }
+
                 UpdateDialogControl(dialogControl, title, message, background, messages);
 
                 return dialogControl.ShowAsync();
             }
             default:
             {
-                throw new ArgumentException(
-                    $"Unexpected {AvaloniaApplication.Current.ApplicationLifetime}."
+                throw new TypeInvalidCastException(
+                    new[]
+                    {
+                        typeof(IClassicDesktopStyleApplicationLifetime),
+                        typeof(ISingleViewApplicationLifetime)
+                    },
+                    applicationLifetime.GetType()
                 );
             }
         }

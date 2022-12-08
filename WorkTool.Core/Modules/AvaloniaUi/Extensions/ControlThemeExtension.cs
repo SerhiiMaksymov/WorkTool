@@ -7,8 +7,15 @@ public static class ControlThemeExtension
         Type targetType
     ) where TControlTheme : ControlTheme
     {
-        var resource = (ControlTheme)AvaloniaApplication.Current.FindResource(targetType);
+        var avaloniaApplicationCurrent = AvaloniaApplication.Current.ThrowIfNull();
+        var resource = avaloniaApplicationCurrent.FindResource(targetType);
 
-        return target.SetBasedOn(resource);
+        if (resource is ControlTheme controlTheme)
+        {
+            return target.SetBasedOn(controlTheme);
+        }
+
+        resource = resource.ThrowIfNull();
+        throw new TypeInvalidCastException(typeof(ControlTheme), resource.GetType());
     }
 }

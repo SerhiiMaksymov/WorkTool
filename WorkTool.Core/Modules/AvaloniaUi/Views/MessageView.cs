@@ -22,7 +22,9 @@ public class MessageView : ReactiveMessageControl<ViewModelBase>
 
     public ICommand CreateCommand(Delegate @delegate)
     {
-        return ViewModel.CreateCommand(async () =>
+        var currentViewModel = ViewModel.ThrowIfNull();
+
+        return currentViewModel.CreateCommand(async () =>
         {
             var result = invoker.Invoke(
                 @delegate,

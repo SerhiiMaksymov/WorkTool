@@ -3,7 +3,7 @@
 public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTemplatedControlContext>
 {
     private readonly Dictionary<Type, Func<object, PropertyInfo, IObjectValue>> typeMatchs;
-    private Func<object, PropertyInfo, IObjectValue> defaultView;
+    private Func<object, PropertyInfo, IObjectValue>? defaultView;
 
     public PropertyInfoItemsControlContextBuilder()
     {
@@ -12,7 +12,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
 
     public PropertyInfoTemplatedControlContext Build()
     {
-        return new PropertyInfoTemplatedControlContext(typeMatchs, defaultView);
+        return new PropertyInfoTemplatedControlContext(typeMatchs, defaultView.ThrowIfNull());
     }
 
     public PropertyInfoItemsControlContextBuilder SetDefaultView(
@@ -53,7 +53,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                         SetupContextMenu<string>(uiContext)
                     )
                     {
-                        Value = (string)property.GetValue(obj),
+                        Value = (string?)property.GetValue(obj),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -63,7 +63,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new Int16PropertyInfoTemplatedControl
                     {
-                        Value = (short)property.GetValue(obj),
+                        Value = (short)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -73,7 +73,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new UInt16PropertyInfoTemplatedControl
                     {
-                        Value = (ushort)property.GetValue(obj),
+                        Value = (ushort)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -83,7 +83,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new UInt32PropertyInfoTemplatedControl
                     {
-                        Value = (uint)property.GetValue(obj),
+                        Value = (uint)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -93,7 +93,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new UInt64PropertyInfoTemplatedControl
                     {
-                        Value = (ulong)property.GetValue(obj),
+                        Value = (ulong)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -103,7 +103,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new Int64PropertyInfoTemplatedControl
                     {
-                        Value = (long)property.GetValue(obj),
+                        Value = (long)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -113,7 +113,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new Int32PropertyInfoTemplatedControl
                     {
-                        Value = (int)property.GetValue(obj),
+                        Value = (int)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -123,7 +123,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new BytePropertyInfoTemplatedControl
                     {
-                        Value = (byte)property.GetValue(obj),
+                        Value = (byte)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -133,7 +133,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new SBytePropertyInfoTemplatedControl
                     {
-                        Value = (sbyte)property.GetValue(obj),
+                        Value = (sbyte)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -143,7 +143,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new BooleanPropertyInfoTemplatedControl
                     {
-                        Value = (bool)property.GetValue(obj),
+                        Value = (bool)(property.GetValue(obj) ?? false),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -153,7 +153,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new DoublePropertyInfoTemplatedControl
                     {
-                        Value = (double)property.GetValue(obj),
+                        Value = (double)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -163,7 +163,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 (obj, property) =>
                     new DecimalPropertyInfoTemplatedControl
                     {
-                        Value = (decimal)property.GetValue(obj),
+                        Value = (decimal)(property.GetValue(obj) ?? 0),
                         Object = obj,
                         PropertyInfo = property,
                         Title = $"{property.Name}[{property.PropertyType}]"
@@ -214,10 +214,22 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
                 .GetObservable(PropertyInfoTemplatedControl<TValue, TextBox>.PropertyInfoProperty)
                 .Subscribe(_ =>
                 {
-                    var defaultValues = uiContext.GetDefaultValues(
-                        property.Object.GetType(),
-                        property.PropertyInfo
-                    );
+                    var obj = property.Object;
+                    var propertyInfo = property.PropertyInfo;
+
+                    if (obj is null)
+                    {
+                        return;
+                    }
+
+                    if (propertyInfo is null)
+                    {
+                        return;
+                    }
+
+                    var defaultValues = uiContext
+                        .GetDefaultValues(obj.GetType(), propertyInfo)
+                        .ToArray();
 
                     if (defaultValues.IsEmpty())
                     {
@@ -226,7 +238,7 @@ public class PropertyInfoItemsControlContextBuilder : IBuilder<PropertyInfoTempl
 
                     var menuFlyout = new MenuFlyout().AddItems(control.CreateDefaultMenuItems());
 
-                    if (control.ContextFlyout is MenuFlyout controlContextFlyout)
+                    if (control.ContextFlyout is MenuFlyout)
                     {
                         control.ContextFlyout = menuFlyout;
                     }

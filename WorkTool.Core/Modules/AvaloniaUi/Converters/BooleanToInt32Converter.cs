@@ -2,20 +2,20 @@
 
 public class BooleanToInt32Converter : IValueConverter
 {
-    private readonly int _falseValue;
-    private readonly int _trueValue;
+    private readonly int falseValue;
+    private readonly int trueValue;
 
     public BooleanToInt32Converter(int trueValue, int falseValue)
     {
-        _trueValue = trueValue;
-        _falseValue = falseValue;
+        this.trueValue = trueValue;
+        this.falseValue = falseValue;
     }
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (targetType == typeof(int) && value is bool booleanValue)
         {
-            return booleanValue ? _trueValue : _falseValue;
+            return booleanValue ? trueValue : falseValue;
         }
 
         return value;
@@ -33,12 +33,12 @@ public class BooleanToInt32Converter : IValueConverter
             return value;
         }
 
-        if (int32Value == _falseValue)
+        if (int32Value == falseValue)
         {
             return false;
         }
 
-        if (int32Value == _trueValue)
+        if (int32Value == trueValue)
         {
             return true;
         }

@@ -12,11 +12,11 @@ public class RandomArrayItem<TValue> : IRandomArrayItem<TValue>
         this.includeDefault = includeDefault;
     }
 
-    public TValue GetRandom(TValue[] values)
+    public TValue? GetRandom(TValue[] values)
     {
         if (values.Length == 0)
         {
-            return includeDefault ? default : throw new Exception("Empty array.");
+            return includeDefault ? default : throw new EmptyEnumerableException(nameof(values));
         }
 
         var min = includeDefault ? -1 : 0;

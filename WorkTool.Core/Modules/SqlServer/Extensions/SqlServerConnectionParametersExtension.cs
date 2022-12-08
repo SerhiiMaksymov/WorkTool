@@ -4,8 +4,6 @@ public static class SqlServerConnectionParametersExtension
 {
     public static SqlConnection ToDbConnection(this SqlServerConnectionParameters connection)
     {
-        var connectionString = connection.GetConnectionString();
-
         return connection.ToDbConnection<SqlServerConnectionParameters, SqlConnection>();
     }
 
@@ -18,8 +16,8 @@ public static class SqlServerConnectionParametersExtension
 
         var result = await dDConnection.GetTableStringAsync<SqlCommand, SqlConnection>(
             query,
-            AdoDotNetConstants.DefaultRowSeparator,
-            AdoDotNetConstants.DefaultPadding
+            Constants.DefaultRowSeparator,
+            Constants.DefaultPadding
         );
 
         return result;
@@ -35,7 +33,7 @@ public static class SqlServerConnectionParametersExtension
         return await dDConnection.ExecuteNonQueryAsync<SqlCommand, SqlConnection>(query);
     }
 
-    public static async Task<object> ExecuteScalarAsync(
+    public static async Task<object?> ExecuteScalarAsync(
         this SqlServerConnectionParameters connection,
         string query
     )
@@ -45,7 +43,7 @@ public static class SqlServerConnectionParametersExtension
         return await dDConnection.ExecuteScalarAsync<SqlCommand, SqlConnection>(query);
     }
 
-    public static async Task<object> ExecuteScalarAsync(
+    public static async Task<object?> ExecuteScalarAsync(
         this SqlServerConnectionParameters connection,
         string query,
         IEnumerable<SqlParameter> parameters

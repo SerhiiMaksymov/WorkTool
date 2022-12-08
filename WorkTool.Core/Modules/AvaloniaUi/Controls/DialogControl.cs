@@ -16,6 +16,11 @@ public class DialogControl : ContentControl, IDialogView
     >(nameof(IsVisibleDialog));
     private TaskCompletionSource<bool> taskCompletionSource;
 
+    public DialogControl()
+    {
+        taskCompletionSource = new TaskCompletionSource<bool>();
+    }
+
     public object Dialog
     {
         get => GetValue(DialogProperty);
@@ -41,7 +46,7 @@ public class DialogControl : ContentControl, IDialogView
             }
             else
             {
-                taskCompletionSource?.TrySetResult(value);
+                taskCompletionSource.TrySetResult(value);
             }
         }
     }

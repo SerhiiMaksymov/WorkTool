@@ -1,26 +1,39 @@
 ﻿namespace WorkTool.Core.Modules.Graph.Services;
 
-public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey : notnull
+public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue?>> where TKey : notnull
 {
-    private TreeNodeBuilder<TKey, TValue> root;
+    private TreeNodeBuilder<TKey, TValue?>? root;
 
-    public TreeNodeBuilder<TKey, TValue> Root
+    public TreeNodeBuilder<TKey, TValue?>? Root
     {
         get => root;
         set
         {
             root = value;
+
+            if (root is null)
+            {
+                return;
+            }
+
             root.Parent = null;
         }
     }
 
-    public TreeNodeBuilder<TKey, TValue> this[TKey key]
+    public TreeNodeBuilder<TKey, TValue?>? this[TKey key]
     {
         get
         {
             if (Root is null)
             {
-                Root = new TreeNodeBuilder<TKey, TValue> { Key = key };
+                Root = new TreeNodeBuilder<TKey, TValue?> { Key = key };
+
+                return Root;
+            }
+
+            if (Root.Key is null)
+            {
+                Root.Key = key;
 
                 return Root;
             }
@@ -30,25 +43,38 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
                 return Root;
             }
 
-            Root = new TreeNodeBuilder<TKey, TValue> { Key = key };
+            Root = new TreeNodeBuilder<TKey, TValue?> { Key = key };
 
             return Root;
         }
         set
         {
             Root = value;
+
+            if (Root is null)
+            {
+                return;
+            }
+
             Root.Parent = null;
             Root.Key = key;
         }
     }
 
-    public TreeNodeBuilder<TKey, TValue> this[TKey key, TValue defaultValue]
+    public TreeNodeBuilder<TKey, TValue?>? this[TKey key, TValue defaultValue]
     {
         get
         {
             if (Root is null)
             {
-                Root = new TreeNodeBuilder<TKey, TValue> { Key = key, Value = defaultValue };
+                Root = new TreeNodeBuilder<TKey, TValue?> { Key = key, Value = defaultValue };
+
+                return Root;
+            }
+
+            if (Root.Key is null)
+            {
+                Root.Key = key;
 
                 return Root;
             }
@@ -58,13 +84,13 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
                 return Root;
             }
 
-            Root = new TreeNodeBuilder<TKey, TValue> { Key = key, Value = defaultValue };
+            Root = new TreeNodeBuilder<TKey, TValue?> { Key = key, Value = defaultValue };
 
             return Root;
         }
     }
 
-    public TreeNodeBuilder<TKey, TValue> this[TValue defaultValue, params TKey[] keys]
+    public TreeNodeBuilder<TKey, TValue?>? this[TValue defaultValue, params TKey[] keys]
     {
         get
         {
@@ -77,7 +103,7 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
 
             foreach (var key in keys[1..])
             {
-                currentNode = currentNode[key, defaultValue];
+                currentNode = currentNode?[key, defaultValue];
             }
 
             return currentNode;
@@ -98,12 +124,18 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
                 return;
             }
 
-            var root = this[keys[0], defaultValue];
-            root[defaultValue, keys[1..]] = value;
+            var newRoot = this[keys[0], defaultValue];
+
+            if (newRoot is null)
+            {
+                return;
+            }
+
+            newRoot[defaultValue, keys[1..]] = value;
         }
     }
 
-    public TreeNodeBuilder<TKey, TValue> this[params TKey[] keys]
+    public TreeNodeBuilder<TKey, TValue?>? this[params TKey[] keys]
     {
         get
         {
@@ -116,7 +148,7 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
 
             foreach (var key in keys[1..])
             {
-                currentNode = currentNode[key];
+                currentNode = currentNode?[key];
             }
 
             return currentNode;
@@ -137,15 +169,21 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey
                 return;
             }
 
-            var root = this[keys[0]];
-            root[keys[1..]] = value;
+            var newRoot = this[keys[0]];
+
+            if (newRoot is null)
+            {
+                return;
+            }
+
+            newRoot[keys[1..]] = value;
         }
     }
 
-    public Tree<TKey, TValue> Build()
+    public Tree<TKey, TValue?> Build()
     {
-        var root = this.root.Build();
+        var newRoot = root.ThrowIfNull().Build();
 
-        return new Tree<TKey, TValue>(root);
+        return new Tree<TKey, TValue?>(newRoot);
     }
 }

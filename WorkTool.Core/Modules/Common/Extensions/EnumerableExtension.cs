@@ -2,12 +2,9 @@
 
 public static class EnumerableExtension
 {
-    public static object ElementAt(this IEnumerable? items, int index)
+    public static object? ElementAt(this IEnumerable items, int index)
     {
-        Contract.Requires<ArgumentNullException>(items is not null);
-        var list = items as IList;
-
-        if (list != null)
+        if (items is IList list)
         {
             return list[index];
         }
@@ -15,16 +12,11 @@ public static class EnumerableExtension
         return Enumerable.ElementAt(items.Cast<object>(), index);
     }
 
-    public static int Count(this IEnumerable? items)
+    public static int Count(this IEnumerable items)
     {
         if (TryGetCountFast(items, out var count))
         {
             return count;
-        }
-
-        if (items is not null)
-        {
-            return Enumerable.Count(items.Cast<object>());
         }
 
         return 0;
@@ -60,14 +52,15 @@ public static class EnumerableExtension
     }
 
     public static IEnumerable<TItem> ThrowIfNullOrEmpty<TItem>(
-        this IEnumerable<TItem> enumerable,
+        this IEnumerable<TItem>? enumerable,
         [CallerArgumentExpression("enumerable")] string paramName = ""
     )
     {
-        enumerable.ThrowIfNull(paramName);
-        enumerable.ThrowIfEmpty(paramName);
+        var array = enumerable.ThrowIfNull().ToArray();
+        array.ThrowIfNull(paramName);
+        array.ThrowIfEmpty(paramName);
 
-        return enumerable;
+        return array;
     }
 
     public static IEnumerable<TItem> ThrowIfEmpty<TItem>(
@@ -75,7 +68,9 @@ public static class EnumerableExtension
         [CallerArgumentExpression("enumerable")] string paramName = ""
     )
     {
-        return enumerable.IsEmpty() ? throw new EmptyEnumerableException(paramName) : enumerable;
+        var array = enumerable.ToArray();
+
+        return array.IsEmpty() ? throw new EmptyEnumerableException(paramName) : array;
     }
 
     public static string JoinString<TEnumerable>(this TEnumerable enumerable, string separator)
@@ -102,7 +97,7 @@ public static class EnumerableExtension
 
         foreach (var item in items)
         {
-            var values = new object[props.Length];
+            var values = new object?[props.Length];
 
             for (var i = 0; i < props.Length; i++)
             {

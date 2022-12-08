@@ -15,13 +15,11 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
 
     public void AddMenuItem(TreeNode<string, MenuItemContext> node)
     {
-        var contextFlyout = ContextFlyout as MenuFlyout;
-
         if (ContextFlyout is null)
         {
-            contextFlyout = new MenuFlyout();
+            var menuFlyout = new MenuFlyout();
 
-            contextFlyout
+            menuFlyout
                 .AddItem(
                     new MenuItem()
                         .SetHeader("Cut")
@@ -61,9 +59,17 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
                             )
                         )
                 );
+
+            ContextFlyout = menuFlyout;
         }
 
         var menuItem = ToMenuItem(node);
+
+        if (ContextFlyout is not MenuFlyout contextFlyout)
+        {
+            throw new TypeInvalidCastException(typeof(MenuFlyout), ContextFlyout.GetType());
+        }
+
         contextFlyout.AddItem(menuItem);
     }
 
@@ -95,17 +101,15 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
 
     private MenuItem AddCommand(MenuItem menuItem, TreeNode<string, MenuItemContext> node)
     {
-        if (node.Value.Task is null)
-        {
-            return menuItem;
-        }
+        var currentViewModel = ViewModel.ThrowIfNull();
 
-        var command = ViewModel.CreateCommand(async () =>
+        var command = currentViewModel.CreateCommand(async () =>
         {
             var arguments = new List<ArgumentValue> { new(GetType(), this) };
 
             arguments.AddRange(parameters);
-            var result = invoker.Invoke(node.Value.Task, arguments);
+            var @delegate = node.Value.Task.ThrowIfNull();
+            var result = invoker.Invoke(@delegate, arguments);
 
             if (result is Task task)
             {

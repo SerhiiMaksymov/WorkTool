@@ -2,7 +2,7 @@
 
 public static class TypeExtension
 {
-    public static object GetDefaultValue(this Type type)
+    public static object? GetDefaultValue(this Type type)
     {
         if (type.IsValueType)
         {

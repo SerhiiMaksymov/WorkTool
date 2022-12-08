@@ -40,7 +40,9 @@ public static class ResourceLoaderHelper
                 continue;
             }
 
-            yield return (IResourceProvider)property.GetValue(null);
+            var value = property.GetValue(null).ThrowIfNull();
+
+            yield return (IResourceProvider)value;
         }
 
         foreach (var field in fields)
@@ -52,7 +54,9 @@ public static class ResourceLoaderHelper
                 continue;
             }
 
-            yield return (IResourceProvider)field.GetValue(null);
+            var value = field.GetValue(null).ThrowIfNull();
+
+            yield return (IResourceProvider)value;
         }
     }
 }

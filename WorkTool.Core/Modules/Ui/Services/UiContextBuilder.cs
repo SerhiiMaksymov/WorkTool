@@ -45,8 +45,8 @@ public class UiContextBuilder : IBuilder<UiContext>
         var keyboardKeyBindings = BuildKeyboardKeyBindings();
         var commands = BuildCommands();
         var contextMenu = BuildContextMenu();
-        var children = BuildChildren();
-        var propertyDefaultValues = BuildPropertyDefaultValues();
+        var newChildren = BuildChildren();
+        var newPropertyDefaultValues = BuildPropertyDefaultValues();
 
         return new UiContext(
             contents,
@@ -54,8 +54,8 @@ public class UiContextBuilder : IBuilder<UiContext>
             keyboardKeyBindings,
             commands,
             contextMenu,
-            children,
-            propertyDefaultValues
+            newChildren,
+            newPropertyDefaultValues
         );
     }
 
@@ -75,14 +75,10 @@ public class UiContextBuilder : IBuilder<UiContext>
     {
         var lambdaExpression = (LambdaExpression)expression;
         var memberExpression = (MemberExpression)lambdaExpression.Body;
-        var property = memberExpression.Member.DeclaringType.GetProperty(
-            memberExpression.Member.Name
-        );
+        var declaringType = memberExpression.Member.DeclaringType.ThrowIfNull();
+        var property = declaringType.GetProperty(memberExpression.Member.Name).ThrowIfNull();
 
-        return AddPropertyDefaultValues(
-            new ClassPropertyPath(memberExpression.Member.DeclaringType, property),
-            values
-        );
+        return AddPropertyDefaultValues(new ClassPropertyPath(declaringType, property), values);
     }
 
     public UiContextBuilder AddPropertyDefaultValues(
@@ -118,7 +114,9 @@ public class UiContextBuilder : IBuilder<UiContext>
         return this;
     }
 
-    public UiContextBuilder AddChild<TChildrenView, TChild>() where TChildrenView : IChildrenView
+    public UiContextBuilder AddChild<TChildrenView, TChild>()
+        where TChildrenView : IChildrenView
+        where TChild : notnull
     {
         if (!children.ContainsKey(typeof(TChildrenView)))
         {
@@ -138,7 +136,9 @@ public class UiContextBuilder : IBuilder<UiContext>
         return this;
     }
 
-    public UiContextBuilder SetContent<TContentView, TContent>() where TContentView : IContentView
+    public UiContextBuilder SetContent<TContentView, TContent>()
+        where TContentView : IContentView
+        where TContent : notnull
     {
         contents[typeof(TContentView)] = () => resolver.Resolve<TContent>();
 
@@ -458,7 +458,11 @@ public class UiContextBuilder : IBuilder<UiContext>
     private Delegate CreateTabItemFunction(Type tabControlViewType, TabItemContext context)
     {
         var tabControlViewParameter = Expression.Parameter(tabControlViewType);
-        var method = typeof(ITabControlView).GetMethod(nameof(ITabControlView.AddTabItem));
+        
+        var method = typeof(ITabControlView)
+            .GetMethod(nameof(ITabControlView.AddTabItem))
+            .ThrowIfNull();
+        
         var contextConstant = Expression.Constant(context);
         var call = Expression.Call(tabControlViewParameter, method, contextConstant);
 
@@ -468,7 +472,7 @@ public class UiContextBuilder : IBuilder<UiContext>
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>(
         string functionName,
         Func<object> header
-    ) where TTabControlView : ITabControlView
+    ) where TTabControlView : ITabControlView where TContent : notnull
     {
         return AddTabItemFunction<TTabControlView>(
             functionName,
@@ -478,7 +482,7 @@ public class UiContextBuilder : IBuilder<UiContext>
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>(Func<object> header)
-        where TTabControlView : ITabControlView
+        where TTabControlView : ITabControlView where TContent : notnull
     {
         var functionName = NameHelper.GetNameAddTabItemFunction(
             typeof(TTabControlView),
@@ -493,7 +497,7 @@ public class UiContextBuilder : IBuilder<UiContext>
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>()
-        where TTabControlView : ITabControlView
+        where TTabControlView : ITabControlView where TContent : notnull
     {
         return AddTabItemFunction<TTabControlView, TContent>(
             () => NameHelper.GetNameAddTabItemFunction(typeof(TTabControlView), typeof(TContent))
@@ -719,7 +723,7 @@ public class UiContextBuilder : IBuilder<UiContext>
         return result;
     }
 
-    private MenuItemContext CreateMenuItem(Delegate task, Func<object> value)
+    private MenuItemContext CreateMenuItem(Delegate? task, Func<object> value)
     {
         if (task is null)
         {
@@ -759,11 +763,11 @@ public class UiContextBuilder : IBuilder<UiContext>
             return;
         }
 
-        var currentNode = item;
+        TreeNodeBuilder<string, MenuItemContext?> currentNode = item!;
 
         foreach (var key in menuPath[1..^1])
         {
-            currentNode = currentNode[key.Key];
+            currentNode = currentNode[key.Key].ThrowIfNull();
 
             if (currentNode.Value is null)
             {
@@ -772,7 +776,8 @@ public class UiContextBuilder : IBuilder<UiContext>
         }
 
         var last = menuPath.Last();
-        currentNode[last.Key].Value = CreateMenuItem(task, last.Value);
+        var node = currentNode[last.Key].ThrowIfNull();
+        node.Value = CreateMenuItem(task, last.Value);
     }
 
     private IEnumerable<KeyValuePair<string, Func<object>>> GetMenuPath(string[] path)

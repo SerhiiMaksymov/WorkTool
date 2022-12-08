@@ -37,7 +37,7 @@ public static class DataTableExtension
         for (var rowIndex = 0; rowIndex < valueRows.Length; rowIndex++)
         {
             var valuesRow = columnNames
-                .Select(x => valueRows[rowIndex][x]?.ToString() ?? string.Empty)
+                .Select(x => valueRows[rowIndex][x].ToString() ?? string.Empty)
                 .ToArray();
             values[rowIndex] = new string[columnNames.Length];
 
@@ -53,10 +53,8 @@ public static class DataTableExtension
 
         for (var index = 0; index < formatColumnNames.Length; index++)
         {
-            formatColumnNames[index] = string.Format(
-                "{0," + (-maxLengths[index] + padding) + "}",
-                columnNames[index]
-            );
+            var template = $"{{0,{-maxLengths[index] + padding}}}";
+            formatColumnNames[index] = string.Format(template, columnNames[index]);
         }
 
         var formatRows = new string[valueRows.Length];
@@ -70,7 +68,8 @@ public static class DataTableExtension
                 formatRow.Add("{" + columnIndex + "," + (-maxLengths[columnIndex] + padding) + "}");
             }
 
-            formatRows[rowIndex] = string.Format(formatRow.JoinString(""), values[rowIndex]);
+            var @params = values[rowIndex].Cast<object>();
+            formatRows[rowIndex] = string.Format(formatRow.JoinString(""), @params);
         }
 
         var result =

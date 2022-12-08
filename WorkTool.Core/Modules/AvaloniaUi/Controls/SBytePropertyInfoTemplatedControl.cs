@@ -13,7 +13,7 @@ public class SBytePropertyInfoTemplatedControl : PropertyInfoTemplatedControl<sb
             {
                 control
                     .GetObservable(NumericUpDown.ValueProperty)
-                    .Subscribe(x => property.Value = (sbyte)x);
+                    .Subscribe(x => property.Value = x.HasValue ? (sbyte)x.Value : (sbyte)0);
 
                 property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
             }

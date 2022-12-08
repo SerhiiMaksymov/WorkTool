@@ -17,7 +17,7 @@ public static class DbDataReaderExtension
     {
         for (var index = 0; index < reader.FieldCount; index++)
         {
-            yield return reader.GetName(index) ?? string.Empty;
+            yield return reader.GetName(index);
         }
     }
 
@@ -28,7 +28,7 @@ public static class DbDataReaderExtension
 
         for (var index = 0; index < reader.FieldCount; index++)
         {
-            result.Add(reader.GetValue(index)?.ToString() ?? string.Empty);
+            result.Add(reader.GetValue(index).ToString() ?? string.Empty);
         }
 
         return result;
@@ -156,10 +156,8 @@ public static class DbDataReaderExtension
 
         for (var index = 0; index < formatColumnNames.Length; index++)
         {
-            formatColumnNames[index] = string.Format(
-                "{0," + (-maxLengths[index] + padding) + "}",
-                columnNames[index]
-            );
+            var template = $"{{0,{-maxLengths[index] + padding}}}";
+            formatColumnNames[index] = string.Format(template, columnNames[index]);
         }
 
         var formatRows = new string[valueRows.Length];
@@ -173,7 +171,10 @@ public static class DbDataReaderExtension
                 formatRow.Add("{" + columnIndex + "," + (-maxLengths[columnIndex] + padding) + "}");
             }
 
-            formatRows[rowIndex] = string.Format(formatRow.JoinString(""), values[rowIndex]);
+            formatRows[rowIndex] = string.Format(
+                formatRow.JoinString(""),
+                values[rowIndex].Cast<object>()
+            );
         }
 
         return $"{formatColumnNames.JoinString("")}{rowSeparator}{formatRows.JoinString(Environment.NewLine)}";

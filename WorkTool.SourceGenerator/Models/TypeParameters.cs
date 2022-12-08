@@ -90,7 +90,7 @@ public readonly struct TypeParameters : IEquatable<TypeParameters>, IEquatable<I
 
         for (var index = 0; index < generics.Count; index++)
         {
-            if (!generics[index].Equals(other.generics))
+            if (!generics[index].Equals(other.generics[index]))
             {
                 return false;
             }

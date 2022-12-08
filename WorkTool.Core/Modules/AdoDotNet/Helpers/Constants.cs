@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.AdoDotNet.Helpers;
 
-public static class AdoDotNetConstants
+public static class Constants
 {
     public const int DefaultPadding = 2;
     public const uint DefaultTimeout = 30;

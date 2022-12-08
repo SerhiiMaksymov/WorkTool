@@ -42,11 +42,23 @@ public class FluentObjectGenerator : ISourceGenerator
                 return;
             }
 
-            foreach (var type in receiver.Items)
+            foreach (var fluentObjectParameters in receiver.Items)
             {
-                var semanticModel = compilation.GetSemanticModel(type.Type.SyntaxTree);
+                var semanticModel = compilation.GetSemanticModel(
+                    fluentObjectParameters.Type.SyntaxTree
+                );
+                var typeInfo = semanticModel.GetTypeInfo(fluentObjectParameters.Type);
+                Log.Send.SendAsync(
+                    $"Fluent Object: {typeInfo.Type.ThrowIfNull().Name}",
+                    context.CancellationToken
+                );
                 var @namespace = compilation.Assembly.MetadataName.ToNamespace();
-                var extension = semanticModel.GetFluentExtension(type, @namespace);
+                var extension = semanticModel.GetFluentExtension(
+                    fluentObjectParameters,
+                    typeInfo,
+                    @namespace,
+                    context.CancellationToken
+                );
                 var text = extension.ToString();
                 var name = this.GetGeneratedName(extension.Type.Name, index++);
                 context.AddSource(name, text);

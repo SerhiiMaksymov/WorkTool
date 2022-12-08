@@ -15,8 +15,8 @@ public static class TypeSymbolExtension
                 .GetAttributes()
                 .FirstOrDefault(
                     x =>
-                        x.AttributeClass.MetadataName.Equals(nameof(PartPropertyAttribute))
-                        && x.ConstructorArguments[0].Value.Equals(parameters.Name)
+                        x.AttributeClass.ThrowIfNull().MetadataName.Equals(nameof(PartPropertyAttribute))
+                        && x.ConstructorArguments[0].Value.ThrowIfNull().Equals(parameters.Name)
                 );
 
             if (partPropertyAttribute is null)
@@ -49,7 +49,7 @@ public static class TypeSymbolExtension
 
     public static NamespaceOptions ToNamespaceOptions(this ITypeSymbol type)
     {
-        return type.ContainingSymbol.ToString().ToNamespace();
+        return type.ContainingSymbol.ToString().ThrowIfNull().ToNamespace();
     }
 
     public static IEnumerable<MethodParameters> GetObjectOptionsMethods(
@@ -251,7 +251,7 @@ public static class TypeSymbolExtension
 
             yield return new PropertyParameters(
                 property.Name,
-                property.GetMethod.ReturnType.ToTypeParameters(),
+                property.GetMethod.ThrowIfNull().ReturnType.ToTypeParameters(),
                 AccessModifier.Public,
                 new PropertyGetterOptions(),
                 null,
@@ -281,13 +281,13 @@ public static class TypeSymbolExtension
                 continue;
             }
 
-            if (property.GetMethod.ReturnType.Name.EndsWith(nameof(GenericMark)))
+            if (property.GetMethod.ThrowIfNull().ReturnType.Name.EndsWith(nameof(GenericMark)))
             {
                 yield return new PropertyParameters(
                     property.Name,
                     new TypeParameters(
                         null,
-                        property.GetMethod.OriginalDefinition.ReturnType.Name,
+                        property.GetMethod.ThrowIfNull().OriginalDefinition.ReturnType.Name,
                         Enumerable.Empty<TypeParameters>()
                     ),
                     AccessModifier.Public,
@@ -300,7 +300,7 @@ public static class TypeSymbolExtension
             {
                 yield return new PropertyParameters(
                     property.Name,
-                    property.GetMethod.ReturnType.ToTypeParameters(),
+                    property.GetMethod.ThrowIfNull().ReturnType.ToTypeParameters(),
                     AccessModifier.Public,
                     new PropertyGetterOptions(),
                     null,
@@ -315,6 +315,7 @@ public static class TypeSymbolExtension
         IEnumerable<PropertyParameters> properties
     )
     {
+        properties = properties.ToArray();
         var typeParameters = type.ToTypeParameters(type.Name.OptionsTypeNameToModelTypeName());
 
         yield return new ConstructorParameters(
@@ -396,7 +397,7 @@ return {
 
             if (property.Type.TypeKind == TypeKind.Enum)
             {
-                var namedTypeSymbol = property.Type as INamedTypeSymbol;
+                var namedTypeSymbol = property.Type.ThrowIfIsNot<INamedTypeSymbol>();
 
                 foreach (var memberName in namedTypeSymbol.MemberNames)
                 {
@@ -450,7 +451,7 @@ return {
                 continue;
             }
 
-            var collectionType = property.GetMethod.ReturnType.GetCollectionType();
+            var collectionType = property.GetMethod.ThrowIfNull().ReturnType.GetCollectionType();
 
             if (collectionType is null)
             {

@@ -2,7 +2,7 @@
 
 public class CollectionChangedEventManager
 {
-    private readonly ConditionalWeakTable<INotifyCollectionChanged, Entry> _entries = new();
+    private readonly ConditionalWeakTable<INotifyCollectionChanged, Entry> entries = new();
     public static CollectionChangedEventManager Instance { get; } = new();
 
     private CollectionChangedEventManager() { }
@@ -16,10 +16,10 @@ public class CollectionChangedEventManager
         listener = listener ?? throw new ArgumentNullException(nameof(listener));
         Dispatcher.UIThread.VerifyAccess();
 
-        if (!_entries.TryGetValue(collection, out var entry))
+        if (!entries.TryGetValue(collection, out var entry))
         {
             entry = new Entry(collection);
-            _entries.Add(collection, entry);
+            entries.Add(collection, entry);
         }
 
         foreach (var l in entry.Listeners)
@@ -44,7 +44,7 @@ public class CollectionChangedEventManager
         listener = listener ?? throw new ArgumentNullException(nameof(listener));
         Dispatcher.UIThread.VerifyAccess();
 
-        if (!_entries.TryGetValue(collection, out var entry))
+        if (!entries.TryGetValue(collection, out var entry))
         {
             throw new InvalidOperationException(
                 "Collection listener not registered for this collection/listener combination."
@@ -68,7 +68,7 @@ public class CollectionChangedEventManager
             }
 
             entry.Dispose();
-            _entries.Remove(collection);
+            entries.Remove(collection);
 
             return;
         }
@@ -80,20 +80,20 @@ public class CollectionChangedEventManager
 
     private class Entry : IWeakEventSubscriber<NotifyCollectionChangedEventArgs>, IDisposable
     {
-        private readonly INotifyCollectionChanged _collection;
+        private readonly INotifyCollectionChanged collection;
 
         public List<WeakReference<ICollectionChangedListener>> Listeners { get; }
 
         public Entry(INotifyCollectionChanged collection)
         {
-            _collection = collection;
+            this.collection = collection;
             Listeners = new List<WeakReference<ICollectionChangedListener>>();
-            WeakEvents.CollectionChanged.Subscribe(_collection, this);
+            WeakEvents.CollectionChanged.Subscribe(this.collection, this);
         }
 
         public void Dispose()
         {
-            WeakEvents.CollectionChanged.Unsubscribe(_collection, this);
+            WeakEvents.CollectionChanged.Unsubscribe(collection, this);
         }
 
         void IWeakEventSubscriber<NotifyCollectionChangedEventArgs>.OnEvent(
@@ -137,12 +137,12 @@ public class CollectionChangedEventManager
 
             if (Dispatcher.UIThread.CheckAccess())
             {
-                Notify(_collection, e, l);
+                Notify(collection, e, l);
             }
             else
             {
                 var eCapture = e;
-                Dispatcher.UIThread.Post(() => Notify(_collection, eCapture, l));
+                Dispatcher.UIThread.Post(() => Notify(collection, eCapture, l));
             }
         }
     }

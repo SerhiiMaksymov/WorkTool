@@ -9,7 +9,7 @@ public static class SemanticModelExtension
     )
     {
         var typeInfo = semanticModel.GetTypeInfo(parameters.Type);
-        var properties = typeInfo.Type.GetPartProperties(parameters);
+        var properties = typeInfo.Type.ThrowIfNull().GetPartProperties(parameters);
 
         return new StructParameters(
             AccessModifier.Public,
@@ -35,7 +35,7 @@ public static class SemanticModelExtension
     )
     {
         var typeInfo = semanticModel.GetTypeInfo(parameters.Type);
-        var properties = typeInfo.Type.GetPartProperties(parameters);
+        var properties = typeInfo.Type.ThrowIfNull().GetPartProperties(parameters);
 
         return new ClassParameters(
             AccessModifier.Public,
@@ -59,12 +59,21 @@ public static class SemanticModelExtension
     public static ClassParameters GetFluentExtension(
         this SemanticModel semanticModel,
         FluentObjectParameters parameters,
-        NamespaceOptions @namespace
+        CodeAnalysisTypeInfo typeInfo,
+        NamespaceOptions @namespace,
+        CancellationToken cancellationToken
     )
     {
-        var type = semanticModel.GetTypeInfo(parameters.Type);
-        var methods = type.Type.GetFluentExtensionMethods();
-        var name = parameters.GetExtensionName(type.Type);
+        Log.Send.SendAsync(@namespace.ToString(), cancellationToken);
+        var type    = typeInfo.Type.ThrowIfNull();
+        var methods = type.GetFluentExtensionMethods().ToArray();
+
+        foreach (var method in methods)
+        {
+            Log.Send.SendAsync(method.Name, cancellationToken);
+        }
+
+        var name = parameters.GetExtensionName(type);
 
         return new ClassParameters(
             AccessModifier.Public,
@@ -81,16 +90,29 @@ public static class SemanticModelExtension
         );
     }
 
+    public static ClassParameters GetFluentExtension(
+        this SemanticModel semanticModel,
+        FluentObjectParameters parameters,
+        NamespaceOptions @namespace,
+        CancellationToken cancellationToken
+    )
+    {
+        var type = semanticModel.GetTypeInfo(parameters.Type);
+
+        return semanticModel.GetFluentExtension(parameters, type, @namespace, cancellationToken);
+    }
+
     public static ClassParameters GetObjectOptions(
         this SemanticModel semanticModel,
         OptionsObjectParameters parameters,
         NamespaceOptions @namespace
     )
     {
-        var type = semanticModel.GetTypeInfo(parameters.Type);
+        var typeInfo = semanticModel.GetTypeInfo(parameters.Type);
+        var type     = typeInfo.Type.ThrowIfNull();
         var name =
-            $"{type.Type.Name}{(parameters.Postfix.IsNullOrWhiteSpace() ? "Options" : parameters.Postfix)}";
-        var properties = type.Type.GetObjectOptionsParameters();
+            $"{type.Name}{(parameters.Postfix.IsNullOrWhiteSpace() ? "Options" : parameters.Postfix)}";
+        var properties = type.GetObjectOptionsParameters();
 
         return new ClassParameters(
             AccessModifier.Public,
@@ -113,13 +135,14 @@ public static class SemanticModelExtension
         NamespaceOptions @namespace
     )
     {
-        var type = semanticModel.GetTypeInfo(parameters.Type);
-        var name = type.Type.Name.OptionsTypeNameToModelTypeName();
-        var properties = type.Type.GetObjectOptionsParameters();
-        var constructors = type.Type.GetObjectOptionsConstructors(properties);
-        var typeParameters = type.Type.ToTypeParameters(name);
-        var genericsTypeParameters = type.Type.GetGenericsParameters();
-        var methods = type.Type.GetObjectOptionsMethods(properties);
+        var typeInfo               = semanticModel.GetTypeInfo(parameters.Type);
+        var type                   = typeInfo.Type.ThrowIfNull();
+        var name                   = type.Name.OptionsTypeNameToModelTypeName();
+        var properties             = type.GetObjectOptionsParameters().ToArray();
+        var constructors           = type.GetObjectOptionsConstructors(properties);
+        var typeParameters         = type.ToTypeParameters(name);
+        var genericsTypeParameters = type.GetGenericsParameters();
+        var methods                = type.GetObjectOptionsMethods(properties);
 
         return new StructParameters(
             AccessModifier.Public,

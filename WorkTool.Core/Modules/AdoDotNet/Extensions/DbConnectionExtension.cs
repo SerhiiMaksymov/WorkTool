@@ -10,7 +10,7 @@ public static class DbConnectionExtension
     {
         return connection.InitCommandAsync<TCommand, TConnection>(
             string.Empty,
-            AdoDotNetConstants.DefaultTimeout
+            Constants.DefaultTimeout
         );
     }
 
@@ -20,7 +20,7 @@ public static class DbConnectionExtension
     {
         return connection.InitCommand<TCommand, TConnection>(
             string.Empty,
-            AdoDotNetConstants.DefaultTimeout
+            Constants.DefaultTimeout
         );
     }
 
@@ -31,10 +31,7 @@ public static class DbConnectionExtension
         where TConnection : DbConnection
         where TCommand : DbCommand, new()
     {
-        return connection.InitCommand<TCommand, TConnection>(
-            query,
-            AdoDotNetConstants.DefaultTimeout
-        );
+        return connection.InitCommand<TCommand, TConnection>(query, Constants.DefaultTimeout);
     }
 
     public static Task<TCommand> InitCommandAsync<TCommand, TConnection>(
@@ -44,10 +41,7 @@ public static class DbConnectionExtension
         where TConnection : DbConnection
         where TCommand : DbCommand, new()
     {
-        return connection.InitCommandAsync<TCommand, TConnection>(
-            query,
-            AdoDotNetConstants.DefaultTimeout
-        );
+        return connection.InitCommandAsync<TCommand, TConnection>(query, Constants.DefaultTimeout);
     }
 
     public static Task<TCommand> InitCommandAsync<TCommand, TConnection>(
@@ -116,8 +110,8 @@ public static class DbConnectionExtension
         where TCommand : DbCommand, new()
     {
         await using var command = await con.InitCommandAsync<TCommand, TConnection>(query);
-        await using var transaction = command.Transaction;
-        await using var connection = command.Connection;
+        await using var transaction = command.Transaction.ThrowIfNull();
+        await using var connection = command.Connection.ThrowIfNull();
 
         try
         {
@@ -134,7 +128,7 @@ public static class DbConnectionExtension
         }
     }
 
-    public static async Task<object> ExecuteScalarAsync<TCommand, TConnection>(
+    public static async Task<object?> ExecuteScalarAsync<TCommand, TConnection>(
         this TConnection con,
         string query
     )
@@ -142,8 +136,8 @@ public static class DbConnectionExtension
         where TCommand : DbCommand, new()
     {
         await using var command = await con.InitCommandAsync<TCommand, TConnection>(query);
-        await using var transaction = command.Transaction;
-        await using var connection = command.Connection;
+        await using var transaction = command.Transaction.ThrowIfNull();
+        await using var connection = command.Connection.ThrowIfNull();
 
         try
         {
@@ -168,8 +162,8 @@ public static class DbConnectionExtension
         where TCommand : DbCommand, new()
     {
         await using var command = await con.InitCommandAsync<TCommand, TConnection>(string.Empty);
-        await using var transaction = command.Transaction;
-        await using var connection = command.Connection;
+        await using var transaction = command.Transaction.ThrowIfNull();
+        await using var connection = command.Connection.ThrowIfNull();
 
         try
         {
@@ -184,7 +178,7 @@ public static class DbConnectionExtension
         }
     }
 
-    public static async Task<object> ExecuteScalarAsync<TCommand, TConnection, TParameter>(
+    public static async Task<object?> ExecuteScalarAsync<TCommand, TConnection, TParameter>(
         this TConnection con,
         string query,
         IEnumerable<TParameter> parameters
@@ -194,8 +188,8 @@ public static class DbConnectionExtension
         where TParameter : DbParameter
     {
         await using var command = await con.InitCommandAsync<TCommand, TConnection>(query);
-        await using var transaction = command.Transaction;
-        await using var connection = command.Connection;
+        await using var transaction = command.Transaction.ThrowIfNull();
+        await using var connection = command.Connection.ThrowIfNull();
         command.Parameters.AddRange(parameters.ToArray());
 
         try
@@ -223,8 +217,8 @@ public static class DbConnectionExtension
         where TParameter : DbParameter
     {
         await using var command = await con.InitCommandAsync<TCommand, TConnection>(query);
-        await using var transaction = command.Transaction;
-        await using var connection = command.Connection;
+        await using var transaction = command.Transaction.ThrowIfNull();
+        await using var connection = command.Connection.ThrowIfNull();
         command.Parameters.AddRange(parameters.ToArray());
 
         try

@@ -1,9 +1,11 @@
 ﻿namespace WorkTool.Core.Modules.Common.Services;
 
-public class ToStringHumanizing<TInput> : IHumanizing<TInput, string>
+public class ToStringHumanizing<TInput> : IHumanizing<TInput, string> where TInput : notnull
 {
     public string Humanize(TInput input)
     {
-        return input?.ToString();
+        var result = input.ToString().ThrowIfNull();
+
+        return result;
     }
 }

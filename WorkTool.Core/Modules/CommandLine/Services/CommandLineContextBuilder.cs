@@ -2,11 +2,10 @@
 
 public sealed class CommandLineContextBuilder : IBuilder<CommandLineContext>
 {
-    private readonly CommandLineContextOptions options;
     private readonly IStreamParser<ICommandLineToken, string> streamParser;
-    private readonly TreeBuilder<string, CommandLineContextItem> treeBuilder;
+    private readonly TreeBuilder<string, CommandLineContextItem?> treeBuilder;
 
-    public TreeNodeBuilder<string, CommandLineContextItem> this[string key]
+    public TreeNodeBuilder<string, CommandLineContextItem?>? this[string key]
     {
         get => treeBuilder[key];
         set => treeBuilder[key] = value;
@@ -14,19 +13,19 @@ public sealed class CommandLineContextBuilder : IBuilder<CommandLineContext>
 
     public TreeNodeBuilder<
         string,
-        CommandLineContextItem
-    > this[string key, CommandLineContextItem defaultValue] => treeBuilder[key, defaultValue];
+        CommandLineContextItem?
+    >? this[string key, CommandLineContextItem defaultValue] => treeBuilder[key, defaultValue];
 
     public TreeNodeBuilder<
         string,
-        CommandLineContextItem
-    > this[CommandLineContextItem defaultValue, params string[] keys]
+        CommandLineContextItem?
+    >? this[CommandLineContextItem defaultValue, params string[] keys]
     {
         get => treeBuilder[defaultValue, keys];
         set => treeBuilder[defaultValue, keys] = value;
     }
 
-    public TreeNodeBuilder<string, CommandLineContextItem> this[params string[] keys]
+    public TreeNodeBuilder<string, CommandLineContextItem?>? this[params string[] keys]
     {
         get => treeBuilder[keys];
         set => treeBuilder[keys] = value;
@@ -35,8 +34,7 @@ public sealed class CommandLineContextBuilder : IBuilder<CommandLineContext>
     public CommandLineContextBuilder(IStreamParser<ICommandLineToken, string> streamParser)
     {
         this.streamParser = streamParser.ThrowIfNull();
-        options = new CommandLineContextOptions();
-        treeBuilder = new TreeBuilder<string, CommandLineContextItem>();
+        treeBuilder = new TreeBuilder<string, CommandLineContextItem?>();
     }
 
     public CommandLineContext Build()
@@ -46,7 +44,7 @@ public sealed class CommandLineContextBuilder : IBuilder<CommandLineContext>
         return new CommandLineContext(
             tree,
             streamParser,
-            new CommandLineContextOptions { RootKey = treeBuilder.Root.Key }
+            new CommandLineContextOptions { RootKey = treeBuilder.Root?.Key }
         );
     }
 }

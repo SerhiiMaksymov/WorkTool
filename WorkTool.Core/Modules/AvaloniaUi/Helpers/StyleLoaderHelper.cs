@@ -43,7 +43,9 @@ public static class StyleLoaderHelper
                 continue;
             }
 
-            yield return (IStyle)property.GetValue(null);
+            var value = property.GetValue(null).ThrowIfNull();
+
+            yield return (IStyle)value;
         }
 
         foreach (var field in fields)
@@ -60,7 +62,9 @@ public static class StyleLoaderHelper
                 continue;
             }
 
-            yield return (IStyle)field.GetValue(null);
+            var value = field.GetValue(null).ThrowIfNull();
+
+            yield return (IStyle)value;
         }
     }
 }

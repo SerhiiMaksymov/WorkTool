@@ -2,16 +2,16 @@
 
 public class RandomInt32 : IRandom<int>
 {
-    private readonly Interval<int> _interval;
+    private readonly Interval<int> interval;
 
     public RandomInt32(Interval<int> interval)
     {
-        _interval = interval;
+        this.interval = interval;
     }
 
     public int GetRandom()
     {
-        var value = CommonConstants.Random.Next(_interval.Min, _interval.Max + 1);
+        var value = CommonConstants.Random.Next(interval.Min, interval.Max + 1);
 
         return value;
     }

@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.Common.Services;
 
-public class FuncHumanizing<TInput> : IHumanizing<TInput, string>
+public class FuncHumanizing<TInput> : IHumanizing<TInput, string> where TInput : notnull
 {
     private readonly Func<TInput, string> func;
 

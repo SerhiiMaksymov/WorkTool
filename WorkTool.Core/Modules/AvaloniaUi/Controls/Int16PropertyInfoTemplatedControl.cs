@@ -13,7 +13,7 @@ public class Int16PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<sh
             {
                 control
                     .GetObservable(NumericUpDown.ValueProperty)
-                    .Subscribe(x => property.Value = (short)x);
+                    .Subscribe(x => property.Value = x.HasValue ? (short)x.Value : (short)0);
 
                 property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
             }

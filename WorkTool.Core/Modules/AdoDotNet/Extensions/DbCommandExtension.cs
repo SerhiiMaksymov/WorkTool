@@ -2,7 +2,7 @@
 
 public static class DbCommandExtension
 {
-    public static async Task<object> ExecuteScalarAsync<TCommand>(
+    public static async Task<object?> ExecuteScalarAsync<TCommand>(
         this TCommand command,
         string query
     ) where TCommand : DbCommand
@@ -15,7 +15,7 @@ public static class DbCommandExtension
         return result;
     }
 
-    public static async Task<object> ExecuteScalarAsync<TCommand, TParameter>(
+    public static async Task<object?> ExecuteScalarAsync<TCommand, TParameter>(
         this TCommand command,
         string query,
         IEnumerable<TParameter> parameters

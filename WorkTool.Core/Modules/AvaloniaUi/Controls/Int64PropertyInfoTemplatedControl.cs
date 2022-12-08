@@ -13,7 +13,7 @@ public class Int64PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<lo
             {
                 control
                     .GetObservable(NumericUpDown.ValueProperty)
-                    .Subscribe(x => property.Value = (long)x);
+                    .Subscribe(x => property.Value = x.HasValue ? (long)x.Value : 0);
 
                 property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
             }

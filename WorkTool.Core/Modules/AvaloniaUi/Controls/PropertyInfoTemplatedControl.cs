@@ -10,26 +10,26 @@ public class PropertyInfoTemplatedControl<TValue, TControl>
 
     public static readonly DirectProperty<
         PropertyInfoTemplatedControl<TValue, TControl>,
-        string
+        string?
     > TitleProperty = AvaloniaProperty.RegisterDirect<
         PropertyInfoTemplatedControl<TValue, TControl>,
-        string
+        string?
     >(nameof(Title), o => o.Title, (o, v) => o.Title = v);
 
     public static readonly DirectProperty<
         PropertyInfoTemplatedControl<TValue, TControl>,
-        PropertyInfo
+        PropertyInfo?
     > PropertyInfoProperty = AvaloniaProperty.RegisterDirect<
         PropertyInfoTemplatedControl<TValue, TControl>,
-        PropertyInfo
+        PropertyInfo?
     >(nameof(PropertyInfo), o => o.PropertyInfo, (o, v) => o.PropertyInfo = v);
 
     public static readonly DirectProperty<
-        PropertyInfoTemplatedControl<TValue, TControl>,
-        TValue
+        PropertyInfoTemplatedControl<TValue?, TControl>,
+        TValue?
     > ValueProperty = AvaloniaProperty.RegisterDirect<
-        PropertyInfoTemplatedControl<TValue, TControl>,
-        TValue
+        PropertyInfoTemplatedControl<TValue?, TControl>,
+        TValue?
     >(nameof(Value), o => o.Value, (o, v) => o.Value = v);
     private readonly Action<
         PropertyInfoTemplatedControl<TValue, TControl>,
@@ -38,29 +38,31 @@ public class PropertyInfoTemplatedControl<TValue, TControl>
         TextBlock
     > onApplyTemplate;
     private readonly CompositeDisposable compositeDisposable;
-    private TControl control;
-    private object @object;
-    private PropertyInfo propertyInfo;
-    private TextBlock textBlock;
-    private string title;
-    private TValue value;
+    private TControl? control;
+    private object? @object;
+    private PropertyInfo? propertyInfo;
+    private TextBlock? textBlock;
+    private string? title;
+    private TValue? value;
 
-    public string Title
+    public string? Title
     {
         get => title;
         set => SetAndRaise(TitleProperty, ref title, value);
     }
 
-    public PropertyInfo PropertyInfo
+    public PropertyInfo? PropertyInfo
     {
         get => propertyInfo;
         set => SetAndRaise(PropertyInfoProperty, ref propertyInfo, value);
     }
 
-    public TValue Value
+    public TValue? Value
     {
         get => value;
+#pragma warning disable CS8601
         set => SetAndRaise(ValueProperty, ref this.value, value);
+#pragma warning restore CS8601
     }
 
     static PropertyInfoTemplatedControl()
@@ -96,10 +98,12 @@ public class PropertyInfoTemplatedControl<TValue, TControl>
         compositeDisposable.Dispose();
     }
 
-    public object Object
+    public object? Object
     {
         get => @object;
+#pragma warning disable CS8601
         set => SetAndRaise(IObjectValue.ObjectProperty, ref @object, value);
+#pragma warning restore CS8601
     }
 
     private static void ValueChanged(AvaloniaPropertyChangedEventArgs e)

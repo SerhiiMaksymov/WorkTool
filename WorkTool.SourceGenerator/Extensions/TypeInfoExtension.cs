@@ -4,17 +4,19 @@ public static class TypeInfoExtension
 {
     public static TypeParameters ToTypeOptions(this CodeAnalysisTypeInfo type)
     {
-        return type.Type.ToTypeParameters();
+        return type.Type.ThrowIfNull().ToTypeParameters();
     }
 
-    public static bool EqualsType(this CodeAnalysisTypeInfo type, ITypeSymbol symbol)
+    public static bool EqualsType(this CodeAnalysisTypeInfo typeInfo, ITypeSymbol symbol)
     {
-        if (type.Type.Name != symbol.Name)
+        var type = typeInfo.Type.ThrowIfNull();
+        
+        if (type.Name != symbol.Name)
         {
             return false;
         }
 
-        if (type.Type.ContainingNamespace.ToString() != symbol.ContainingNamespace.ToString())
+        if (type.ContainingNamespace.ToString() != symbol.ContainingNamespace.ToString())
         {
             return false;
         }

@@ -3,10 +3,10 @@
 public class ReactiveMessageControl<TViewModel> : MessageControl, IViewFor<TViewModel>
     where TViewModel : class
 {
-    public static readonly StyledProperty<TViewModel> ViewModelProperty = AvaloniaProperty.Register<
-        ReactiveMessageControl<TViewModel>,
-        TViewModel
-    >(nameof(ViewModel));
+    public static readonly StyledProperty<TViewModel?> ViewModelProperty =
+        AvaloniaProperty.Register<ReactiveMessageControl<TViewModel>, TViewModel?>(
+            nameof(ViewModel)
+        );
 
     public ReactiveMessageControl()
     {
@@ -24,7 +24,22 @@ public class ReactiveMessageControl<TViewModel> : MessageControl, IViewFor<TView
     object? IViewFor.ViewModel
     {
         get => ViewModel;
-        set => ViewModel = (TViewModel)value;
+        set
+        {
+            switch (value)
+            {
+                case null:
+                    ViewModel = null;
+
+                    return;
+                case TViewModel viewModel:
+                    ViewModel = viewModel;
+
+                    return;
+                default:
+                    throw new TypeInvalidCastException(typeof(TViewModel), value.GetType());
+            }
+        }
     }
 
     protected override void OnDataContextChanged(EventArgs e)
@@ -33,9 +48,9 @@ public class ReactiveMessageControl<TViewModel> : MessageControl, IViewFor<TView
         ViewModel = DataContext as TViewModel;
     }
 
-    private void OnViewModelChanged(object value)
+    private void OnViewModelChanged(object? value)
     {
-        if (value == null)
+        if (value is null)
         {
             ClearValue(DataContextProperty);
         }

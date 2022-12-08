@@ -2,7 +2,7 @@
 
 public static class ObjectExtension
 {
-    public static Stream ToXmlStream<TObject>(this TObject obj)
+    public static Stream ToXmlStream<TObject>(this TObject obj) where TObject : notnull
     {
         var xmlSerializer = new XmlSerializer(obj.GetType());
         var stream = new MemoryStream();

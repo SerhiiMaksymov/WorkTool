@@ -17,7 +17,7 @@ public class RandomStringInInterval : IRandom<string, Interval<int>>
         this.randomInt32 = randomInt32.ThrowIfNull();
     }
 
-    public string GetRandom(Interval<int> interval)
+    public string? GetRandom(Interval<int> interval)
     {
         var value = randomInt32.GetRandom(interval);
 

@@ -10,12 +10,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.SourceGenerator.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.Benchmark", "WorkTool.Benchmark\WorkTool.Benchmark.csproj", "{9C058832-0433-41DE-9911-3A9F7B31CAD5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.Core.UnitTests", "WorkTool.Core.UnitTests\WorkTool.Core.UnitTests.csproj", "{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{82098CDB-A59D-495B-B7F7-728485C4A480}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82098CDB-A59D-495B-B7F7-728485C4A480}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82098CDB-A59D-495B-B7F7-728485C4A480}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2F0DD7B-FB39-488F-8BC5-22D804EEE03C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D2F0DD7B-FB39-488F-8BC5-22D804EEE03C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2F0DD7B-FB39-488F-8BC5-22D804EEE03C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -36,5 +42,9 @@ Global
 		{9C058832-0433-41DE-9911-3A9F7B31CAD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C058832-0433-41DE-9911-3A9F7B31CAD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C058832-0433-41DE-9911-3A9F7B31CAD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

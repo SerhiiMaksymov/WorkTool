@@ -26,8 +26,19 @@ public static class NameHelper
 
     public static string GetNameFunction(Expression expression)
     {
-        var lambda = expression.As<LambdaExpression>();
-        var methodCallExpression = lambda.Body.As<MethodCallExpression>();
+        if (expression is not LambdaExpression lambdaExpression)
+        {
+            throw new TypeInvalidCastException(typeof(LambdaExpression), expression.GetType());
+        }
+
+        if (lambdaExpression.Body is not MethodCallExpression methodCallExpression)
+        {
+            throw new TypeInvalidCastException(
+                typeof(MethodCallExpression),
+                lambdaExpression.Body.GetType()
+            );
+        }
+
         var genericArguments = expression.Type.GetGenericArguments();
 
         return GetNameFunction(

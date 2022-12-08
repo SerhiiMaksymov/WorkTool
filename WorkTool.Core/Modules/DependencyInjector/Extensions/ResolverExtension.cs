@@ -2,7 +2,7 @@
 
 public static class ResolverExtension
 {
-    public static TObject Resolve<TObject>(this IResolver resolver)
+    public static TObject Resolve<TObject>(this IResolver resolver) where TObject : notnull
     {
         var type = typeof(TObject);
 

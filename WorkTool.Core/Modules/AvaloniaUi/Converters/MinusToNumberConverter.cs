@@ -44,7 +44,7 @@ public class MinusToNumberConverter : IValueConverter
 
                 try
                 {
-                    return converter.ConvertFromInvariantString(str);
+                    return converter.ConvertFromInvariantString(str.ThrowIfNull());
                 }
                 catch
                 {

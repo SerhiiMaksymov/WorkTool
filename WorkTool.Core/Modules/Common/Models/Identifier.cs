@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.Common.Models;
 
-public abstract class Identifier<TKey> : IIdentifier<TKey>
+public abstract class Identifier<TKey> : IIdentifier<TKey> where TKey : notnull
 {
     public Identifier(TKey key)
     {
@@ -36,6 +36,8 @@ public abstract class Identifier<TKey> : IIdentifier<TKey>
 }
 
 public class Identifier2<TKey1, TKey2>
+    where TKey1 : notnull
+    where TKey2 : notnull
 {
     public TKey1 Key1 { get; }
     public TKey2 Key2 { get; }

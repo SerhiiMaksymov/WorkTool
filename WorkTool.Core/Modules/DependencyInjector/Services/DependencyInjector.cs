@@ -5,7 +5,7 @@ public class DependencyInjector : IDependencyInjector
     private readonly bool autoInject;
     private readonly Dictionary<ConstructorInfo, IEnumerable<ParameterInfo>> constructorParameters;
     private readonly Dictionary<ParameterInfo, object> constructorParametersValue;
-    private readonly Dictionary<Type, ConstructorInfo> constructors;
+    private readonly Dictionary<Type, ConstructorInfo> cacheConstructors;
     private readonly Dictionary<Delegate, ParameterInfo[]> methodParameters;
     private readonly Dictionary<Delegate, MethodInfo> methods;
     private readonly Dictionary<Type, Func<IResolver, object>> singleton;
@@ -41,7 +41,7 @@ public class DependencyInjector : IDependencyInjector
         this.methods = new Dictionary<Delegate, MethodInfo>(methods);
         this.singleton = new Dictionary<Type, Func<IResolver, object>>(singleton);
         this.transient = new Dictionary<Type, Func<IResolver, object>>(transient);
-        this.constructors = new Dictionary<Type, ConstructorInfo>(constructors);
+        this.cacheConstructors = new Dictionary<Type, ConstructorInfo>(constructors);
         this.constructorParametersValue = new Dictionary<ParameterInfo, object>(
             constructorParametersValue
         );
@@ -51,7 +51,7 @@ public class DependencyInjector : IDependencyInjector
         this.typePublicSetters = new Dictionary<Type, IEnumerable<PropertyInfo>>(typePublicSetters);
     }
 
-    public object Invoke(Delegate @delegate, IEnumerable<ArgumentValue> arguments)
+    public object? Invoke(Delegate @delegate, IEnumerable<ArgumentValue> arguments)
     {
         var argumentsInvoke = GetArgumentsInvoke(@delegate, arguments);
 
@@ -61,15 +61,28 @@ public class DependencyInjector : IDependencyInjector
     public TResult Invoke<TResult>(Delegate @delegate, IEnumerable<ArgumentValue> arguments)
     {
         var argumentsInvoke = GetArgumentsInvoke(@delegate, arguments);
+        var response = @delegate.DynamicInvoke(argumentsInvoke);
 
-        return (TResult)@delegate.DynamicInvoke(argumentsInvoke);
+        if (response is TResult result)
+        {
+            return result;
+        }
+
+        response = response.ThrowIfNull();
+        throw new TypeInvalidCastException(typeof(TResult), response.GetType());
     }
 
     public Task InvokeAsync(Delegate @delegate, IEnumerable<ArgumentValue> arguments)
     {
         var argumentsInvoke = GetArgumentsInvoke(@delegate, arguments);
+        var response = @delegate.DynamicInvoke(argumentsInvoke).ThrowIfNull();
 
-        return (Task)@delegate.DynamicInvoke(argumentsInvoke);
+        if (response is Task task)
+        {
+            return task;
+        }
+
+        throw new TypeInvalidCastException(typeof(Task), response.GetType());
     }
 
     public Task<TResult> InvokeAsync<TResult>(
@@ -78,8 +91,14 @@ public class DependencyInjector : IDependencyInjector
     )
     {
         var argumentsInvoke = GetArgumentsInvoke(@delegate, arguments);
+        var response = @delegate.DynamicInvoke(argumentsInvoke).ThrowIfNull();
 
-        return (Task<TResult>)@delegate.DynamicInvoke(argumentsInvoke);
+        if (response is Task<TResult> task)
+        {
+            return task;
+        }
+
+        throw new TypeInvalidCastException(typeof(Task<TResult>), response.GetType());
     }
 
     public object Resolve(Type type)
@@ -185,7 +204,7 @@ public class DependencyInjector : IDependencyInjector
         return methodParameters[@delegate];
     }
 
-    private object[] GetArgumentsInvoke(Delegate @delegate, IEnumerable<ArgumentValue> arguments)
+    private object?[] GetArgumentsInvoke(Delegate @delegate, IEnumerable<ArgumentValue> arguments)
     {
         var parameters = GetParameterInfos(@delegate);
 
@@ -197,7 +216,11 @@ public class DependencyInjector : IDependencyInjector
         var argumentsInvokeLenght = parameters.Length;
         var parameterIndex = 0;
 
-        if (parameters[0].ParameterType.FullName.Equals("System.Runtime.CompilerServices.Closure"))
+        if (
+            parameters[0].ParameterType.FullName
+                .ThrowIfNull()
+                .Equals("System.Runtime.CompilerServices.Closure")
+        )
         {
             argumentsInvokeLenght--;
             parameterIndex++;
@@ -209,8 +232,8 @@ public class DependencyInjector : IDependencyInjector
         }
 
         var argumentsInvokeIndex = 0;
-        var argumentsInvoke = new object[argumentsInvokeLenght];
-        var argumentsDictionary = new Dictionary<Type, object>();
+        var argumentsInvoke = new object?[argumentsInvokeLenght];
+        var argumentsDictionary = new Dictionary<Type, object?>();
 
         foreach (var argument in arguments)
         {
@@ -221,9 +244,8 @@ public class DependencyInjector : IDependencyInjector
         {
             if (argumentsDictionary.ContainsKey(parameters[parameterIndex].ParameterType))
             {
-                argumentsInvoke[argumentsInvokeIndex] = argumentsDictionary[
-                    parameters[parameterIndex].ParameterType
-                ];
+                var parameterType = parameters[parameterIndex].ParameterType;
+                argumentsInvoke[argumentsInvokeIndex] = argumentsDictionary[parameterType];
 
                 continue;
             }
@@ -240,7 +262,8 @@ public class DependencyInjector : IDependencyInjector
     {
         var parameters = GetConstructorParameters(constructor);
         var parameterValues = parameters.Select(x => GetParameterValue(x)).ToArray();
-        var result = Activator.CreateInstance(constructor.DeclaringType, parameterValues);
+        var declaringType = constructor.DeclaringType.ThrowIfNull();
+        var result = Activator.CreateInstance(declaringType, parameterValues).ThrowIfNull();
 
         return result;
     }
@@ -287,7 +310,7 @@ public class DependencyInjector : IDependencyInjector
 
     private ConstructorInfo GetSingleConstructor(Type type)
     {
-        if (this.constructors.TryGetValue(type, out var constructor))
+        if (this.cacheConstructors.TryGetValue(type, out var constructor))
         {
             return constructor;
         }
@@ -305,7 +328,7 @@ public class DependencyInjector : IDependencyInjector
         }
 
         constructor = constructors[0];
-        this.constructors.Add(type, constructor);
+        this.cacheConstructors.Add(type, constructor);
 
         return constructor;
     }
