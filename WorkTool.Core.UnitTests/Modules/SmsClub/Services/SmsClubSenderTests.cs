@@ -5,7 +5,7 @@ public class SmsClubSenderTests : IDisposable
     private Mock<HttpMessageHandler>? httpMessageHandlerMock;
     private Mock<IDelay>? delayMock;
 
-    private IReadOnlyDictionary<string, string>? endpoints;
+    private SmsClubSenderEndpoints endpoints;
     private SmsClubSender<object>? smsClubSender;
     private SendSmsClubRequest? successClubRequest;
     private SmsClubResponse? successClubResponse;
@@ -63,12 +63,12 @@ public class SmsClubSenderTests : IDisposable
 
         messageItemsCollection2 = CreateMessageItemsCollection<object>(2);
         messageItemsCollection15 = CreateMessageItemsCollection<object>(15);
-        endpoints = Constants.DefaultEndpoints;
-        sendUrl = $"{Constants.DefaultHost}{endpoints[Constants.SmsSendEndpointId]}";
+        sendUrl = $"{SmsClubSender.DefaultHost}{SmsClubSenderEndpoints.DefaultSmsSendEndpoint}";
         var httpClient = httpMessageHandlerMock
             .CreateClient()
-            .SetBaseAddress(Constants.DefaultHost);
+            .SetBaseAddress(SmsClubSender.DefaultHost);
         options = SmsClubSenderOptions.Default;
+        endpoints = SmsClubSenderEndpoints.Default;
         smsClubSender = new SmsClubSender<object>(httpClient, endpoints, options, delayMock.Object);
     }
 
