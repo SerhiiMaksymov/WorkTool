@@ -41,6 +41,8 @@ global using Avalonia.Layout;
 global using Avalonia.Media;
 global using Avalonia.Metadata;
 global using Avalonia.Styling;
+global using Avalonia.Markup.Xaml;
+global using Avalonia.ReactiveUI;
 
 global using EntityFrameworkCore.Triggers;
 
@@ -50,6 +52,7 @@ global using Microsoft.EntityFrameworkCore.Storage;
 
 global using ReactiveUI;
 
+global using WorkTool.Core.Modules.FileSystem.ViewModel;
 global using WorkTool.Core.Modules.Http.Exceptions;
 global using WorkTool.Core.Modules.SmsClub.Extensions;
 global using WorkTool.Core.Modules.SmsClub.Models;
