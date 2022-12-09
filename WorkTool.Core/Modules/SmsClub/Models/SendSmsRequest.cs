@@ -1,8 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace WorkTool.Core.Modules.SmsClub.Models;
 
-namespace WorkTool.Core.Modules.SmsClub.Models;
-
-public class SendSmsClubRequest
+public class SendSmsRequest
 {
     [JsonPropertyName("phone")]
     public string[]? PhoneNumbers { get; set; }

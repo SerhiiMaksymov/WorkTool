@@ -5,88 +5,115 @@ public class SmsClubSenderTests : IDisposable
     private Mock<HttpMessageHandler>? httpMessageHandlerMock;
     private Mock<IDelay>? delayMock;
 
-    private SmsClubSenderEndpoints endpoints;
+    private SmsSenderEndpoints endpoints;
     private SmsClubSender<object>? smsClubSender;
-    private SendSmsClubRequest? successClubRequest;
-    private SmsClubResponse? successClubResponse;
-    private SendSmsClubRequest? faultClubRequest;
-    private SmsClubResponse? faultClubResponse;
-    private SmsClubSenderOptions? options;
+    private SendSmsRequest? successSendSmsClubRequest;
+    private DictionarySmsResponse? successDictionarySmsResponse;
+    private ArraySmsResponse? successArraySmsResponse;
+    private SendSmsRequest? faultSendSmsClubRequest;
+    private DictionarySmsResponse? faultDictionarySmsResponse;
+    private SmsSenderOptions? options;
     private int smsId;
     private string? faultPhoneNumber;
     private string? successPhoneNumber;
-    private string? errorMessage;
+    private string? faultMessage;
     private string? sendUrl;
     private string? getSmsStatusUrl;
+    private string? getOriginatorsUrl;
+    private string? originator;
     private MessageItemsCollection<object> messageItemsCollection2;
     private MessageItemsCollection<object> messageItemsCollection15;
 
     [SetUp]
     public void Setup()
     {
+        originator = "test";
         delayMock = new();
         httpMessageHandlerMock = new();
-        errorMessage = "Данный номер находится в черном списке";
+        faultMessage = "Данный номер находится в черном списке";
         smsId = 106;
         successPhoneNumber = "380989361131";
         faultPhoneNumber = "380989361130";
 
-        successClubRequest = new SendSmsClubRequest()
+        var httpClient = httpMessageHandlerMock
+            .CreateClient()
+            .SetBaseAddress(SmsClubSender.DefaultHostUri);
+
+        successArraySmsResponse = new ArraySmsResponse()
+        {
+            SuccessRequest = new ArraySuccessRequest() { Info = new[] { originator } }
+        };
+
+        successSendSmsClubRequest = new SendSmsRequest()
         {
             PhoneNumbers = new[] { successPhoneNumber },
             Message = "test text",
             Recipient = "VashZakaz"
         };
 
-        successClubResponse = new SmsClubResponse()
+        successDictionarySmsResponse = new DictionarySmsResponse()
         {
-            SuccessRequest = new SuccessRequest()
+            SuccessRequest = new DictionarySuccessRequest()
             {
                 Info = new Dictionary<string, string>() { { smsId.ToString(), successPhoneNumber } }
             }
         };
 
-        faultClubRequest = new SendSmsClubRequest()
+        faultSendSmsClubRequest = new SendSmsRequest()
         {
             PhoneNumbers = new[] { successPhoneNumber, faultPhoneNumber },
             Message = "test text",
             Recipient = "VashZakaz"
         };
 
-        faultClubResponse = new SmsClubResponse()
+        faultDictionarySmsResponse = new DictionarySmsResponse()
         {
-            SuccessRequest = new SuccessRequest()
+            SuccessRequest = new DictionarySuccessRequest()
             {
                 Info = new Dictionary<string, string>()
                 {
                     { smsId.ToString(), successPhoneNumber }
                 },
-                AddInfo = new Dictionary<string, string>() { { faultPhoneNumber, errorMessage } }
+                AddInfo = new Dictionary<string, string>() { { faultPhoneNumber, faultMessage } }
             }
         };
 
         messageItemsCollection2 = CreateMessageItemsCollection<object>(2);
         messageItemsCollection15 = CreateMessageItemsCollection<object>(15);
-        sendUrl = $"{SmsClubSender.DefaultHost}{SmsClubSenderEndpoints.DefaultSmsSendEndpoint}";
-        getSmsStatusUrl =
-            $"{SmsClubSender.DefaultHost}{SmsClubSenderEndpoints.DefaultSmsStatusEndpoint}";
-        var httpClient = httpMessageHandlerMock
-            .CreateClient()
-            .SetBaseAddress(SmsClubSender.DefaultHost);
-        options = SmsClubSenderOptions.Default;
-        endpoints = SmsClubSenderEndpoints.Default;
+        var smsOriginatorEndpoint = SmsSenderEndpoints.DefaultSmsOriginatorEndpoint;
+        var smsStatusEndpoint = SmsSenderEndpoints.DefaultSmsStatusEndpoint;
+        getOriginatorsUrl = $"{SmsClubSender.DefaultHostUri}{smsOriginatorEndpoint}";
+        sendUrl = $"{SmsClubSender.DefaultHostUri}{SmsSenderEndpoints.DefaultSmsSendEndpoint}";
+        getSmsStatusUrl = $"{SmsClubSender.DefaultHostUri}{smsStatusEndpoint}";
+        options = SmsSenderOptions.Default;
+        endpoints = SmsSenderEndpoints.Default;
         smsClubSender = new SmsClubSender<object>(httpClient, endpoints, options, delayMock.Object);
+    }
+
+    [Test]
+    public async Task GetOriginatorsAsync_SendRequest_ListOriginators()
+    {
+        smsClubSender = smsClubSender.ThrowIfNull();
+
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Get, getOriginatorsUrl)
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successArraySmsResponse));
+
+        var response = await smsClubSender.GetOriginatorsAsync();
+
+        response.SuccessRequest.ThrowIfNull().Info.Should().HaveCount(1).And.Contain(originator);
     }
 
     [Test]
     public async Task GetSmsStatusAsync_GetStatus1Sms_SuccessOneRequest()
     {
-        faultClubRequest = faultClubRequest.ThrowIfNull();
+        faultSendSmsClubRequest = faultSendSmsClubRequest.ThrowIfNull();
         smsClubSender = smsClubSender.ThrowIfNull();
         successPhoneNumber = successPhoneNumber.ThrowIfNull();
+
         httpMessageHandlerMock
             .SetupRequest(HttpMethod.Post, getSmsStatusUrl)
-            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successClubResponse));
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successDictionarySmsResponse));
 
         var response = await smsClubSender.GetSmsStatusAsync(new[] { smsId.ToString() });
 
@@ -103,13 +130,14 @@ public class SmsClubSenderTests : IDisposable
     [Test]
     public async Task GetSmsStatusAsync_GetStatus2Sms_SuccessOneRequest()
     {
-        faultClubRequest = faultClubRequest.ThrowIfNull();
+        faultSendSmsClubRequest = faultSendSmsClubRequest.ThrowIfNull();
         smsClubSender = smsClubSender.ThrowIfNull();
         successPhoneNumber = successPhoneNumber.ThrowIfNull();
+        var ids = new[] { smsId.ToString(), smsId.ToString() };
+
         httpMessageHandlerMock
             .SetupRequest(HttpMethod.Post, getSmsStatusUrl)
-            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successClubResponse));
-        var ids = new[] { smsId.ToString(), smsId.ToString() };
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successDictionarySmsResponse));
 
         var response = await smsClubSender.GetSmsStatusAsync(ids);
 
@@ -135,6 +163,7 @@ public class SmsClubSenderTests : IDisposable
         await foreach (var massageItem in smsClubSender.SendsSmsesAsync(messageItemsCollection2))
         {
             SetupSuccessSend();
+
             massageItem.SuccessRequest
                 .ThrowIfNull()
                 .Info.Should()
@@ -161,6 +190,7 @@ public class SmsClubSenderTests : IDisposable
         await foreach (var massageItem in smsClubSender.SendsSmsesAsync(messageItemsCollection15))
         {
             SetupSuccessSend();
+
             massageItem.SuccessRequest
                 .ThrowIfNull()
                 .Info.Should()
@@ -177,11 +207,12 @@ public class SmsClubSenderTests : IDisposable
     public async Task SendSmsAsync_SendSmsRequest_OkSuccess()
     {
         smsClubSender = smsClubSender.ThrowIfNull();
-        successClubRequest = successClubRequest.ThrowIfNull();
+        successSendSmsClubRequest = successSendSmsClubRequest.ThrowIfNull();
         successPhoneNumber = successPhoneNumber.ThrowIfNull();
         delayMock = delayMock.ThrowIfNull();
         SetupSuccessSend();
-        var response = await smsClubSender.SendSmsAsync(successClubRequest);
+
+        var response = await smsClubSender.SendSmsAsync(successSendSmsClubRequest);
 
         response.SuccessRequest
             .ThrowIfNull()
@@ -198,16 +229,17 @@ public class SmsClubSenderTests : IDisposable
     public async Task SendSmsAsync_SendSmsRequest_OkFault()
     {
         smsClubSender = smsClubSender.ThrowIfNull();
-        faultClubRequest = faultClubRequest.ThrowIfNull();
+        faultSendSmsClubRequest = faultSendSmsClubRequest.ThrowIfNull();
         successPhoneNumber = successPhoneNumber.ThrowIfNull();
         faultPhoneNumber = faultPhoneNumber.ThrowIfNull();
-        errorMessage = errorMessage.ThrowIfNull();
+        faultMessage = faultMessage.ThrowIfNull();
         delayMock = delayMock.ThrowIfNull();
+
         httpMessageHandlerMock
             .SetupRequest(HttpMethod.Post, sendUrl)
-            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(faultClubResponse));
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(faultDictionarySmsResponse));
 
-        var response = await smsClubSender.SendSmsAsync(faultClubRequest);
+        var response = await smsClubSender.SendSmsAsync(faultSendSmsClubRequest);
 
         response.SuccessRequest
             .ThrowIfNull()
@@ -221,7 +253,7 @@ public class SmsClubSenderTests : IDisposable
             .AddInfo.Should()
             .HaveCount(1)
             .And.ContainKey(faultPhoneNumber)
-            .And.ContainValue(errorMessage);
+            .And.ContainValue(faultMessage);
 
         httpMessageHandlerMock.VerifyRequest(_ => true, Times.Once());
         delayMock.Verify(x => x.DelayAsync(It.IsAny<TimeSpan>()), Times.Never());
@@ -231,19 +263,26 @@ public class SmsClubSenderTests : IDisposable
     public async Task SendSmsAsync_ServerError_Exception()
     {
         smsClubSender = smsClubSender.ThrowIfNull();
-        faultClubRequest = faultClubRequest.ThrowIfNull();
+        faultSendSmsClubRequest = faultSendSmsClubRequest.ThrowIfNull();
         delayMock = delayMock.ThrowIfNull();
-        var times = Times.Exactly(HttpConsts.ErrorHttpStatusCodes.Length);
+        var times = Times.Exactly(HttpConsts.ErrorHttpStatusCodes.Length * 3);
+        var smsIds = new[] { smsId.ToString() };
 
         foreach (var errorHttpStatusCode in HttpConsts.ErrorHttpStatusCodes.ToArray())
         {
-            httpMessageHandlerMock
-                .SetupRequest(HttpMethod.Post, sendUrl)
-                .ReturnsResponse(errorHttpStatusCode);
+            var errorMessage = CreateErrorMessage(errorHttpStatusCode);
+            SetupFaultEndpoints(errorHttpStatusCode);
 
-            var func = () => smsClubSender.SendSmsAsync(faultClubRequest);
+            var sendSmsAsyncFunc = () => smsClubSender.SendSmsAsync(faultSendSmsClubRequest);
+            var getOriginatorsAsyncFunc = () => smsClubSender.GetOriginatorsAsync();
+            var getSmsStatusAsyncFunc = () => smsClubSender.GetSmsStatusAsync(smsIds);
 
-            await func.Should().ThrowAsync<HttpResponseException>("");
+            var exception = await sendSmsAsyncFunc.Should().ThrowAsync<HttpResponseException>();
+            exception.WithMessage(errorMessage);
+            exception = await getOriginatorsAsyncFunc.Should().ThrowAsync<HttpResponseException>();
+            exception.WithMessage(errorMessage);
+            exception = await getSmsStatusAsyncFunc.Should().ThrowAsync<HttpResponseException>();
+            exception.WithMessage(errorMessage);
         }
 
         httpMessageHandlerMock.VerifyRequest(_ => true, times);
@@ -255,11 +294,42 @@ public class SmsClubSenderTests : IDisposable
         httpMessageHandlerMock?.Object?.Dispose();
     }
 
+    private string CreateErrorMessage(HttpStatusCode httpStatusCode)
+    {
+        var reasonPhrase = httpStatusCode.GetReasonPhrase();
+        var stringBuilder = new StringBuilder();
+        stringBuilder.Append($"{httpStatusCode} 1.1");
+
+        if (reasonPhrase is not null)
+        {
+            stringBuilder.Append($" {reasonPhrase}");
+        }
+
+        var errorMessage = stringBuilder.ToString();
+
+        return errorMessage;
+    }
+
+    private void SetupFaultEndpoints(HttpStatusCode httpStatusCode)
+    {
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Post, sendUrl)
+            .ReturnsResponse(httpStatusCode);
+
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Post, getSmsStatusUrl)
+            .ReturnsResponse(httpStatusCode);
+
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Get, getOriginatorsUrl)
+            .ReturnsResponse(httpStatusCode);
+    }
+
     private void SetupSuccessSend()
     {
         httpMessageHandlerMock
             .SetupRequest(HttpMethod.Post, sendUrl)
-            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successClubResponse));
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successDictionarySmsResponse));
     }
 
     private MessageItemsCollection<TParameters> CreateMessageItemsCollection<TParameters>(int count)

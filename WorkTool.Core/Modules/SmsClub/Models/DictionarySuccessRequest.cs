@@ -1,8 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace WorkTool.Core.Modules.SmsClub.Models;
 
-namespace WorkTool.Core.Modules.SmsClub.Models;
-
-public class SuccessRequest
+public class DictionarySuccessRequest
 {
     [JsonPropertyName("info")]
     public Dictionary<string, string>? Info { get; set; }

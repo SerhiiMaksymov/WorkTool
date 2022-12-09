@@ -18,10 +18,33 @@ public class HttpResponseException : Exception
 
     private static string CreateMessage(HttpResponseMessage httpResponseMessage)
     {
-        return $$"""
-{{httpResponseMessage.StatusCode}} {{httpResponseMessage.Version}} {{httpResponseMessage.ReasonPhrase}}
-{{httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult()}}
-{{httpResponseMessage.Headers.Select(x => $"{x.Key}: {x.Value}").JoinString(Environment.NewLine)}}
-""";
+        var stringBuilder = new StringBuilder();
+        stringBuilder.Append($"{httpResponseMessage.StatusCode} {httpResponseMessage.Version}");
+
+        if (httpResponseMessage.ReasonPhrase is not null)
+        {
+            stringBuilder.Append($" {httpResponseMessage.ReasonPhrase}");
+        }
+
+        if (httpResponseMessage.Headers.Any())
+        {
+            foreach (var header in httpResponseMessage.Headers)
+            {
+                stringBuilder.Append(Environment.NewLine);
+                stringBuilder.Append($"{header.Key}: {header.Value}");
+            }
+        }
+
+        var content = httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+        if (content.Any())
+        {
+            stringBuilder.Append(Environment.NewLine);
+            stringBuilder.Append(content);
+        }
+
+        var result = stringBuilder.ToString();
+
+        return result;
     }
 }

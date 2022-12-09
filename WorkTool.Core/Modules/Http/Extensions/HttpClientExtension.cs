@@ -2,14 +2,14 @@
 
 public static class HttpClientExtension
 {
-    public static Task<HttpResponseMessage> PostAsync<TObject>(
+    public static async Task<HttpResponseMessage> PostAsync<TObject>(
         this HttpClient httpClient,
         string uri,
         TObject obj
     )
     {
-        var content = obj.ToJsonHttpContent();
+        using var content = obj.ToJsonHttpContent();
 
-        return httpClient.PostAsync(uri, content);
+        return await httpClient.PostAsync(uri, content);
     }
 }

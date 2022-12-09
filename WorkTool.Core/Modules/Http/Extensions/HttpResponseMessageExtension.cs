@@ -13,4 +13,9 @@ public static class HttpResponseMessageExtension
 
         throw new HttpResponseException(httpResponseMessage);
     }
+
+    public static Task<T?> ReadFromJsonAsync<T>(this HttpResponseMessage httpResponseMessage)
+    {
+        return httpResponseMessage.Content.ReadFromJsonAsync<T>();
+    }
 }
