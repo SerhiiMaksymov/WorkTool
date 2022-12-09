@@ -20,7 +20,17 @@ public class SmsClubSender<TParameters> where TParameters : notnull
         this.httpClient = httpClient;
     }
 
-    public async Task<ArraySmsResponse> GetOriginatorsAsync()
+    public async Task<SmsResponse<Balance>> GetBalanceAsync()
+    {
+        using var httpResponseMessage = await httpClient.GetAsync(endpoints.SmsBalanceEndpoint);
+        httpResponseMessage.ThrowIfNotSuccess();
+        var smsClubResponse = await httpResponseMessage.ReadFromJsonAsync<SmsResponse<Balance>>();
+        smsClubResponse = smsClubResponse.ThrowIfNull();
+
+        return smsClubResponse;
+    }
+
+    public async Task<SmsResponse<ArraySuccessRequest>> GetOriginatorsAsync()
     {
         using var httpResponseMessage = await httpClient.GetAsync(endpoints.SmsOriginatorEndpoint);
         httpResponseMessage.ThrowIfNotSuccess();
@@ -30,7 +40,9 @@ public class SmsClubSender<TParameters> where TParameters : notnull
         return smsClubResponse;
     }
 
-    public async Task<DictionarySmsResponse> GetSmsStatusAsync(IEnumerable<string> smsIds)
+    public async Task<SmsResponse<DictionarySuccessRequest>> GetSmsStatusAsync(
+        IEnumerable<string> smsIds
+    )
     {
         var request = new GetSmsStatusRequest() { SmsIds = smsIds.ToArray() };
         var url = endpoints.SmsStatusEndpoint;
@@ -42,7 +54,7 @@ public class SmsClubSender<TParameters> where TParameters : notnull
         return smsClubResponse;
     }
 
-    public async Task<DictionarySmsResponse> SendSmsAsync(SendSmsRequest request)
+    public async Task<SmsResponse<DictionarySuccessRequest>> SendSmsAsync(SendSmsRequest request)
     {
         var url = endpoints.SmsSendEndpoint;
         using var httpResponseMessage = await httpClient.PostAsync(url, request);
@@ -53,7 +65,7 @@ public class SmsClubSender<TParameters> where TParameters : notnull
         return smsClubResponse;
     }
 
-    public async IAsyncEnumerable<DictionarySmsResponse> SendsSmsesAsync(
+    public async IAsyncEnumerable<SmsResponse<DictionarySuccessRequest>> SendsSmsesAsync(
         MessageItemsCollection<TParameters> messageItems
     )
     {

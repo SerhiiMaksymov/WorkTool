@@ -114,3 +114,5 @@ global using AvaloniaPath = Avalonia.Controls.Shapes.Path;
 global using AvaloniaColor = Avalonia.Media.Color;
 global using SystemColor = System.Drawing.Color;
 global using SystemVersion = System.Version;
+global using DictionarySmsResponse = WorkTool.Core.Modules.SmsClub.Models.SmsResponse<WorkTool.Core.Modules.SmsClub.Models.DictionarySuccessRequest>;
+global using ArraySmsResponse = WorkTool.Core.Modules.SmsClub.Models.SmsResponse<WorkTool.Core.Modules.SmsClub.Models.ArraySuccessRequest>;

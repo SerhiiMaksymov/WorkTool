@@ -8,18 +8,22 @@ public class SmsClubSenderTests : IDisposable
     private SmsSenderEndpoints endpoints;
     private SmsClubSender<object>? smsClubSender;
     private SendSmsRequest? successSendSmsClubRequest;
-    private DictionarySmsResponse? successDictionarySmsResponse;
-    private ArraySmsResponse? successArraySmsResponse;
+    private SmsResponse<DictionarySuccessRequest>? successDictionarySmsResponse;
+    private SmsResponse<ArraySuccessRequest>? successArraySmsResponse;
     private SendSmsRequest? faultSendSmsClubRequest;
-    private DictionarySmsResponse? faultDictionarySmsResponse;
+    private SmsResponse<DictionarySuccessRequest>? faultDictionarySmsResponse;
     private SmsSenderOptions? options;
+    private SmsResponse<Balance>? balanceSmsResponse;
+    private double money;
     private int smsId;
+    private string? currency;
     private string? faultPhoneNumber;
     private string? successPhoneNumber;
     private string? faultMessage;
     private string? sendUrl;
     private string? getSmsStatusUrl;
     private string? getOriginatorsUrl;
+    private string? getBalanceUrl;
     private string? originator;
     private MessageItemsCollection<object> messageItemsCollection2;
     private MessageItemsCollection<object> messageItemsCollection15;
@@ -27,6 +31,8 @@ public class SmsClubSenderTests : IDisposable
     [SetUp]
     public void Setup()
     {
+        money = 8111.1700;
+        currency = "UAH";
         originator = "test";
         delayMock = new();
         httpMessageHandlerMock = new();
@@ -39,7 +45,12 @@ public class SmsClubSenderTests : IDisposable
             .CreateClient()
             .SetBaseAddress(SmsClubSender.DefaultHostUri);
 
-        successArraySmsResponse = new ArraySmsResponse()
+        balanceSmsResponse = new SmsResponse<Balance>()
+        {
+            SuccessRequest = new Balance() { Currency = currency, Money = money }
+        };
+
+        successArraySmsResponse = new SmsResponse<ArraySuccessRequest>()
         {
             SuccessRequest = new ArraySuccessRequest() { Info = new[] { originator } }
         };
@@ -51,7 +62,7 @@ public class SmsClubSenderTests : IDisposable
             Recipient = "VashZakaz"
         };
 
-        successDictionarySmsResponse = new DictionarySmsResponse()
+        successDictionarySmsResponse = new SmsResponse<DictionarySuccessRequest>()
         {
             SuccessRequest = new DictionarySuccessRequest()
             {
@@ -66,7 +77,7 @@ public class SmsClubSenderTests : IDisposable
             Recipient = "VashZakaz"
         };
 
-        faultDictionarySmsResponse = new DictionarySmsResponse()
+        faultDictionarySmsResponse = new SmsResponse<DictionarySuccessRequest>()
         {
             SuccessRequest = new DictionarySuccessRequest()
             {
@@ -82,12 +93,29 @@ public class SmsClubSenderTests : IDisposable
         messageItemsCollection15 = CreateMessageItemsCollection<object>(15);
         var smsOriginatorEndpoint = SmsSenderEndpoints.DefaultSmsOriginatorEndpoint;
         var smsStatusEndpoint = SmsSenderEndpoints.DefaultSmsStatusEndpoint;
+        var smsBalanceEndpoint = SmsSenderEndpoints.DefaultSmsBalanceEndpoint;
+        getBalanceUrl = $"{SmsClubSender.DefaultHostUri}{smsBalanceEndpoint}";
         getOriginatorsUrl = $"{SmsClubSender.DefaultHostUri}{smsOriginatorEndpoint}";
         sendUrl = $"{SmsClubSender.DefaultHostUri}{SmsSenderEndpoints.DefaultSmsSendEndpoint}";
         getSmsStatusUrl = $"{SmsClubSender.DefaultHostUri}{smsStatusEndpoint}";
         options = SmsSenderOptions.Default;
         endpoints = SmsSenderEndpoints.Default;
         smsClubSender = new SmsClubSender<object>(httpClient, endpoints, options, delayMock.Object);
+    }
+
+    [Test]
+    public async Task GetBalanceAsync_SendRequest_Balance()
+    {
+        smsClubSender = smsClubSender.ThrowIfNull();
+
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Get, getBalanceUrl)
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(balanceSmsResponse));
+
+        var response = await smsClubSender.GetBalanceAsync();
+
+        response.SuccessRequest.ThrowIfNull().Currency.Should().Be(currency);
+        response.SuccessRequest.ThrowIfNull().Money.Should().Be(money);
     }
 
     [Test]
@@ -265,7 +293,7 @@ public class SmsClubSenderTests : IDisposable
         smsClubSender = smsClubSender.ThrowIfNull();
         faultSendSmsClubRequest = faultSendSmsClubRequest.ThrowIfNull();
         delayMock = delayMock.ThrowIfNull();
-        var times = Times.Exactly(HttpConsts.ErrorHttpStatusCodes.Length * 3);
+        var times = Times.Exactly(HttpConsts.ErrorHttpStatusCodes.Length * 4);
         var smsIds = new[] { smsId.ToString() };
 
         foreach (var errorHttpStatusCode in HttpConsts.ErrorHttpStatusCodes.ToArray())
@@ -276,12 +304,15 @@ public class SmsClubSenderTests : IDisposable
             var sendSmsAsyncFunc = () => smsClubSender.SendSmsAsync(faultSendSmsClubRequest);
             var getOriginatorsAsyncFunc = () => smsClubSender.GetOriginatorsAsync();
             var getSmsStatusAsyncFunc = () => smsClubSender.GetSmsStatusAsync(smsIds);
+            var getBalanceAsyncFunc = () => smsClubSender.GetBalanceAsync();
 
             var exception = await sendSmsAsyncFunc.Should().ThrowAsync<HttpResponseException>();
             exception.WithMessage(errorMessage);
             exception = await getOriginatorsAsyncFunc.Should().ThrowAsync<HttpResponseException>();
             exception.WithMessage(errorMessage);
             exception = await getSmsStatusAsyncFunc.Should().ThrowAsync<HttpResponseException>();
+            exception.WithMessage(errorMessage);
+            exception = await getBalanceAsyncFunc.Should().ThrowAsync<HttpResponseException>();
             exception.WithMessage(errorMessage);
         }
 
@@ -322,6 +353,10 @@ public class SmsClubSenderTests : IDisposable
 
         httpMessageHandlerMock
             .SetupRequest(HttpMethod.Get, getOriginatorsUrl)
+            .ReturnsResponse(httpStatusCode);
+
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Get, getBalanceUrl)
             .ReturnsResponse(httpStatusCode);
     }
 
