@@ -109,7 +109,7 @@ public class UiContext
 
         if (view is IContentView contentView && contents.ContainsKey(type))
         {
-            contentView.AddContent(contents[type]);
+            contentView.SetContent(contents[type]);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace WorkTool.Core.Modules.Expressions;
+﻿namespace WorkTool.Core.Modules.Expressions.Extensions;
 
 public static class ExpressionExtension
 {

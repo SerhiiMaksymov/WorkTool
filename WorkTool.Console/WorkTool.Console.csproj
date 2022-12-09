@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\WorkTool.Core\WorkTool.Core.csproj"/>
+        <ProjectReference Include="..\WorkTool.Core\WorkTool.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-preview1"/>
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-preview1" />
     </ItemGroup>
 
 </Project>

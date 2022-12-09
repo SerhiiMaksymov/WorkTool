@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls">
+    <ControlTheme x:Key="{x:Type controls:TabbedControl}" TargetType="controls:TabbedControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="Auto,*">
+                    <Menu x:Name="{x:Static controls:TabbedControl.MenuPartName}" />
+                    <TabControl Grid.Row="1" x:Name= "{x:Static controls:TabbedControl.TabControlPartName}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

@@ -1,4 +1,6 @@
-﻿namespace WorkTool.Core.Modules.Ui.Services;
+﻿using WorkTool.Core.Modules.Expressions.Extensions;
+
+namespace WorkTool.Core.Modules.Ui.Services;
 
 public class UiContextBuilder : IBuilder<UiContext>
 {

@@ -1,6 +1,6 @@
 namespace WorkTool.Core.Modules.SmsClub.Services;
 
-public class SmsClubSender<TParameters> where TParameters : notnull
+public class SmsClubSender<TParameters> : ISmsClubSender<TParameters> where TParameters : notnull
 {
     private readonly HttpClient httpClient;
     private readonly SmsSenderEndpoints endpoints;

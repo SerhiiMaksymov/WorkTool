@@ -50,7 +50,7 @@ public class CommandsView
         this.AddItem(new Button().SetCommand(command).SetContent(content));
     }
 
-    public void AddContent(Func<object> content)
+    public void SetContent(Func<object> content)
     {
         var value = content.Invoke();
         SetParameter(new ArgumentValue(value.GetType(), value));

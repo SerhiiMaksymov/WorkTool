@@ -64,6 +64,12 @@ public static class DependencyInjectorHelper
                     new StyleInclude(r.Resolve<Uri>())
                     {
                         Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
+                    },
+                    new StyleInclude(r.Resolve<Uri>())
+                    {
+                        Source = new Uri(
+                            "avares://WorkTool.Core/Modules/AvaloniaUi/Styles/Controls.axaml"
+                        )
                     }
                 };
 

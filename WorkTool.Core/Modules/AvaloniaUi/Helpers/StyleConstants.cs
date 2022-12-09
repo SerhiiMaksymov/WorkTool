@@ -565,24 +565,6 @@ public static class StyleConstants
         );
 
     [Style]
-    public static readonly IStyle TabbedControlStyle = new Style()
-        .SetSelector(default(Selector).Is<TabbedControl>())
-        .AddSetter(
-            new Setter()
-                .SetProperty(TemplatedControl.TemplateProperty)
-                .SetValue(
-                    new FuncControlTemplate<TabbedControl>(
-                        (templated, _) =>
-                            new Grid()
-                                .AddRowDefinition(GridLength.Auto)
-                                .AddRowDefinition(GridLength.Star)
-                                .AddChild(templated.Menu)
-                                .AddChild(templated.Tabs.SetGridRow(1))
-                    )
-                )
-        );
-
-    [Style]
     public static readonly IStyle DialogControlStyle = new Style()
         .SetSelector(default(Selector).Is<DialogControl>())
         .AddSetter(

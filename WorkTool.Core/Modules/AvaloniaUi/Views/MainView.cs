@@ -7,25 +7,25 @@ public class MainView
         IKeyBindingView
 {
     private readonly IInvoker invoker;
+    private readonly UiContext uiContext;
 
-    public MainView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
+    public MainView(IInvoker invoker, UiContext uiContext, ViewModelBase viewModel)
     {
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
+        this.uiContext = uiContext;
 
         this.WhenActivated(disposables =>
         {
             var currentViewModel = ViewModel.ThrowIfNull();
             currentViewModel.CanExecute.DisposeWith(disposables);
-            Tabs.Bind(ItemsControl.ItemsProperty, new Binding("TabItems")).DisposeWith(disposables);
         });
-
-        avaloniaUiContext.InitView(this);
     }
 
     public void AddKeyBinding(KeyboardKeyGesture keyGesture, Delegate @delegate)
     {
         var currentViewModel = ViewModel.ThrowIfNull();
+
         var command = currentViewModel.CreateCommand(async () =>
         {
             var arguments = new List<ArgumentValue>
@@ -95,7 +95,14 @@ public class MainView
         var command = currentViewModel.CreateCommand(async () =>
         {
             var @delegate = node.Value.Task.ThrowIfNull();
-            var result = invoker.Invoke(@delegate, new[] { new ArgumentValue(GetType(), this) });
+            var result = invoker.Invoke(
+                @delegate,
+                new[]
+                {
+                    new ArgumentValue(GetType(), this),
+                    new ArgumentValue(typeof(ITabControlView), this)
+                }
+            );
 
             if (result is Task task)
             {
@@ -125,5 +132,11 @@ public class MainView
     {
         return AddHeader(AddCommand(new MenuItem(), node), node)
             .SetItems(node.Nodes.Select(x => ToMenuItem(x)).ToArray());
+    }
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        uiContext.InitView(this);
     }
 }
