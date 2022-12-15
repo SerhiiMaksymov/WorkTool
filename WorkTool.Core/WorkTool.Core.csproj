@@ -21,7 +21,8 @@
         <PackageReference Include="FormatWith" Version="3.0.1" />
         <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
         <PackageReference Include="Material.Icons.Avalonia" Version="1.2.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -31,6 +32,12 @@
 
     <ItemGroup>
       <AvaloniaResource Include="Modules\AvaloniaUi\Fonts\Alatsi-Regular.ttf" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Configuration.Json">
+        <HintPath>..\..\..\.nuget\packages\microsoft.extensions.configuration.json\7.0.0\lib\net7.0\Microsoft.Extensions.Configuration.Json.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

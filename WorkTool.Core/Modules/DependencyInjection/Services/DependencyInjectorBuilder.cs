@@ -2,17 +2,24 @@
 
 public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDependencyInjectorBuilder
 {
+    private static readonly IRandom<string> DefaultRandomString;
+
     private readonly Dictionary<AutoInjectIdentifier, InjectorItem> autoInjects;
     private readonly Dictionary<Type, InjectorItem> injectors;
     private readonly Dictionary<ReserveIdentifier, InjectorItem> reserves;
     private IRandom<string> randomString;
+
+    static DependencyInjectorBuilder()
+    {
+        DefaultRandomString = new RandomStringGuid("N");
+    }
 
     public DependencyInjectorBuilder()
     {
         injectors = new();
         reserves = new();
         autoInjects = new();
-        randomString = new RandomStringGuid("N");
+        randomString = DefaultRandomString;
     }
 
     public void AddConfigurationFromAssemblies()

@@ -52,7 +52,7 @@ public readonly ref struct DictionarySpan<TKey, TValue> where TKey : notnull
         return false;
     }
 
-    public bool TryGetValue(TKey key, out TValue? value)
+    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
         foreach (var item in Span)
         {

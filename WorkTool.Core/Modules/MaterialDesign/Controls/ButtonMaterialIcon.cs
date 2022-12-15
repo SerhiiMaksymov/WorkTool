@@ -1,4 +1,4 @@
-﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
+﻿namespace WorkTool.Core.Modules.MaterialDesign.Controls;
 
 public class ButtonMaterialIcon : Button
 {

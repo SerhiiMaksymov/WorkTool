@@ -22,6 +22,7 @@ global using System.Net.Http.Headers;
 global using System.Text.Json.Serialization;
 global using System.ComponentModel;
 global using System.Diagnostics;
+global using System.Diagnostics.CodeAnalysis;
 
 global using Avalonia.Controls.Notifications;
 global using Avalonia.Threading;
@@ -54,6 +55,8 @@ global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.FileProviders;
+global using Microsoft.Extensions.Configuration.Json;
 
 global using ReactiveUI;
 
@@ -61,6 +64,7 @@ global using FormatWith;
 
 global using Material.Icons;
 
+global using WorkTool.Core.Modules.Json.Extensions;
 global using WorkTool.Core.Modules.SmsClub.Helpers;
 global using WorkTool.Core.Modules.SmsClub.Services;
 global using WorkTool.Core.Modules.Http.Models;
@@ -73,7 +77,6 @@ global using WorkTool.Core.Modules.Http.Exceptions;
 global using WorkTool.Core.Modules.SmsClub.Extensions;
 global using WorkTool.Core.Modules.SmsClub.Models;
 global using WorkTool.Core.Modules.AdoDotNet.Extensions;
-global using WorkTool.Core.Modules.AdoDotNet.Helpers;
 global using WorkTool.Core.Modules.AdoDotNet.Interfaces;
 global using WorkTool.Core.Modules.AdoDotNet.Models;
 global using WorkTool.Core.Modules.Aes.Models;
@@ -124,11 +127,12 @@ global using WorkTool.Core.Modules.DependencyInjection.Interfaces;
 global using WorkTool.Core.Modules.DependencyInjection.Services;
 global using WorkTool.Core.Modules.DependencyInjection.Models;
 global using WorkTool.Core.Modules.DependencyInjection.Exceptions;
+global using WorkTool.Core.Modules.MaterialDesign.Controls;
 global using WorkTool.Core.Modules.Common.Services;
 
 global using LibGit2Sharp;
 
-global using CommonConstants = WorkTool.Core.Modules.Common.Helpers.Constants;
+global using ConfigurationConstants = WorkTool.Core.Modules.Configuration.Helpers.Constants;
 global using AvaloniaApplication = Avalonia.Application;
 global using AvaloniaPath = Avalonia.Controls.Shapes.Path;
 global using AvaloniaColor = Avalonia.Media.Color;

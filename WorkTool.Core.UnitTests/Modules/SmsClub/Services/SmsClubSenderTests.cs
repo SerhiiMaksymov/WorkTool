@@ -5,7 +5,7 @@ public class SmsClubSenderTests : IDisposable
     private Mock<HttpMessageHandler>? httpMessageHandlerMock;
     private Mock<IDelay>? delayMock;
 
-    private SmsSenderEndpointsOptions endpointsOptions;
+    private SmsSenderEndpointsOptions? endpointsOptions;
     private SmsClubSender<object>? smsClubSender;
     private SendSmsRequest? successSendSmsClubRequest;
     private SmsResponse<DictionarySuccessRequest>? successDictionarySmsResponse;
@@ -54,47 +54,44 @@ public class SmsClubSenderTests : IDisposable
             }
         };
 
-        successArraySmsResponse = new SmsResponse<ArraySuccessRequest>()
+        successArraySmsResponse = new SmsResponse<ArraySuccessRequest>
         {
-            SuccessRequest = new ArraySuccessRequest() { Info = new[] { originator } }
+            SuccessRequest = new ArraySuccessRequest { Info = new[] { originator } }
         };
 
-        emptyArraySmsResponse = new SmsResponse<ArraySuccessRequest>()
+        emptyArraySmsResponse = new SmsResponse<ArraySuccessRequest>
         {
-            SuccessRequest = new ArraySuccessRequest() { Info = Array.Empty<string>() }
+            SuccessRequest = new ArraySuccessRequest { Info = Array.Empty<string>() }
         };
 
-        successSendSmsClubRequest = new SendSmsRequest()
+        successSendSmsClubRequest = new SendSmsRequest
         {
             PhoneNumbers = new[] { successPhoneNumber },
             Message = "test text",
             Recipient = "VashZakaz"
         };
 
-        successDictionarySmsResponse = new SmsResponse<DictionarySuccessRequest>()
+        successDictionarySmsResponse = new SmsResponse<DictionarySuccessRequest>
         {
-            SuccessRequest = new DictionarySuccessRequest()
+            SuccessRequest = new DictionarySuccessRequest
             {
-                Info = new Dictionary<string, string>() { { smsId.ToString(), successPhoneNumber } }
+                Info = new Dictionary<string, string> { { smsId.ToString(), successPhoneNumber } }
             }
         };
 
-        faultSendSmsClubRequest = new SendSmsRequest()
+        faultSendSmsClubRequest = new SendSmsRequest
         {
             PhoneNumbers = new[] { successPhoneNumber, faultPhoneNumber },
             Message = "test text",
             Recipient = "VashZakaz"
         };
 
-        faultDictionarySmsResponse = new SmsResponse<DictionarySuccessRequest>()
+        faultDictionarySmsResponse = new SmsResponse<DictionarySuccessRequest>
         {
-            SuccessRequest = new DictionarySuccessRequest()
+            SuccessRequest = new DictionarySuccessRequest
             {
-                Info = new Dictionary<string, string>()
-                {
-                    { smsId.ToString(), successPhoneNumber }
-                },
-                AddInfo = new Dictionary<string, string>() { { faultPhoneNumber, faultMessage } }
+                Info = new Dictionary<string, string> { { smsId.ToString(), successPhoneNumber } },
+                AddInfo = new Dictionary<string, string> { { faultPhoneNumber, faultMessage } }
             }
         };
 

@@ -66,9 +66,9 @@ public class MainView
             .AddColumnDefinitions(GridLength.Star, GridLength.Auto, GridLength.Auto)
             .AddChild(new ContentControl().SetContent(header))
             .AddChild(
-                new ButtonMaterialIcon()
+                new ButtonIcon()
+                    .AddClass("close")
                     .SetGridColumn(2)
-                    .SetKindClose()
                     .SetCommand(
                         currentViewModel.CreateCommand(() => Tabs.ThrowIfNull().RemoveItem(tabItem))
                     )
@@ -77,9 +77,9 @@ public class MainView
         if (content is IRefreshCommandView refreshCommandView)
         {
             grid.AddChild(
-                new ButtonMaterialIcon()
+                new ButtonIcon()
+                    .AddClass("refresh")
                     .SetGridColumn(1)
-                    .SetKindRefresh()
                     .SetCommand(refreshCommandView.RefreshCommand)
             );
         }

@@ -1,18 +1,18 @@
-namespace WorkTool.Core.Modules.SmsClub.Configuration;
+namespace WorkTool.Core.Modules.SmsClub.Configurations;
 
 public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorBuilder dependencyInjectorBuilder)
     {
-        dependencyInjectorBuilder.RegisterTransient(
-            typeof(ControlPanelView),
-            (IResolver r) =>
-                new ControlPanelView() { ViewModel = r.Resolve<ControlPanelViewModel>() }
+        dependencyInjectorBuilder.RegisterTransient<ControlPanelView>(
+            (ControlPanelViewModel viewModel) => new ControlPanelView { ViewModel = viewModel }
         );
+
         dependencyInjectorBuilder.RegisterTransient<
             ISmsClubSender<object>,
             SmsClubSender<object>
         >();
+
         dependencyInjectorBuilder.RegisterReserveTransient<SmsClubSender<object>, HttpClient>(
             (IConfiguration configuration) =>
             {

@@ -1,6 +1,6 @@
-﻿namespace WorkTool.Core.Modules.SmsClub.Configuration;
+﻿namespace WorkTool.Core.Modules.SmsClub.Configurations;
 
-public class UiConfiguration : IUiConfiguration
+public readonly struct UiConfiguration : IUiConfiguration
 {
     public void Configure(UiContextBuilder builder)
     {

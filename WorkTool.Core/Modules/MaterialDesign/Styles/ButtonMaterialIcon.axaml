@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
-                    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+                    xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+                    xmlns:controls="clr-namespace:WorkTool.Core.Modules.MaterialDesign.Controls">
     <ControlTheme x:Key="{x:Type controls:ButtonMaterialIcon}" 
                   TargetType="controls:ButtonMaterialIcon" 
                   BasedOn="{StaticResource {x:Type Button}}">

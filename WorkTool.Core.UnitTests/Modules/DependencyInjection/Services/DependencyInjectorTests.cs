@@ -14,7 +14,8 @@ public class DependencyInjectorTests
         dependencyInjector = new DependencyInjector(
             new Dictionary<Type, InjectorItem>(),
             new Dictionary<ReserveIdentifier, InjectorItem>(),
-            new Dictionary<AutoInjectIdentifier, InjectorItem>()
+            new Dictionary<AutoInjectIdentifier, InjectorItem>(),
+            new RandomStringGuid("N")
         );
     }
 
@@ -27,7 +28,8 @@ public class DependencyInjectorTests
                 { typeof(object), new InjectorItem((InjectorItemType)255, () => new object()) }
             },
             new Dictionary<ReserveIdentifier, InjectorItem>(),
-            new Dictionary<AutoInjectIdentifier, InjectorItem>()
+            new Dictionary<AutoInjectIdentifier, InjectorItem>(),
+            new RandomStringGuid("N")
         );
 
         var func = () => dependencyInjector.Resolve(typeof(object));
@@ -72,7 +74,8 @@ public class DependencyInjectorTests
                 }
             },
             new Dictionary<ReserveIdentifier, InjectorItem>(),
-            new Dictionary<AutoInjectIdentifier, InjectorItem>()
+            new Dictionary<AutoInjectIdentifier, InjectorItem>(),
+            new RandomStringGuid("N")
         );
 
         var instance = dependencyInjector.Resolve(typeof(StructStructWith1ConstructorAndParameter));
@@ -90,7 +93,8 @@ public class DependencyInjectorTests
                 { typeof(object), new InjectorItem(InjectorItemType.Singleton, () => new object()) }
             },
             new Dictionary<ReserveIdentifier, InjectorItem>(),
-            new Dictionary<AutoInjectIdentifier, InjectorItem>()
+            new Dictionary<AutoInjectIdentifier, InjectorItem>(),
+            new RandomStringGuid("N")
         );
 
         var instance1 = dependencyInjector.Resolve(typeof(object));
@@ -111,7 +115,8 @@ public class DependencyInjectorTests
                 },
             },
             new Dictionary<ReserveIdentifier, InjectorItem>(),
-            new Dictionary<AutoInjectIdentifier, InjectorItem>()
+            new Dictionary<AutoInjectIdentifier, InjectorItem>(),
+            new RandomStringGuid("N")
         );
 
         var instance1 = dependencyInjector.Resolve(typeof(object));
@@ -139,7 +144,8 @@ public class DependencyInjectorTests
                 }
             },
             new Dictionary<ReserveIdentifier, InjectorItem>(),
-            new Dictionary<AutoInjectIdentifier, InjectorItem>()
+            new Dictionary<AutoInjectIdentifier, InjectorItem>(),
+            new RandomStringGuid("N")
         );
 
         var instance = dependencyInjector.Resolve(typeof(StructStructWith1ConstructorAndParameter));

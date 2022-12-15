@@ -50,7 +50,7 @@ public class DependencyInjector : IDependencyInjector
         return result;
     }
 
-#region Injector
+#region AutoInject
 
     private Expression GetAutoInjectExpression(Type type, Expression root)
     {
@@ -63,7 +63,6 @@ public class DependencyInjector : IDependencyInjector
 
         var id = randomString.GetRandom();
         var variable = root.Type.ToVariable($"newInstance{id}");
-        var label = Expression.Label(root.Type);
 
         var blockItems = new List<Expression> { variable.Assign(root) };
 
@@ -111,53 +110,13 @@ public class DependencyInjector : IDependencyInjector
         }
     }
 
-    private Expression CacheSingletonAutoInjectsValueTypeValue(Type type)
-    {
-        if (!type.IsValueType)
-        {
-            throw new NotHaveConstructorException(type);
-        }
-
-        return type.ToNew()
-            .Convert(typeof(object))
-            .Lambda()
-            .Compile()
-            .ThrowIfIsNot<Func<object>>()
-            .DynamicInvoke()
-            .ThrowIfNull()
-            .ToConstant();
-    }
-
-    private Expression CacheSingletonAutoInjectsDefaultValue(Type type)
-    {
-        var constructor = GetSingleConstructor(type);
-
-        if (constructor is null)
-        {
-            return CacheSingletonAutoInjectsValueTypeValue(type);
-        }
-
-        var parameters = constructor.GetParameters();
-        var expressions = ConstructorParametersToExpressions(type, parameters);
-
-        return constructor
-            .ToNew(expressions)
-            .Convert(typeof(object))
-            .Lambda()
-            .Compile()
-            .ThrowIfIsNot<Func<object>>()
-            .DynamicInvoke()
-            .ThrowIfNull()
-            .ToConstant();
-    }
-
     private Expression GetSingletonAutoInjectsValue(Delegate del, MemberInfo member)
     {
         var parameters = del.Method.GetParameters();
 
         if (parameters.Length == 1 && parameters[0].ParameterType == del.Method.ReturnType)
         {
-            return CacheSingletonAutoInjectsDefaultValue(del.Method.ReturnType);
+            return GetOrCacheExpression(del.Method.ReturnType);
         }
 
         var expressions = ConstructorParametersToExpressions(
@@ -178,40 +137,13 @@ public class DependencyInjector : IDependencyInjector
         return constant;
     }
 
-    private Expression CacheTransientAutoInjectsValueTypeValue(Type type)
-    {
-        if (!type.IsValueType)
-        {
-            throw new NotHaveConstructorException(type);
-        }
-
-        return type.ToNew();
-    }
-
-    private Expression CacheTransientAutoInjectsDefaultValue(Type type)
-    {
-        var constructor = GetSingleConstructor(type);
-
-        if (constructor is null)
-        {
-            return CacheTransientAutoInjectsValueTypeValue(type);
-        }
-
-        var parameters = constructor.GetParameters();
-        var expressions = ConstructorParametersToExpressions(type, parameters);
-
-        return constructor.ToNew(expressions);
-    }
-
     private Expression GetTransientAutoInjectsValue(Delegate del, MemberInfo member)
     {
         var parameters = del.Method.GetParameters();
 
         if (parameters.Length == 1 && parameters[0].ParameterType == del.Method.ReturnType)
         {
-            CacheValue(del.Method.ReturnType);
-
-            return GetCacheExpression(del.Method.ReturnType).ThrowIfNull();
+            return GetOrCacheExpression(del.Method.ReturnType);
         }
 
         var expressions = ConstructorParametersToExpressions(
@@ -242,6 +174,10 @@ public class DependencyInjector : IDependencyInjector
         }
     }
 
+#endregion
+
+#region Injector
+
     private List<Expression> ConstructorParametersToExpressions(
         Type type,
         IEnumerable<ParameterInfo> parameters
@@ -263,6 +199,19 @@ public class DependencyInjector : IDependencyInjector
         }
 
         return result;
+    }
+
+    private Expression GetOrCacheExpression(Type type)
+    {
+        var expression = GetCacheExpression(type);
+
+        if (expression is null)
+        {
+            CacheValue(type);
+            expression = GetCacheExpression(type).ThrowIfNull();
+        }
+
+        return expression;
     }
 
     private Expression GetOrCacheExpression(Type type, ParameterInfo parameter)
@@ -661,7 +610,7 @@ public class DependencyInjector : IDependencyInjector
         {
             if (arguments.TryGetValue(parameters[index].ParameterType, out var value))
             {
-                args[index] = value.ThrowIfNull();
+                args[index] = value;
             }
             else
             {

@@ -11,18 +11,27 @@
             <InvokeCommandAction Command="{Binding LoadedCommand}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Horizontal">
-            <controls:ButtonMaterialIcon Kind="Download" Command="{Binding GetSmsesStatusCommand}"/>
-            <TextBox Text="{Binding SmsIds}" />
-            <TextBlock Text="{Binding Info}" />
-        </StackPanel>
+    
+    <Grid RowDefinitions="Auto,Auto,*">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Balance}" />
             <TextBlock Text="{Binding Currency}" />
         </StackPanel>
-        <StackPanel Orientation="Vertical">
-            <ItemsControl Items="{Binding Originators}" />
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <controls:ButtonIcon Classes="download" Command="{Binding GetSmsesStatusCommand}"/>
+            <TextBox Text="{Binding SmsIds}" MinWidth="200" Watermark="Sms Ids"/>
         </StackPanel>
-    </StackPanel>
+        
+        <Grid Grid.Row="2" ColumnDefinitions="*,*">
+            <ListBox SelectedItem="{Binding SelectedOriginator}" Items="{Binding Originators}" />
+            
+            <StackPanel Grid.Column="1">
+                <TextBox Text="{Binding PhoneNumbers}" Watermark="Phone Numbers"/>
+                <TextBox Text="{Binding Text}" Watermark="Text"/>
+                <controls:ButtonIcon Classes="send" Command="{Binding SendSmsCommand}"/>
+                <TextBlock Text="{Binding Info}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
 </UserControl>

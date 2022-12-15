@@ -45,7 +45,7 @@ public class SmsClubSender<TParameters> : ISmsClubSender<TParameters> where TPar
     public async Task<DictionarySmsResponse> GetSmsStatusAsync(IEnumerable<string> smsIds)
     {
         smsIds = smsIds.ThrowIfEmpty().ToArray();
-        var request = new GetSmsStatusRequest() { SmsIds = smsIds.ThrowIfEmpty().ToArray() };
+        var request = new GetSmsStatusRequest { SmsIds = smsIds.ThrowIfEmpty().ToArray() };
 
         var jsonDocument = await httpClient.PostReadJsonDocumentThrowIfNotSuccessAsync(
             endpointsOptions.SmsStatus,
@@ -88,7 +88,7 @@ public class SmsClubSender<TParameters> : ISmsClubSender<TParameters> where TPar
         foreach (var item in messageItems)
         {
             currentCount++;
-            var request = new SendSmsRequest()
+            var request = new SendSmsRequest
             {
                 Message = item.GetMessageValue(),
                 Recipient = item.Message.RecipientName,
