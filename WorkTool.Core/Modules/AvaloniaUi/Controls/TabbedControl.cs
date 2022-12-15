@@ -1,13 +1,19 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
+[TemplatePart(MenuPartName, typeof(Menu))]
+[TemplatePart(TabControlPartName, typeof(TabControl))]
 public class TabbedControl : ContentControl
 {
-    public readonly Menu Menu;
-    public readonly TabControl Tabs;
+    public const string MenuPartName = "PART_Menu";
+    public const string TabControlPartName = "PART_TabControl";
 
-    public TabbedControl()
+    protected Menu? Menu;
+    protected TabControl? Tabs;
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
-        Menu = new Menu();
-        Tabs = new TabControl();
+        base.OnApplyTemplate(e);
+        Menu = e.NameScope.Get<Menu>(MenuPartName);
+        Tabs = e.NameScope.Get<TabControl>(TabControlPartName);
     }
 }

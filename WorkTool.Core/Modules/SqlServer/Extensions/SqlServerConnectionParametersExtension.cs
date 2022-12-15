@@ -16,8 +16,8 @@ public static class SqlServerConnectionParametersExtension
 
         var result = await dDConnection.GetTableStringAsync<SqlCommand, SqlConnection>(
             query,
-            Constants.DefaultRowSeparator,
-            Constants.DefaultPadding
+            AdoDotNetConstants.DefaultRowSeparator,
+            AdoDotNetConstants.DefaultPadding
         );
 
         return result;

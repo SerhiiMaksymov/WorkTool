@@ -4,104 +4,144 @@ public static class DependencyInjectorHelper
 {
     public static IDependencyInjector CreateIndexOperation()
     {
-        return new DependencyInjectorBuilder()
-            .RegisterTransient<IManagedNotificationManager>(() =>
-            {
-                var currentApplication = Application.Current.ThrowIfNull();
-                var applicationLifetime = currentApplication.ApplicationLifetime.ThrowIfNull();
-                var classicDesktopStyleApplicationLifetime =
-                    applicationLifetime.ThrowIfIsNot<IClassicDesktopStyleApplicationLifetime>();
-                var mainWindow = classicDesktopStyleApplicationLifetime.MainWindow.ThrowIfNull();
+        var dependencyInjectorBuilder = new DependencyInjectorBuilder();
+        dependencyInjectorBuilder.AddConfigurationFromAssemblies();
+        dependencyInjectorBuilder.RegisterTransient<IDelay, DelayService>();
+        dependencyInjectorBuilder.RegisterTransient(() => SmsSenderEndpointsOptions.Default);
+        dependencyInjectorBuilder.RegisterTransient(() => SmsSenderOptions.Default);
+        dependencyInjectorBuilder.RegisterTransient<MainView>();
+        dependencyInjectorBuilder.RegisterTransient<IMessageBoxView, AvaloniaMessageBoxView>();
+        dependencyInjectorBuilder.RegisterTransient<CommandLineContextBuilder>();
+        dependencyInjectorBuilder.RegisterTransient(() => AppBaseUri.AppStyleUri);
+        dependencyInjectorBuilder.RegisterTransient<IStyleLoader, StyleLoader>();
+        dependencyInjectorBuilder.RegisterTransient<IResourceLoader, ResourceLoader>();
+        dependencyInjectorBuilder.RegisterTransient<IApplication, DesktopAvaloniaUiApplication>();
+        dependencyInjectorBuilder.RegisterTransient<AvaloniaUiApplicationCommandLine>();
 
-                return new WindowNotificationManager(mainWindow);
-            })
-            .RegisterTransient<MainView>()
-            .RegisterTransient<IMessageBoxView, AvaloniaMessageBoxView>()
-            .RegisterTransient<IHumanizing<Exception, object>, ExceptionHumanizing>()
-            .RegisterTransient<IHumanizing<Exception, string>, ToStringHumanizing<Exception>>()
-            .RegisterTransient<
-                IStreamParser<ICommandLineToken, string>,
-                CommandLineArgumentParser
-            >()
-            .RegisterTransient<CommandLineContextBuilder>()
-            .RegisterTransient(
-                r =>
-                    PropertyInfoItemsControlContextBuilder
-                        .CreateDefaultBuilder(r.Resolve<IResolver>(), r.Resolve<UiContext>())
-                        .Build()
-            )
-            .RegisterTransient(r => r)
-            .RegisterTransient<Control>(
-                r =>
-                    new DialogControl()
-                        .SetName(AvaloniaMessageBoxView.DialogControlName)
-                        .SetContent(r.Resolve<MainView>())
-                        .SetDialog(r.Resolve<MessageControl>())
-            )
-            .RegisterTransient(r => (IInvoker)r)
-            .RegisterTransient(() => new Uri("avares://App/Styles"))
-            .RegisterTransient(
-                r =>
-                    r.Resolve<UiContextBuilder>()
-                        .AddFromAssembly(typeof(WorkToolCoreMarcType).Assembly)
-                        .Build()
-            )
-            .RegisterTransient<IStyleLoader, StyleLoader>()
-            .RegisterTransient<IResourceLoader, ResourceLoader>()
-            .RegisterTransient(r =>
-            {
-                var resourceLoader = r.Resolve<IResourceLoader>();
+        dependencyInjectorBuilder.RegisterTransient<IManagedNotificationManager>(() =>
+        {
+            var currentApplication = Application.Current.ThrowIfNull();
+            var applicationLifetime = currentApplication.ApplicationLifetime.ThrowIfNull();
+            var classicDesktopStyleApplicationLifetime =
+                applicationLifetime.ThrowIfIsNot<IClassicDesktopStyleApplicationLifetime>();
+            var mainWindow = classicDesktopStyleApplicationLifetime.MainWindow.ThrowIfNull();
 
-                return resourceLoader.LoadResources();
-            })
-            .RegisterTransient<IEnumerable<IStyle>>(r =>
-            {
-                var styleLoader = r.Resolve<IStyleLoader>();
+            return new WindowNotificationManager(mainWindow);
+        });
 
+        dependencyInjectorBuilder.RegisterTransient<
+            IHumanizing<Exception, object>,
+            ExceptionHumanizing
+        >();
+
+        dependencyInjectorBuilder.RegisterTransient<
+            IHumanizing<Exception, string>,
+            ToStringHumanizing<Exception>
+        >();
+
+        dependencyInjectorBuilder.RegisterTransient<
+            IStreamParser<ICommandLineToken, string>,
+            CommandLineArgumentParser
+        >();
+
+        dependencyInjectorBuilder.RegisterTransient<PropertyInfoTemplatedControlContext>(
+            (IResolver resolver, UiContext uiContext) =>
+                PropertyInfoItemsControlContextBuilder
+                    .CreateDefaultBuilder(resolver, uiContext)
+                    .Build()
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<Control>(
+            (MainView mainView, MessageControl messageControl) =>
+                new DialogControl()
+                    .SetName(AvaloniaMessageBoxView.DialogControlName)
+                    .SetContent(mainView)
+                    .SetDialog(messageControl)
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<UiContext>(
+            (UiContextBuilder uiContextBuilder) =>
+                uiContextBuilder.AddFromAssembly(typeof(WorkToolCoreMarcType).Assembly).Build()
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<IEnumerable<IResourceProvider>>(
+            (IResourceLoader resourceLoader) => resourceLoader.LoadResources()
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<IEnumerable<IStyle>>(
+            (IStyleLoader styleLoader, Uri uri) =>
+            {
                 var result = new List<IStyle>
                 {
-                    new FluentTheme(r.Resolve<Uri>()) { Mode = FluentThemeMode.Dark },
-                    new StyleInclude(r.Resolve<Uri>())
-                    {
-                        Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
-                    }
+                    new FluentTheme(uri) { Mode = FluentThemeMode.Dark },
+                    new StyleInclude(uri) { Source = AvaloniaUriBase.DataGridThemeFluentUri },
+                    new StyleInclude(uri) { Source = AvaloniaUriBase.MaterialIconsUri }
                 };
 
                 var styles = styleLoader.LoadStyles();
                 result.AddRange(styles);
 
+                result.Add(new StyleInclude(uri) { Source = AvaloniaUriBase.ControlsStylesUri });
+
                 return result;
-            })
-            .RegisterTransient(r =>
+            }
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<Window>(
+            (Control control) =>
             {
-                var window = new Window().SetContent(r.Resolve<Control>());
+                var window = new Window().SetContent(control);
 
                 window.AttachDevTools();
 
                 return window;
-            })
-            .RegisterTransient<IApplication, DesktopAvaloniaUiApplication>()
-            .RegisterTransient(
-                r =>
-                    AppBuilder
-                        .Configure(() => r.Resolve<AvaloniaUiApp>())
-                        .UseReactiveUI()
-                        .UsePlatformDetect()
-            )
-            .RegisterTransient<IApplicationCommandLine, CombineApplicationCommandLine>()
-            .RegisterTransient<IEnumerable<IApplicationCommandLine>>(
-                r => new IApplicationCommandLine[] { r.Resolve<AvaloniaUiApplicationCommandLine>() }
-            )
-            .RegisterTransient<AvaloniaUiApplicationCommandLine>()
-            .RegisterTransient(
-                () => new BlobServiceClient(AzureStorageBlobsConnections.Development)
-            )
-            .RegisterTransient<IRandom<int>>(() => new RandomInt32(new Interval<int>(-99, 99)))
-            .RegisterTransient<IRandomArrayItem<Guid>>(() => new RandomArrayItem<Guid>(false))
-            .RegisterTransient<IRandomArrayItem<Guid?>>(() => new RandomArrayItem<Guid?>(true))
-            .RegisterTransient<IRandomArrayItem<string>>(() => new RandomArrayItem<string>(false))
-            .RegisterTransient<IRandomArrayItem<char>>(() => new RandomArrayItem<char>(false))
-            .RegisterTransient<IRandom<int, Interval<int>>, RandomInt32InInterval>()
-            .Build();
+            }
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<AppBuilder>(
+            (AvaloniaUiApp avaloniaUiApp) =>
+                AppBuilder.Configure(() => avaloniaUiApp).UseReactiveUI().UsePlatformDetect()
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<
+            IApplicationCommandLine,
+            CombineApplicationCommandLine
+        >();
+
+        dependencyInjectorBuilder.RegisterTransient<IEnumerable<IApplicationCommandLine>>(
+            (AvaloniaUiApplicationCommandLine avaloniaUiApplicationCommandLine) =>
+                new IApplicationCommandLine[] { avaloniaUiApplicationCommandLine }
+        );
+
+        dependencyInjectorBuilder.RegisterTransient(
+            () => new BlobServiceClient(AzureStorageBlobsConnections.Development)
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<IRandom<int>>(
+            () => new RandomInt32(new Interval<int>(-99, 99))
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<IRandomArrayItem<Guid>>(
+            () => new RandomArrayItem<Guid>(false)
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<IRandomArrayItem<Guid?>>(
+            () => new RandomArrayItem<Guid?>(true)
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<IRandomArrayItem<string>>(
+            () => new RandomArrayItem<string>(false)
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<IRandomArrayItem<char>>(
+            () => new RandomArrayItem<char>(false)
+        );
+
+        dependencyInjectorBuilder.RegisterTransient<
+            IRandom<int, Interval<int>>,
+            RandomInt32InInterval
+        >();
+
+        return dependencyInjectorBuilder.Build();
     }
 }

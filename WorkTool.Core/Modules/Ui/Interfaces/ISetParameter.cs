@@ -2,5 +2,5 @@
 
 public interface ISetParameter
 {
-    void SetParameter(ArgumentValue argumentValue);
+    void SetParameter(Type type, object value);
 }

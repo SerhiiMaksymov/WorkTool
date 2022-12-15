@@ -1,6 +1,4 @@
-﻿using FormatWith;
-
-namespace WorkTool.Core.Modules.SmsClub.Extensions;
+﻿namespace WorkTool.Core.Modules.SmsClub.Extensions;
 
 public static class MessageExtension
 {

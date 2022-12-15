@@ -1,0 +1,37 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="WorkTool.Core.Modules.SmsClub.Views.ControlPanelView"
+             Name="ControlPanelView">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded" SourceObject="ControlPanelView">
+            <InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    
+    <Grid RowDefinitions="Auto,Auto,*">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Balance}" />
+            <TextBlock Text="{Binding Currency}" />
+        </StackPanel>
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <controls:ButtonIcon Classes="download" Command="{Binding GetSmsesStatusCommand}"/>
+            <TextBox Text="{Binding SmsIds}" MinWidth="200" Watermark="Sms Ids"/>
+        </StackPanel>
+        
+        <Grid Grid.Row="2" ColumnDefinitions="*,*">
+            <ListBox SelectedItem="{Binding SelectedOriginator}" Items="{Binding Originators}" />
+            
+            <StackPanel Grid.Column="1">
+                <TextBox Text="{Binding PhoneNumbers}" Watermark="Phone Numbers"/>
+                <TextBox Text="{Binding Text}" Watermark="Text"/>
+                <controls:ButtonIcon Classes="send" Command="{Binding SendSmsCommand}"/>
+                <TextBlock Text="{Binding Info}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

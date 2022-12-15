@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>11</LangVersion>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,17 +15,29 @@
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview4" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview4" />
         <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.0-preview4" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
         <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.3" />
         <PackageReference Include="FormatWith" Version="3.0.1" />
         <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
-        <PackageReference Include="Material.Avalonia" Version="3.0.0-avalonia11-preview2.130-nightly" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+        <PackageReference Include="Material.Icons.Avalonia" Version="1.2.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\WorkTool.SourceGenerator.Core\WorkTool.SourceGenerator.Core.csproj" />
         <ProjectReference Include="..\WorkTool.SourceGenerator\WorkTool.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaResource Include="Modules\AvaloniaUi\Fonts\Alatsi-Regular.ttf" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Configuration.Json">
+        <HintPath>..\..\..\.nuget\packages\microsoft.extensions.configuration.json\7.0.0\lib\net7.0\Microsoft.Extensions.Configuration.Json.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

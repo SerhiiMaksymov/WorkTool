@@ -6,12 +6,12 @@ public class CommandsView
         IContentView,
         ISetParameter
 {
-    private readonly List<ArgumentValue> argumentValues;
+    private readonly Dictionary<Type, object> argumentValues;
     private readonly IInvoker invoker;
 
     public CommandsView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
-        argumentValues = new List<ArgumentValue>();
+        argumentValues = new() { { GetType(), this } };
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
 
@@ -29,10 +29,7 @@ public class CommandsView
         var currentViewModel = ViewModel.ThrowIfNull();
         var command = currentViewModel.CreateCommand(async () =>
         {
-            var arguments = new List<ArgumentValue> { new(GetType(), this) };
-
-            arguments.AddRange(argumentValues);
-            var result = invoker.Invoke(commandContext.Task, arguments);
+            var result = invoker.Invoke(commandContext.Task, argumentValues);
 
             if (result is null)
             {
@@ -50,21 +47,21 @@ public class CommandsView
         this.AddItem(new Button().SetCommand(command).SetContent(content));
     }
 
-    public void AddContent(Func<object> content)
+    public void SetContent(Func<object> content)
     {
         var value = content.Invoke();
-        SetParameter(new ArgumentValue(value.GetType(), value));
+        SetParameter(value.GetType(), value);
 
         if (value is ISetParameter setParameter)
         {
-            setParameter.SetParameter(new ArgumentValue(GetType(), value));
+            setParameter.SetParameter(GetType(), value);
         }
 
         this.SetContent(value);
     }
 
-    public void SetParameter(ArgumentValue argumentValue)
+    public void SetParameter(Type type, object value)
     {
-        argumentValues.Add(argumentValue);
+        argumentValues[type] = value;
     }
 }

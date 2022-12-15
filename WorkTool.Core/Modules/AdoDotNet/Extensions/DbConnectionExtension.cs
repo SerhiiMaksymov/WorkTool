@@ -8,10 +8,9 @@ public static class DbConnectionExtension
         where TConnection : DbConnection
         where TCommand : DbCommand, new()
     {
-        return connection.InitCommandAsync<TCommand, TConnection>(
-            string.Empty,
-            Constants.DefaultTimeout
-        );
+        var timeout = AdoDotNetConstants.DefaultTimeout;
+
+        return connection.InitCommandAsync<TCommand, TConnection>(string.Empty, timeout);
     }
 
     public static TCommand InitCommand<TCommand, TConnection>(this TConnection connection)
@@ -20,7 +19,7 @@ public static class DbConnectionExtension
     {
         return connection.InitCommand<TCommand, TConnection>(
             string.Empty,
-            Constants.DefaultTimeout
+            AdoDotNetConstants.DefaultTimeout
         );
     }
 
@@ -31,7 +30,9 @@ public static class DbConnectionExtension
         where TConnection : DbConnection
         where TCommand : DbCommand, new()
     {
-        return connection.InitCommand<TCommand, TConnection>(query, Constants.DefaultTimeout);
+        var timeout = AdoDotNetConstants.DefaultTimeout;
+
+        return connection.InitCommand<TCommand, TConnection>(query, timeout);
     }
 
     public static Task<TCommand> InitCommandAsync<TCommand, TConnection>(
@@ -41,7 +42,9 @@ public static class DbConnectionExtension
         where TConnection : DbConnection
         where TCommand : DbCommand, new()
     {
-        return connection.InitCommandAsync<TCommand, TConnection>(query, Constants.DefaultTimeout);
+        var timeout = AdoDotNetConstants.DefaultTimeout;
+
+        return connection.InitCommandAsync<TCommand, TConnection>(query, timeout);
     }
 
     public static Task<TCommand> InitCommandAsync<TCommand, TConnection>(

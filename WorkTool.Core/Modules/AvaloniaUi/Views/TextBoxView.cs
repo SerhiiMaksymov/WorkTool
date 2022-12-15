@@ -3,11 +3,11 @@
 public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISetParameter
 {
     private readonly IInvoker invoker;
-    private readonly List<ArgumentValue> parameters;
+    private readonly Dictionary<Type, object> parameters;
 
     public TextBoxView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
-        parameters = new List<ArgumentValue>();
+        parameters = new() { { GetType(), this } };
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
         avaloniaUiContext.InitView(this);
@@ -73,9 +73,9 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
         contextFlyout.AddItem(menuItem);
     }
 
-    public void SetParameter(ArgumentValue argumentValue)
+    public void SetParameter(Type type, object obj)
     {
-        parameters.Add(argumentValue);
+        parameters[type] = obj;
     }
 
     private MenuItem ToMenuItem(TreeNode<string, MenuItemContext> node)
@@ -105,11 +105,8 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
 
         var command = currentViewModel.CreateCommand(async () =>
         {
-            var arguments = new List<ArgumentValue> { new(GetType(), this) };
-
-            arguments.AddRange(parameters);
             var @delegate = node.Value.Task.ThrowIfNull();
-            var result = invoker.Invoke(@delegate, arguments);
+            var result = invoker.Invoke(@delegate, parameters);
 
             if (result is Task task)
             {

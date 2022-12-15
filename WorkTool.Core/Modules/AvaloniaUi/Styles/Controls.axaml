@@ -1,0 +1,14 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/TabbedControl.axaml" />
+                <ResourceInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/MainView.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+    <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/Button.axaml"/>
+    <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/ButtonIcon.axaml"/>
+    <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/Path.axaml"/>
+</Styles>

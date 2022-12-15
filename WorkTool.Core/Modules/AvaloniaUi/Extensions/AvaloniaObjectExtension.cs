@@ -36,7 +36,7 @@ public static class AvaloniaObjectExtension
 
         var binding = new Binding(path).SetStringFormat(stringFormat);
 
-        return target.BindValue(targetProperty, binding, null);
+        return target.BindValue(targetProperty, binding);
     }
 
     public static DisposableItem<TAvaloniaObject> BindBindingValue<TAvaloniaObject>(
@@ -50,7 +50,7 @@ public static class AvaloniaObjectExtension
 
         var binding = new Binding(path).SetConverter(converter);
 
-        return target.BindValue(targetProperty, binding, null);
+        return target.BindValue(targetProperty, binding);
     }
 
     public static DisposableItem<TAvaloniaObject> BindBindingValue<TAvaloniaObject>(

@@ -174,7 +174,7 @@ public class UiContextBuilder : IBuilder<UiContext>
             var rootParameters = new List<ParameterExpression> { serviceParameter };
 
             rootParameters.AddRange(parameters);
-            var @delegate = call.ToLambda(rootParameters.ToArray()).Compile();
+            var @delegate = call.Lambda(rootParameters.ToArray()).Compile();
             var nameFunction = NameHelper.GetNameFunction(serviceType, parameters, method);
             AddFunction(nameFunction, @delegate);
         }
@@ -466,7 +466,7 @@ public class UiContextBuilder : IBuilder<UiContext>
         var contextConstant = Expression.Constant(context);
         var call = Expression.Call(tabControlViewParameter, method, contextConstant);
 
-        return call.ToLambda(tabControlViewParameter).Compile();
+        return call.Lambda(tabControlViewParameter).Compile();
     }
 
     public UiContextBuilder AddTabItemFunction<TTabControlView, TContent>(
@@ -504,7 +504,7 @@ public class UiContextBuilder : IBuilder<UiContext>
         where TContent : notnull
     {
         return AddTabItemFunction<TTabControlView, TContent>(
-            () => NameHelper.GetNameAddTabItemFunction(typeof(TTabControlView), typeof(TContent))
+            NameHelper.GetNameAddTabItemFunction<TTabControlView, TContent>
         );
     }
 

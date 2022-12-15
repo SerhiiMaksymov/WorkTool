@@ -30,7 +30,7 @@ public class DynamicResourceBinding : IBinding
             return null;
         }
 
-        var control = target as IResourceHost ?? this.anchor as IResourceHost;
+        var control = target as IResourceHost ?? anchor as IResourceHost;
 
         if (control != null)
         {
@@ -39,7 +39,7 @@ public class DynamicResourceBinding : IBinding
             return InstancedBinding.OneWay(source, priority);
         }
 
-        if (this.anchor is IResourceProvider resourceProvider)
+        if (anchor is IResourceProvider resourceProvider)
         {
             var source = resourceProvider.GetResourceObservable(
                 ResourceKey,

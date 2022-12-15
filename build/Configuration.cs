@@ -1,6 +1,7 @@
 extern alias NC;
+using Enumeration = NC::Nuke.Common.Tooling.Enumeration;
 
-using NC.Nuke.Common.Tooling;
+namespace _build;
 
 [TypeConverter(typeof(TypeConverter<Configuration>))]
 public class Configuration : Enumeration

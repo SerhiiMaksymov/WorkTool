@@ -2,5 +2,5 @@
 
 public interface IContentView
 {
-    void AddContent(Func<object> content);
+    void SetContent(Func<object> content);
 }

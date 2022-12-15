@@ -17,8 +17,6 @@ global using CliWrap;
 
 global using Serilog;
 
-global using JetBrains.Annotations;
-
 global using WorkTool.Core.Modules.Common.Exceptions;
 global using WorkTool.Core.Modules.Common.Extensions;
 global using WorkTool.Core.Modules.Git.Exceptions;

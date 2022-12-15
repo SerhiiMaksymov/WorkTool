@@ -7,34 +7,31 @@ public class MainView
         IKeyBindingView
 {
     private readonly IInvoker invoker;
+    private readonly UiContext uiContext;
+    private readonly Dictionary<Type, object> argumentValues;
 
-    public MainView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
+    public MainView(IInvoker invoker, UiContext uiContext, ViewModelBase viewModel)
     {
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
+        this.uiContext = uiContext;
+
+        argumentValues = new() { { GetType(), this }, { typeof(ITabControlView), this } };
 
         this.WhenActivated(disposables =>
         {
             var currentViewModel = ViewModel.ThrowIfNull();
             currentViewModel.CanExecute.DisposeWith(disposables);
-            Tabs.Bind(ItemsControl.ItemsProperty, new Binding("TabItems")).DisposeWith(disposables);
         });
-
-        avaloniaUiContext.InitView(this);
     }
 
     public void AddKeyBinding(KeyboardKeyGesture keyGesture, Delegate @delegate)
     {
         var currentViewModel = ViewModel.ThrowIfNull();
+
         var command = currentViewModel.CreateCommand(async () =>
         {
-            var arguments = new List<ArgumentValue>
-            {
-                new(GetType(), this),
-                new(typeof(ITabControlView), this)
-            };
-
-            var result = invoker.Invoke(@delegate, arguments);
+            var result = invoker.Invoke(@delegate, argumentValues);
 
             if (result is null)
             {
@@ -55,7 +52,7 @@ public class MainView
     public void AddMenuItem(TreeNode<string, MenuItemContext> node)
     {
         var menuItem = ToMenuItem(node);
-        Menu.AddItem(menuItem);
+        Menu.ThrowIfNull().AddItem(menuItem);
     }
 
     public void AddTabItem(TabItemContext tabItemContext)
@@ -65,28 +62,29 @@ public class MainView
         var content = tabItemContext.Content.Invoke();
         var tabItem = new TabItem();
 
-        Tabs.AddItem(
-            tabItem
-                .SetHeader(
-                    new Grid()
-                        .AddColumnDefinition(GridLength.Star)
-                        .AddColumnDefinition(GridLength.Auto)
-                        .AddChild(new ContentControl().SetContent(header))
-                        .AddChild(
-                            new Button()
-                                .SetGridColumn(1)
-                                .SetContent(
-                                    new AvaloniaPath()
-                                        .SetData(GeometryConstants.Close)
-                                        .SetFill(Brushes.Black)
-                                )
-                                .SetCommand(
-                                    currentViewModel.CreateCommand(() => Tabs.RemoveItem(tabItem))
-                                )
-                        )
-                )
-                .SetContent(content)
-        );
+        var grid = new Grid()
+            .AddColumnDefinitions(GridLength.Star, GridLength.Auto, GridLength.Auto)
+            .AddChild(new ContentControl().SetContent(header))
+            .AddChild(
+                new ButtonIcon()
+                    .AddClass("close")
+                    .SetGridColumn(2)
+                    .SetCommand(
+                        currentViewModel.CreateCommand(() => Tabs.ThrowIfNull().RemoveItem(tabItem))
+                    )
+            );
+
+        if (content is IRefreshCommandView refreshCommandView)
+        {
+            grid.AddChild(
+                new ButtonIcon()
+                    .AddClass("refresh")
+                    .SetGridColumn(1)
+                    .SetCommand(refreshCommandView.RefreshCommand)
+            );
+        }
+
+        Tabs.ThrowIfNull().AddItem(tabItem.SetHeader(grid).SetContent(content));
     }
 
     private MenuItem AddCommand(MenuItem menuItem, TreeNode<string, MenuItemContext> node)
@@ -95,7 +93,7 @@ public class MainView
         var command = currentViewModel.CreateCommand(async () =>
         {
             var @delegate = node.Value.Task.ThrowIfNull();
-            var result = invoker.Invoke(@delegate, new[] { new ArgumentValue(GetType(), this) });
+            var result = invoker.Invoke(@delegate, argumentValues);
 
             if (result is Task task)
             {
@@ -125,5 +123,11 @@ public class MainView
     {
         return AddHeader(AddCommand(new MenuItem(), node), node)
             .SetItems(node.Nodes.Select(x => ToMenuItem(x)).ToArray());
+    }
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        uiContext.InitView(this);
     }
 }
