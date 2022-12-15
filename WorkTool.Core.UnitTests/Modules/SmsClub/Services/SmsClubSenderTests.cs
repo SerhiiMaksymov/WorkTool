@@ -115,6 +115,7 @@ public class SmsClubSenderTests : IDisposable
         );
     }
 
+    [Test]
     public async Task GetSmsStatusAsync_SendNotExistIds_Exception()
     {
         smsClubSender = smsClubSender.ThrowIfNull();
