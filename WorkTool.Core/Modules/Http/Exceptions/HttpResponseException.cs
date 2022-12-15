@@ -3,39 +3,59 @@
 public class HttpResponseException : Exception
 {
     public HttpResponseException(HttpResponseMessage httpResponseMessage)
-        : base(CreateMessage(httpResponseMessage))
+        : this(
+            httpResponseMessage.ReasonPhrase,
+            httpResponseMessage.Version,
+            httpResponseMessage.StatusCode,
+            httpResponseMessage.Headers,
+            httpResponseMessage.ReadAsStringAsync().GetAwaiter().GetResult()
+        ) { }
+
+    private HttpResponseException(
+        string? reasonPhrase,
+        SystemVersion version,
+        HttpStatusCode statusCode,
+        HttpResponseHeaders headers,
+        string content
+    ) : base(CreateMessage(reasonPhrase, version, statusCode, headers, content))
     {
-        StatusCode = httpResponseMessage.StatusCode;
-        Version = httpResponseMessage.Version;
-        ReasonPhrase = httpResponseMessage.ReasonPhrase;
-        Headers = httpResponseMessage.Headers;
+        ReasonPhrase = reasonPhrase;
+        Version = version;
+        StatusCode = statusCode;
+        Headers = headers;
+        Content = content;
     }
 
     public string? ReasonPhrase { get; }
     public SystemVersion Version { get; }
     public HttpStatusCode StatusCode { get; }
     public HttpResponseHeaders Headers { get; }
+    public string Content { get; }
 
-    private static string CreateMessage(HttpResponseMessage httpResponseMessage)
+    private static string CreateMessage(
+        string? reasonPhrase,
+        SystemVersion version,
+        HttpStatusCode statusCode,
+        HttpResponseHeaders headers,
+        string content
+    )
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder.Append($"{httpResponseMessage.StatusCode} {httpResponseMessage.Version}");
+        stringBuilder.Append($"{statusCode} {version}");
 
-        if (httpResponseMessage.ReasonPhrase is not null)
+        if (reasonPhrase is not null)
         {
-            stringBuilder.Append($" {httpResponseMessage.ReasonPhrase}");
+            stringBuilder.Append($" {reasonPhrase}");
         }
 
-        if (httpResponseMessage.Headers.Any())
+        if (headers.Any())
         {
-            foreach (var header in httpResponseMessage.Headers)
+            foreach (var header in headers)
             {
                 stringBuilder.Append(Environment.NewLine);
                 stringBuilder.Append($"{header.Key}: {header.Value}");
             }
         }
-
-        var content = httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
         if (content.Any())
         {

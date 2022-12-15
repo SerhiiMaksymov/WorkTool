@@ -1,6 +1,8 @@
 ﻿namespace WorkTool.Core.Modules.SmsClub.Views;
 
-public partial class ControlPanelView : ReactiveUserControl<ControlPanelViewModel>
+public partial class ControlPanelView
+    : ReactiveUserControl<ControlPanelViewModel>,
+        IRefreshCommandView
 {
     public ControlPanelView()
     {
@@ -11,4 +13,6 @@ public partial class ControlPanelView : ReactiveUserControl<ControlPanelViewMode
     {
         AvaloniaXamlLoader.Load(this);
     }
+
+    public ICommand RefreshCommand => ViewModel.ThrowIfNull().RefreshCommand;
 }

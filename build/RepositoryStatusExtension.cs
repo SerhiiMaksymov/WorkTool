@@ -1,4 +1,6 @@
-﻿public static class RepositoryStatusExtension
+﻿namespace _build;
+
+public static class RepositoryStatusExtension
 {
     public static RepositoryStatus LogStatus(this RepositoryStatus repositoryStatus)
     {

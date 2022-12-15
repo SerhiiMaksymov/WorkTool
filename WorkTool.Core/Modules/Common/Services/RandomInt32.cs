@@ -1,4 +1,6 @@
-﻿namespace WorkTool.Core.Modules.Common.Services;
+﻿using Constants = WorkTool.Core.Modules.Common.Helpers.Constants;
+
+namespace WorkTool.Core.Modules.Common.Services;
 
 public class RandomInt32 : IRandom<int>
 {
@@ -11,7 +13,7 @@ public class RandomInt32 : IRandom<int>
 
     public int GetRandom()
     {
-        var value = CommonConstants.Random.Next(interval.Min, interval.Max + 1);
+        var value = Constants.Random.Next(interval.Min, interval.Max + 1);
 
         return value;
     }

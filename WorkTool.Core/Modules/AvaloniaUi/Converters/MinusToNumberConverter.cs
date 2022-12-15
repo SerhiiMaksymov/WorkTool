@@ -1,17 +1,10 @@
-﻿using System.ComponentModel;
-
-namespace WorkTool.Core.Modules.AvaloniaUi.Converters;
+﻿namespace WorkTool.Core.Modules.AvaloniaUi.Converters;
 
 public class MinusToNumberConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is null)
-        {
-            return targetType.GetDefaultValue();
-        }
-
-        return value.ToString();
+        return value is null ? targetType.GetDefaultValue() : value.ToString();
     }
 
     public object? ConvertBack(

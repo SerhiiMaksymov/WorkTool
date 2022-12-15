@@ -1,6 +1,4 @@
-﻿using DynamicData;
-
-namespace WorkTool.Core.Modules.AvaloniaUi.Services;
+﻿namespace WorkTool.Core.Modules.AvaloniaUi.Services;
 
 public class AvaloniaUiApp : AvaloniaApplication
 {

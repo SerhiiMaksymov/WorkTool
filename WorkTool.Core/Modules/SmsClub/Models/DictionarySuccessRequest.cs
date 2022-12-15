@@ -2,7 +2,9 @@
 
 public class DictionarySuccessRequest
 {
-    [JsonPropertyName("info")]
+    public const string InfoJsonPropertyName = "info";
+
+    [JsonPropertyName(InfoJsonPropertyName)]
     public Dictionary<string, string>? Info { get; set; }
 
     [JsonPropertyName("add_info")]

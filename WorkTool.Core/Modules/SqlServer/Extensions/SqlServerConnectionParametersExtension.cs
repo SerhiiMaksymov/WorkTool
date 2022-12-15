@@ -1,4 +1,6 @@
-﻿namespace WorkTool.Core.Modules.SqlServer.Extensions;
+﻿using Constants = WorkTool.Core.Modules.AdoDotNet.Helpers.Constants;
+
+namespace WorkTool.Core.Modules.SqlServer.Extensions;
 
 public static class SqlServerConnectionParametersExtension
 {

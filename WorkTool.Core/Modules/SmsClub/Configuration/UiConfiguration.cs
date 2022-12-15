@@ -4,11 +4,12 @@ public class UiConfiguration : IUiConfiguration
 {
     public void Configure(UiContextBuilder builder)
     {
-        builder.AddFunction(
-            $"Add{nameof(ControlPanelView)}",
-            (ITabControlView view) => view.AddTabItem(() => "Test", () => new ControlPanelView())
-        );
+        var nameAddTabItemFunction = NameHelper.GetNameAddTabItemFunction<
+            MainView,
+            ControlPanelView
+        >();
 
-        builder.AddMenuItem<MainView>($"Add{nameof(ControlPanelView)}", "Test", "Test");
+        builder.AddTabItemFunction<MainView, ControlPanelView>(() => "SMS Club");
+        builder.AddMenuItem<MainView>(nameAddTabItemFunction, "SMS", "SMS Club");
     }
 }

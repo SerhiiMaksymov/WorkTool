@@ -12,6 +12,7 @@ public class TabbedControl : ContentControl
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
+        base.OnApplyTemplate(e);
         Menu = e.NameScope.Get<Menu>(MenuPartName);
         Tabs = e.NameScope.Get<TabControl>(TabControlPartName);
     }

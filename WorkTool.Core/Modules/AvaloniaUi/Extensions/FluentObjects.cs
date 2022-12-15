@@ -1,4 +1,5 @@
 ﻿[assembly: FluentObject(typeof(StackPanel), null)]
+[assembly: FluentObject(typeof(ButtonMaterialIcon), null)]
 [assembly: FluentObject(typeof(MenuItem), null)]
 [assembly: FluentObject(typeof(HeaderedSelectingItemsControl), null)]
 [assembly: FluentObject(typeof(ItemsControl), null)]

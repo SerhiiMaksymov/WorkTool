@@ -2,6 +2,8 @@
 
 public class SmsResponse<TSuccessRequest>
 {
-    [JsonPropertyName("success_request")]
+    public const string SuccessRequestJsonPropertyName = "success_request";
+
+    [JsonPropertyName(SuccessRequestJsonPropertyName)]
     public TSuccessRequest? SuccessRequest { get; set; }
 }

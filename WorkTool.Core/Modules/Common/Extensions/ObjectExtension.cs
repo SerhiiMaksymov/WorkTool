@@ -12,13 +12,6 @@ public static class ObjectExtension
         return result;
     }
 
-    public static T With<T>(this T value, Action<T> action)
-    {
-        action.Invoke(value);
-
-        return value;
-    }
-
     public static T? As<T>(this object value) where T : class
     {
         return value as T;
@@ -41,5 +34,15 @@ public static class ObjectExtension
         }
 
         throw new NotEqualsException<TObj>(name, obj, expected);
+    }
+
+    public static T IfNullUse<T>(this T? obj, T @default)
+    {
+        if (obj is null)
+        {
+            return @default;
+        }
+
+        return obj;
     }
 }

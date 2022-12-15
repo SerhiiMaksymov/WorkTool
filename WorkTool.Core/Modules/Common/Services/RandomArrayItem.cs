@@ -1,4 +1,6 @@
-﻿namespace WorkTool.Core.Modules.Common.Services;
+﻿using Constants = WorkTool.Core.Modules.Common.Helpers.Constants;
+
+namespace WorkTool.Core.Modules.Common.Services;
 
 public class RandomArrayItem<TValue> : IRandomArrayItem<TValue>
 {
@@ -20,7 +22,7 @@ public class RandomArrayItem<TValue> : IRandomArrayItem<TValue>
         }
 
         var min = includeDefault ? -1 : 0;
-        var index = CommonConstants.Random.Next(min, values.Length);
+        var index = Constants.Random.Next(min, values.Length);
 
         if (index == -1)
         {

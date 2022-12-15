@@ -8,12 +8,15 @@ public class MainView
 {
     private readonly IInvoker invoker;
     private readonly UiContext uiContext;
+    private readonly Dictionary<Type, object> argumentValues;
 
     public MainView(IInvoker invoker, UiContext uiContext, ViewModelBase viewModel)
     {
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
         this.uiContext = uiContext;
+
+        argumentValues = new() { { GetType(), this }, { typeof(ITabControlView), this } };
 
         this.WhenActivated(disposables =>
         {
@@ -28,13 +31,7 @@ public class MainView
 
         var command = currentViewModel.CreateCommand(async () =>
         {
-            var arguments = new List<ArgumentValue>
-            {
-                new(GetType(), this),
-                new(typeof(ITabControlView), this)
-            };
-
-            var result = invoker.Invoke(@delegate, arguments);
+            var result = invoker.Invoke(@delegate, argumentValues);
 
             if (result is null)
             {
@@ -55,7 +52,7 @@ public class MainView
     public void AddMenuItem(TreeNode<string, MenuItemContext> node)
     {
         var menuItem = ToMenuItem(node);
-        Menu.AddItem(menuItem);
+        Menu.ThrowIfNull().AddItem(menuItem);
     }
 
     public void AddTabItem(TabItemContext tabItemContext)
@@ -65,28 +62,29 @@ public class MainView
         var content = tabItemContext.Content.Invoke();
         var tabItem = new TabItem();
 
-        Tabs.AddItem(
-            tabItem
-                .SetHeader(
-                    new Grid()
-                        .AddColumnDefinition(GridLength.Star)
-                        .AddColumnDefinition(GridLength.Auto)
-                        .AddChild(new ContentControl().SetContent(header))
-                        .AddChild(
-                            new Button()
-                                .SetGridColumn(1)
-                                .SetContent(
-                                    new AvaloniaPath()
-                                        .SetData(GeometryConstants.Close)
-                                        .SetFill(Brushes.Black)
-                                )
-                                .SetCommand(
-                                    currentViewModel.CreateCommand(() => Tabs.RemoveItem(tabItem))
-                                )
-                        )
-                )
-                .SetContent(content)
-        );
+        var grid = new Grid()
+            .AddColumnDefinitions(GridLength.Star, GridLength.Auto, GridLength.Auto)
+            .AddChild(new ContentControl().SetContent(header))
+            .AddChild(
+                new ButtonMaterialIcon()
+                    .SetGridColumn(2)
+                    .SetKindClose()
+                    .SetCommand(
+                        currentViewModel.CreateCommand(() => Tabs.ThrowIfNull().RemoveItem(tabItem))
+                    )
+            );
+
+        if (content is IRefreshCommandView refreshCommandView)
+        {
+            grid.AddChild(
+                new ButtonMaterialIcon()
+                    .SetGridColumn(1)
+                    .SetKindRefresh()
+                    .SetCommand(refreshCommandView.RefreshCommand)
+            );
+        }
+
+        Tabs.ThrowIfNull().AddItem(tabItem.SetHeader(grid).SetContent(content));
     }
 
     private MenuItem AddCommand(MenuItem menuItem, TreeNode<string, MenuItemContext> node)
@@ -95,14 +93,7 @@ public class MainView
         var command = currentViewModel.CreateCommand(async () =>
         {
             var @delegate = node.Value.Task.ThrowIfNull();
-            var result = invoker.Invoke(
-                @delegate,
-                new[]
-                {
-                    new ArgumentValue(GetType(), this),
-                    new ArgumentValue(typeof(ITabControlView), this)
-                }
-            );
+            var result = invoker.Invoke(@delegate, argumentValues);
 
             if (result is Task task)
             {

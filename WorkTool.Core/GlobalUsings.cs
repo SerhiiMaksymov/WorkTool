@@ -20,6 +20,8 @@ global using System;
 global using System.Net.Http.Json;
 global using System.Net.Http.Headers;
 global using System.Text.Json.Serialization;
+global using System.ComponentModel;
+global using System.Diagnostics;
 
 global using Avalonia.Controls.Notifications;
 global using Avalonia.Threading;
@@ -44,14 +46,26 @@ global using Avalonia.Styling;
 global using Avalonia.Markup.Xaml;
 global using Avalonia.ReactiveUI;
 
+global using DynamicData;
+
 global using EntityFrameworkCore.Triggers;
 
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Storage;
+global using Microsoft.Extensions.Configuration;
 
 global using ReactiveUI;
 
+global using FormatWith;
+
+global using Material.Icons;
+
+global using WorkTool.Core.Modules.SmsClub.Helpers;
+global using WorkTool.Core.Modules.SmsClub.Services;
+global using WorkTool.Core.Modules.Http.Models;
+global using WorkTool.Core.Modules.SmsClub.Excpetions;
+global using WorkTool.Core.Modules.Expressions.Extensions;
 global using WorkTool.Core.Modules.SmsClub.Views;
 global using WorkTool.Core.Modules.SmsClub.Interfaces;
 global using WorkTool.Core.Modules.SmsClub.ViewModels;
@@ -80,15 +94,9 @@ global using WorkTool.Core.Modules.Common.Extensions;
 global using WorkTool.Core.Modules.Common.Helpers;
 global using WorkTool.Core.Modules.Common.Interfaces;
 global using WorkTool.Core.Modules.Common.Models;
-global using WorkTool.Core.Modules.Common.Services;
 global using WorkTool.Core.Modules.Crypto.Interfaces;
-global using WorkTool.Core.Modules.DependencyInjector.Attributes;
-global using WorkTool.Core.Modules.DependencyInjector.Extensions;
-global using WorkTool.Core.Modules.DependencyInjector.Interfaces;
-global using WorkTool.Core.Modules.DependencyInjector.Models;
 global using WorkTool.Core.Modules.EntityFrameworkCore.Exceptions;
 global using WorkTool.Core.Modules.EntityFrameworkCore.Models;
-global using WorkTool.Core.Modules.Expressions;
 global using WorkTool.Core.Modules.Graph.Models;
 global using WorkTool.Core.Modules.Graph.Services;
 global using WorkTool.Core.Modules.Hash.Interfaces;
@@ -105,19 +113,27 @@ global using WorkTool.Core.Modules.Ui.Models;
 global using WorkTool.Core.Modules.Ui.Services;
 global using WorkTool.SourceGenerator.Core.Attributes;
 global using WorkTool.Core.Modules.AvaloniaUi.Converters;
-global using WorkTool.Core.Modules.DependencyInjector.Services;
 global using WorkTool.Core.Modules.AvaloniaUi.Services;
 global using WorkTool.SourceGenerator.Core.Models;
 global using WorkTool.Core.Modules.Git.Exceptions;
 global using WorkTool.Core.Modules.LibGit2Sharp.Helpers;
 global using WorkTool.Core.Modules.Http.Extensions;
+global using WorkTool.Core.Modules.Http.Helpers;
+global using WorkTool.Core.Modules.DependencyInjection.Extensions;
+global using WorkTool.Core.Modules.DependencyInjection.Interfaces;
+global using WorkTool.Core.Modules.DependencyInjection.Services;
+global using WorkTool.Core.Modules.DependencyInjection.Models;
+global using WorkTool.Core.Modules.DependencyInjection.Exceptions;
+global using WorkTool.Core.Modules.Common.Services;
 
 global using LibGit2Sharp;
 
+global using CommonConstants = WorkTool.Core.Modules.Common.Helpers.Constants;
 global using AvaloniaApplication = Avalonia.Application;
 global using AvaloniaPath = Avalonia.Controls.Shapes.Path;
 global using AvaloniaColor = Avalonia.Media.Color;
 global using SystemColor = System.Drawing.Color;
 global using SystemVersion = System.Version;
+global using BalanceResponse = WorkTool.Core.Modules.SmsClub.Models.SmsResponse<WorkTool.Core.Modules.SmsClub.Models.ObjectSuccessRequest<WorkTool.Core.Modules.SmsClub.Models.Balance>>;
 global using DictionarySmsResponse = WorkTool.Core.Modules.SmsClub.Models.SmsResponse<WorkTool.Core.Modules.SmsClub.Models.DictionarySuccessRequest>;
 global using ArraySmsResponse = WorkTool.Core.Modules.SmsClub.Models.SmsResponse<WorkTool.Core.Modules.SmsClub.Models.ArraySuccessRequest>;

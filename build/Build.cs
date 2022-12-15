@@ -1,28 +1,33 @@
 extern alias NC;
+using NC::Nuke.Common.Tools.DotNet;
 
-using NC.Nuke.Common;
-using NC.Nuke.Common.ProjectModel;
-using NC.Nuke.Common.Tools.DotNet;
-using NC.Nuke.Common.Tools.GitVersion;
+using static NC::Nuke.Common.Tools.DotNet.DotNetTasks;
 
-using static NC.Nuke.Common.Tools.DotNet.DotNetTasks;
+using GitVersion = NC::Nuke.Common.Tools.GitVersion.GitVersion;
+using NukeBuild = NC::Nuke.Common.NukeBuild;
+using Solution = NC::Nuke.Common.ProjectModel.Solution;
+using Target = NC::Nuke.Common.Target;
+
+namespace _build;
 
 class Build : NukeBuild
 {
-    [Solution]
+    [NC::Nuke.Common.ProjectModel.SolutionAttribute]
     public Solution Solution;
 
-    [GitVersion]
+    [NC::Nuke.Common.Tools.GitVersion.GitVersionAttribute]
     public GitVersion GitVersion;
 
     public static int Main() => Execute<Build>(x => x.Compile);
 
-    [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
+    [NC::Nuke.Common.ParameterAttribute(
+        "Configuration to build - Default is 'Debug' (local) or 'Release' (server)"
+    )]
     readonly Configuration Configuration = IsLocalBuild
         ? Configuration.Debug
         : Configuration.Release;
 
-    [Parameter("GIT message commit.")]
+    [NC::Nuke.Common.ParameterAttribute("GIT message commit.")]
     readonly string CommitMessage;
 
     Target GitCommit =>

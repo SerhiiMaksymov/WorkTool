@@ -2,15 +2,15 @@
 
 public interface ISmsClubSender<TParameters> where TParameters : notnull
 {
-    Task<SmsResponse<Balance>> GetBalanceAsync();
+    Task<BalanceResponse> GetBalanceAsync();
 
-    Task<SmsResponse<ArraySuccessRequest>> GetOriginatorsAsync();
+    Task<ArraySmsResponse> GetOriginatorsAsync();
 
-    Task<SmsResponse<DictionarySuccessRequest>> GetSmsStatusAsync(IEnumerable<string> smsIds);
+    Task<DictionarySmsResponse> GetSmsStatusAsync(IEnumerable<string> smsIds);
 
-    Task<SmsResponse<DictionarySuccessRequest>> SendSmsAsync(SendSmsRequest request);
+    Task<DictionarySmsResponse> SendSmsAsync(SendSmsRequest request);
 
-    IAsyncEnumerable<SmsResponse<DictionarySuccessRequest>> SendsSmsesAsync(
+    IAsyncEnumerable<DictionarySmsResponse> SendsSmsesAsync(
         MessageItemsCollection<TParameters> messageItems
     );
 }

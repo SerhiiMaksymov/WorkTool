@@ -2,13 +2,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="WorkTool.Core.Modules.SmsClub.Views.ControlPanelView"
              Name="ControlPanelView">
     <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Loaded" SourceObject="ControlPanelView" Actions="">
-            <InvokeCommandAction Command="{Binding LoadedCommand}"/>
+        <EventTriggerBehavior EventName="Loaded" SourceObject="ControlPanelView">
+            <InvokeCommandAction Command="{Binding LoadedCommand}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
-    <ItemsControl Items="{Binding Originators}"></ItemsControl>
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <controls:ButtonMaterialIcon Kind="Download" Command="{Binding GetSmsesStatusCommand}"/>
+            <TextBox Text="{Binding SmsIds}" />
+            <TextBlock Text="{Binding Info}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Balance}" />
+            <TextBlock Text="{Binding Currency}" />
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <ItemsControl Items="{Binding Originators}" />
+        </StackPanel>
+    </StackPanel>
 </UserControl>

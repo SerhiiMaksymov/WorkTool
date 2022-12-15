@@ -2,6 +2,16 @@
 
 public static class StringExtension
 {
+    public static string? GetEnvironmentVariable(this string key)
+    {
+        return Environment.GetEnvironmentVariable(key);
+    }
+
+    public static Uri ToUri(this string str)
+    {
+        return new(str);
+    }
+
     public static string ThrowIfNullOrWhiteSpace(
         this string? str,
         [CallerArgumentExpression(nameof(str))] string paramName = ""
@@ -80,5 +90,20 @@ public static class StringExtension
     public static string ToWriteToFile(this string str, FileInfo file)
     {
         return str.ToWriteToFile(file, Encoding.UTF8);
+    }
+
+    public static string? AddLine(this string? str, string? line)
+    {
+        if (str is null)
+        {
+            return line;
+        }
+
+        if (line is null)
+        {
+            return str;
+        }
+
+        return $"{str}{line}{Environment.NewLine}";
     }
 }

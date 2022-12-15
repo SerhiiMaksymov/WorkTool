@@ -1,23 +1,16 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Views;
 
-public class MessageView : ReactiveMessageControl<ViewModelBase>
+public class MessageView : ReactiveMessageControl<ViewModelBase>, ISetParameter
 {
-    private readonly Dictionary<Type, ArgumentValue> argumentValues;
+    private readonly Dictionary<Type, object> argumentValues;
     private readonly IInvoker invoker;
 
     public MessageView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
-        argumentValues = new Dictionary<Type, ArgumentValue>();
+        argumentValues = new() { { GetType(), this }, { typeof(ITabControlView), this } };
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
         avaloniaUiContext.InitView(this);
-    }
-
-    public MessageView AddArgumentValue(ArgumentValue argument)
-    {
-        argumentValues.Add(argument.Type, argument);
-
-        return this;
     }
 
     public ICommand CreateCommand(Delegate @delegate)
@@ -26,15 +19,7 @@ public class MessageView : ReactiveMessageControl<ViewModelBase>
 
         return currentViewModel.CreateCommand(async () =>
         {
-            var result = invoker.Invoke(
-                @delegate,
-                argumentValues
-                    .Select(x => x.Value)
-                    .ToList()
-                    .AddItem(this.ToArgumentValue())
-                    .AddItem(this.As<ITabControlView>().ToArgumentValue())
-                    .ToArray()
-            );
+            var result = invoker.Invoke(@delegate, argumentValues);
 
             if (result is null)
             {
@@ -46,5 +31,10 @@ public class MessageView : ReactiveMessageControl<ViewModelBase>
                 await task;
             }
         });
+    }
+
+    public void SetParameter(Type type, object value)
+    {
+        argumentValues[type] = value;
     }
 }

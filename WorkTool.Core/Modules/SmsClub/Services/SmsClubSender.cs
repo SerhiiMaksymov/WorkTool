@@ -3,69 +3,83 @@ namespace WorkTool.Core.Modules.SmsClub.Services;
 public class SmsClubSender<TParameters> : ISmsClubSender<TParameters> where TParameters : notnull
 {
     private readonly HttpClient httpClient;
-    private readonly SmsSenderEndpoints endpoints;
+    private readonly SmsSenderEndpointsOptions endpointsOptions;
     private readonly SmsSenderOptions options;
     private readonly IDelay delay;
 
     public SmsClubSender(
         HttpClient httpClient,
-        SmsSenderEndpoints endpoints,
+        SmsSenderEndpointsOptions endpointsOptions,
         SmsSenderOptions options,
         IDelay delay
     )
     {
         this.delay = delay;
         this.options = options;
-        this.endpoints = endpoints;
+        this.endpointsOptions = endpointsOptions;
         this.httpClient = httpClient;
     }
 
-    public async Task<SmsResponse<Balance>> GetBalanceAsync()
+    public async Task<BalanceResponse> GetBalanceAsync()
     {
-        using var httpResponseMessage = await httpClient.GetAsync(endpoints.SmsBalanceEndpoint);
-        httpResponseMessage.ThrowIfNotSuccess();
-        var smsClubResponse = await httpResponseMessage.ReadFromJsonAsync<SmsResponse<Balance>>();
-        smsClubResponse = smsClubResponse.ThrowIfNull();
+        var smsResponse = await httpClient.PostReadJsonThrowIfNotSuccessAsync<BalanceResponse>(
+            endpointsOptions.SmsBalance
+        );
 
-        return smsClubResponse;
+        smsResponse = smsResponse.ThrowIfNull();
+
+        return smsResponse;
     }
 
     public async Task<SmsResponse<ArraySuccessRequest>> GetOriginatorsAsync()
     {
-        using var httpResponseMessage = await httpClient.GetAsync(endpoints.SmsOriginatorEndpoint);
-        httpResponseMessage.ThrowIfNotSuccess();
-        var smsClubResponse = await httpResponseMessage.ReadFromJsonAsync<ArraySmsResponse>();
-        smsClubResponse = smsClubResponse.ThrowIfNull();
+        var smsResponse = await httpClient.PostReadJsonThrowIfNotSuccessAsync<ArraySmsResponse>(
+            endpointsOptions.SmsOriginator
+        );
 
-        return smsClubResponse;
+        smsResponse = smsResponse.ThrowIfNull();
+
+        return smsResponse;
     }
 
-    public async Task<SmsResponse<DictionarySuccessRequest>> GetSmsStatusAsync(
-        IEnumerable<string> smsIds
-    )
+    public async Task<DictionarySmsResponse> GetSmsStatusAsync(IEnumerable<string> smsIds)
     {
-        var request = new GetSmsStatusRequest() { SmsIds = smsIds.ToArray() };
-        var url = endpoints.SmsStatusEndpoint;
-        using var httpResponseMessage = await httpClient.PostAsync(url, request);
-        httpResponseMessage.ThrowIfNotSuccess();
-        var smsClubResponse = await httpResponseMessage.ReadFromJsonAsync<DictionarySmsResponse>();
-        smsClubResponse = smsClubResponse.ThrowIfNull();
+        smsIds = smsIds.ThrowIfEmpty().ToArray();
+        var request = new GetSmsStatusRequest() { SmsIds = smsIds.ThrowIfEmpty().ToArray() };
 
-        return smsClubResponse;
+        var jsonDocument = await httpClient.PostReadJsonDocumentThrowIfNotSuccessAsync(
+            endpointsOptions.SmsStatus,
+            request
+        );
+
+        var infoElement = jsonDocument.RootElement
+            .GetProperty(DictionarySmsResponse.SuccessRequestJsonPropertyName)
+            .GetProperty(DictionarySuccessRequest.InfoJsonPropertyName);
+
+        if (infoElement.ValueKind == JsonValueKind.Array)
+        {
+            throw new NotFoundSmsesException(smsIds);
+        }
+
+        var smsResponse = jsonDocument.Deserialize<DictionarySmsResponse>();
+        smsResponse = smsResponse.ThrowIfNull();
+
+        return smsResponse;
     }
 
-    public async Task<SmsResponse<DictionarySuccessRequest>> SendSmsAsync(SendSmsRequest request)
+    public async Task<DictionarySmsResponse> SendSmsAsync(SendSmsRequest request)
     {
-        var url = endpoints.SmsSendEndpoint;
-        using var httpResponseMessage = await httpClient.PostAsync(url, request);
-        httpResponseMessage.ThrowIfNotSuccess();
-        var smsClubResponse = await httpResponseMessage.ReadFromJsonAsync<DictionarySmsResponse>();
-        smsClubResponse = smsClubResponse.ThrowIfNull();
+        var smsResponse =
+            await httpClient.PostReadJsonThrowIfNotSuccessAsync<DictionarySmsResponse>(
+                endpointsOptions.SmsSend,
+                request
+            );
+        smsResponse = smsResponse.ThrowIfNull();
 
-        return smsClubResponse;
+        return smsResponse;
     }
 
-    public async IAsyncEnumerable<SmsResponse<DictionarySuccessRequest>> SendsSmsesAsync(
+    public async IAsyncEnumerable<DictionarySmsResponse> SendsSmsesAsync(
         MessageItemsCollection<TParameters> messageItems
     )
     {

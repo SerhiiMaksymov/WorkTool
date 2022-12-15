@@ -5,15 +5,16 @@ public class SmsClubSenderTests : IDisposable
     private Mock<HttpMessageHandler>? httpMessageHandlerMock;
     private Mock<IDelay>? delayMock;
 
-    private SmsSenderEndpoints endpoints;
+    private SmsSenderEndpointsOptions endpointsOptions;
     private SmsClubSender<object>? smsClubSender;
     private SendSmsRequest? successSendSmsClubRequest;
     private SmsResponse<DictionarySuccessRequest>? successDictionarySmsResponse;
     private SmsResponse<ArraySuccessRequest>? successArraySmsResponse;
+    private SmsResponse<ArraySuccessRequest>? emptyArraySmsResponse;
     private SendSmsRequest? faultSendSmsClubRequest;
     private SmsResponse<DictionarySuccessRequest>? faultDictionarySmsResponse;
     private SmsSenderOptions? options;
-    private SmsResponse<Balance>? balanceSmsResponse;
+    private SmsResponse<ObjectSuccessRequest<Balance>>? balanceSmsResponse;
     private double money;
     private int smsId;
     private string? currency;
@@ -45,14 +46,22 @@ public class SmsClubSenderTests : IDisposable
             .CreateClient()
             .SetBaseAddress(SmsClubSender.DefaultHostUri);
 
-        balanceSmsResponse = new SmsResponse<Balance>()
+        balanceSmsResponse = new()
         {
-            SuccessRequest = new Balance() { Currency = currency, Money = money }
+            SuccessRequest = new()
+            {
+                Object = new() { Currency = currency, Money = money }
+            }
         };
 
         successArraySmsResponse = new SmsResponse<ArraySuccessRequest>()
         {
             SuccessRequest = new ArraySuccessRequest() { Info = new[] { originator } }
+        };
+
+        emptyArraySmsResponse = new SmsResponse<ArraySuccessRequest>()
+        {
+            SuccessRequest = new ArraySuccessRequest() { Info = Array.Empty<string>() }
         };
 
         successSendSmsClubRequest = new SendSmsRequest()
@@ -91,16 +100,34 @@ public class SmsClubSenderTests : IDisposable
 
         messageItemsCollection2 = CreateMessageItemsCollection<object>(2);
         messageItemsCollection15 = CreateMessageItemsCollection<object>(15);
-        var smsOriginatorEndpoint = SmsSenderEndpoints.DefaultSmsOriginatorEndpoint;
-        var smsStatusEndpoint = SmsSenderEndpoints.DefaultSmsStatusEndpoint;
-        var smsBalanceEndpoint = SmsSenderEndpoints.DefaultSmsBalanceEndpoint;
+        var smsOriginatorEndpoint = SmsSenderEndpointsOptions.DefaultSmsOriginatorEndpoint;
+        var smsStatusEndpoint = SmsSenderEndpointsOptions.DefaultSmsStatusEndpoint;
+        var smsBalanceEndpoint = SmsSenderEndpointsOptions.DefaultSmsBalanceEndpoint;
         getBalanceUrl = $"{SmsClubSender.DefaultHostUri}{smsBalanceEndpoint}";
         getOriginatorsUrl = $"{SmsClubSender.DefaultHostUri}{smsOriginatorEndpoint}";
-        sendUrl = $"{SmsClubSender.DefaultHostUri}{SmsSenderEndpoints.DefaultSmsSendEndpoint}";
+        sendUrl =
+            $"{SmsClubSender.DefaultHostUri}{SmsSenderEndpointsOptions.DefaultSmsSendEndpoint}";
         getSmsStatusUrl = $"{SmsClubSender.DefaultHostUri}{smsStatusEndpoint}";
         options = SmsSenderOptions.Default;
-        endpoints = SmsSenderEndpoints.Default;
-        smsClubSender = new SmsClubSender<object>(httpClient, endpoints, options, delayMock.Object);
+        endpointsOptions = SmsSenderEndpointsOptions.Default;
+        smsClubSender = new SmsClubSender<object>(
+            httpClient,
+            endpointsOptions,
+            options,
+            delayMock.Object
+        );
+    }
+
+    public async Task GetSmsStatusAsync_SendNotExistIds_Exception()
+    {
+        smsClubSender = smsClubSender.ThrowIfNull();
+        httpMessageHandlerMock
+            .SetupRequest(HttpMethod.Post, getSmsStatusUrl)
+            .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(emptyArraySmsResponse));
+        var func = () => smsClubSender.GetSmsStatusAsync(new[] { smsId.ToString() });
+
+        var exception = await func.Should().ThrowAsync<NotFoundSmsesException>();
+        exception.WithMessage($"Not found sms with id {smsId}.");
     }
 
     [Test]
@@ -109,13 +136,14 @@ public class SmsClubSenderTests : IDisposable
         smsClubSender = smsClubSender.ThrowIfNull();
 
         httpMessageHandlerMock
-            .SetupRequest(HttpMethod.Get, getBalanceUrl)
+            .SetupRequest(HttpMethod.Post, getBalanceUrl)
             .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(balanceSmsResponse));
 
         var response = await smsClubSender.GetBalanceAsync();
-
-        response.SuccessRequest.ThrowIfNull().Currency.Should().Be(currency);
-        response.SuccessRequest.ThrowIfNull().Money.Should().Be(money);
+        var successRequest = response.SuccessRequest.ThrowIfNull();
+        var obj = successRequest.Object.ThrowIfNull();
+        obj.Currency.Should().Be(currency);
+        obj.Money.Should().Be(money);
     }
 
     [Test]
@@ -124,7 +152,7 @@ public class SmsClubSenderTests : IDisposable
         smsClubSender = smsClubSender.ThrowIfNull();
 
         httpMessageHandlerMock
-            .SetupRequest(HttpMethod.Get, getOriginatorsUrl)
+            .SetupRequest(HttpMethod.Post, getOriginatorsUrl)
             .ReturnsResponse(HttpStatusCode.OK, JsonContent.Create(successArraySmsResponse));
 
         var response = await smsClubSender.GetOriginatorsAsync();
@@ -352,11 +380,11 @@ public class SmsClubSenderTests : IDisposable
             .ReturnsResponse(httpStatusCode);
 
         httpMessageHandlerMock
-            .SetupRequest(HttpMethod.Get, getOriginatorsUrl)
+            .SetupRequest(HttpMethod.Post, getOriginatorsUrl)
             .ReturnsResponse(httpStatusCode);
 
         httpMessageHandlerMock
-            .SetupRequest(HttpMethod.Get, getBalanceUrl)
+            .SetupRequest(HttpMethod.Post, getBalanceUrl)
             .ReturnsResponse(httpStatusCode);
     }
 

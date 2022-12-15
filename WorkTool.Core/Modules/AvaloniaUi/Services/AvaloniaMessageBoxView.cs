@@ -82,9 +82,8 @@ public class AvaloniaMessageBoxView : IMessageBoxView
         IEnumerable<MessageBoxViewItem> messages
     )
     {
-        var messageView = resolver
-            .Resolve<MessageView>()
-            .AddArgumentValue(new ArgumentValue<IDialogView>(dialogControl));
+        var messageView = resolver.Resolve<MessageView>();
+        messageView.SetParameter(typeof(IDialogView), dialogControl);
 
         var buttons = messages.Select(
             x => new Button().SetContent(x.Content).SetCommand(messageView.CreateCommand(x.Action))
