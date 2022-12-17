@@ -17,6 +17,7 @@ public static class DependencyInjectorHelper
         dependencyInjectorBuilder.RegisterTransient<IResourceLoader, ResourceLoader>();
         dependencyInjectorBuilder.RegisterTransient<IApplication, DesktopAvaloniaUiApplication>();
         dependencyInjectorBuilder.RegisterTransient<AvaloniaUiApplicationCommandLine>();
+        dependencyInjectorBuilder.RegisterTransientAutoInject((AvaloniaUiApp app) => app.Resolver);
 
         dependencyInjectorBuilder.RegisterTransient<IManagedNotificationManager>(() =>
         {
@@ -73,14 +74,11 @@ public static class DependencyInjectorHelper
             {
                 var result = new List<IStyle>
                 {
-                    new FluentTheme(uri) { Mode = FluentThemeMode.Dark },
-                    new StyleInclude(uri) { Source = AvaloniaUriBase.DataGridThemeFluentUri },
-                    new StyleInclude(uri) { Source = AvaloniaUriBase.MaterialIconsUri }
+                    new StyleInclude(uri) { Source = AvaloniaUriBase.DataGridThemeFluentUri }
                 };
 
                 var styles = styleLoader.LoadStyles();
                 result.AddRange(styles);
-
                 result.Add(new StyleInclude(uri) { Source = AvaloniaUriBase.ControlsStylesUri });
 
                 return result;

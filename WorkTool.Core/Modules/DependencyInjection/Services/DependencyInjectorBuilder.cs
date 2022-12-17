@@ -38,8 +38,8 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
 
     public void AddConfigurationFromAssembly(Assembly assembly)
     {
-        var types = assembly
-            .GetTypes()
+        var types = assembly.GetTypes();
+        var dependencyInjectorConfigurations = types
             .Where(
                 x =>
                     x is { IsInterface: false, IsAbstract: false }
@@ -47,12 +47,13 @@ public class DependencyInjectorBuilder : IBuilder<IDependencyInjector>, IDepende
             )
             .ToArray();
 
-        foreach (var type in types)
+        foreach (var type in dependencyInjectorConfigurations)
         {
             var dependencyInjectorConfiguration = Activator
                 .CreateInstance(type)
                 .ThrowIfNull()
                 .ThrowIfIsNot<IDependencyInjectorConfiguration>();
+
             AddConfiguration(dependencyInjectorConfiguration);
         }
     }

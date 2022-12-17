@@ -62,8 +62,7 @@ global using ReactiveUI;
 
 global using FormatWith;
 
-global using Material.Icons;
-
+global using WorkTool.Core.Modules.ReactiveUI.ViewModels;
 global using WorkTool.Core.Modules.FileSystem.ViewModel;
 global using WorkTool.Core.Modules.Json.Extensions;
 global using WorkTool.Core.Modules.SmsClub.Helpers;
@@ -78,7 +77,6 @@ global using WorkTool.Core.Modules.Http.Exceptions;
 global using WorkTool.Core.Modules.SmsClub.Extensions;
 global using WorkTool.Core.Modules.SmsClub.Models;
 global using WorkTool.Core.Modules.AdoDotNet.Extensions;
-global using WorkTool.Core.Modules.AdoDotNet.Helpers;
 global using WorkTool.Core.Modules.AdoDotNet.Interfaces;
 global using WorkTool.Core.Modules.AdoDotNet.Models;
 global using WorkTool.Core.Modules.Aes.Models;
@@ -88,7 +86,6 @@ global using WorkTool.Core.Modules.AvaloniaUi.Controls;
 global using WorkTool.Core.Modules.AvaloniaUi.Extensions;
 global using WorkTool.Core.Modules.AvaloniaUi.Helpers;
 global using WorkTool.Core.Modules.AvaloniaUi.Interfaces;
-global using WorkTool.Core.Modules.AvaloniaUi.ViewModels;
 global using WorkTool.Core.Modules.AvaloniaUi.Views;
 global using WorkTool.Core.Modules.CommandLine.Enums;
 global using WorkTool.Core.Modules.CommandLine.Interfaces;
@@ -130,11 +127,18 @@ global using WorkTool.Core.Modules.DependencyInjection.Interfaces;
 global using WorkTool.Core.Modules.DependencyInjection.Services;
 global using WorkTool.Core.Modules.DependencyInjection.Models;
 global using WorkTool.Core.Modules.DependencyInjection.Exceptions;
-global using WorkTool.Core.Modules.MaterialDesign.Controls;
 global using WorkTool.Core.Modules.Common.Services;
+global using WorkTool.Core.Modules.FileSystem.Interfaces;
+global using WorkTool.Core.Modules.FileSystem.Services;
+global using WorkTool.Core.Modules.FileSystem.View;
 
 global using LibGit2Sharp;
 
+global using SystemPath = System.IO.Path;
+global using FileSystemFile = WorkTool.Core.Modules.FileSystem.Models.File;
+global using FileSystemDirectory = WorkTool.Core.Modules.FileSystem.Models.Directory;
+global using SystemDirectory = System.IO.Directory;
+global using FileSystemPath = WorkTool.Core.Modules.FileSystem.Models.Path;
 global using CommonConstants = WorkTool.Core.Modules.Common.Helpers.Constants;
 global using AdoDotNetConstants = WorkTool.Core.Modules.AdoDotNet.Helpers.Constants;
 global using ConfigurationConstants = WorkTool.Core.Modules.Configuration.Helpers.Constants;

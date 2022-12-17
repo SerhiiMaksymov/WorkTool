@@ -13,7 +13,7 @@ public class UInt64PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<u
             {
                 control
                     .GetObservable(NumericUpDown.ValueProperty)
-                    .Subscribe(x => property.Value = x.HasValue ? (ulong)x.Value : 0);
+                    .Subscribe(x => property.Value = (ulong)x);
 
                 property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
             }

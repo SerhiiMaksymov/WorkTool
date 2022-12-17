@@ -1,7 +1,7 @@
-﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+﻿<Styles xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls">
-    <ControlTheme x:Key="{x:Type controls:TabbedControl}" TargetType="controls:TabbedControl">
+    <Style Selector="controls|TabbedControl">
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid RowDefinitions="Auto,*">
@@ -10,5 +10,5 @@
                 </Grid>
             </ControlTemplate>
         </Setter>
-    </ControlTheme>
-</ResourceDictionary>
+    </Style>
+</Styles>

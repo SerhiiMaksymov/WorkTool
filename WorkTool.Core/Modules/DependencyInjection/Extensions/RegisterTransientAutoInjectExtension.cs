@@ -18,7 +18,10 @@ public static class RegisterTransientAutoInjectExtension
     )
     {
         var member = expression.Body.ThrowIfIsNot<MemberExpression>().Member;
-        autoInject.RegisterTransientAutoInject(new AutoInjectIdentifier(typeof(T), member), del);
+        autoInject.RegisterTransientAutoInject(
+            new AutoInjectIdentifier(typeof(T), (AutoInjectMember)member),
+            del
+        );
     }
 
     public static void RegisterTransientAutoInject<T, TParameter>(

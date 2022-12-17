@@ -12,13 +12,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-preview4" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Update="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Avalonia.Diagnostics" Version="0.10.18" />
     </ItemGroup>
 
 </Project>

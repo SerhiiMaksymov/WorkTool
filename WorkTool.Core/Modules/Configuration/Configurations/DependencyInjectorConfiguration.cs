@@ -12,7 +12,7 @@ public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConf
         );
 
         dependencyInjectorBuilder.RegisterTransient<IFileProvider>(
-            () => new PhysicalFileProvider(Directory.GetCurrentDirectory())
+            () => new PhysicalFileProvider(SystemDirectory.GetCurrentDirectory())
         );
 
         dependencyInjectorBuilder.RegisterTransientAutoInject(

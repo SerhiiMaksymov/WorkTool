@@ -54,7 +54,7 @@ public class DependencyInjector : IDependencyInjector
 
     private Expression GetAutoInjectExpression(Type type, Expression root)
     {
-        var expressions = GetTypeMembersExpressions(type).ToArray();
+        var expressions = GetTypeMembersExpressions(type);
 
         if (expressions.IsEmpty())
         {
@@ -78,14 +78,16 @@ public class DependencyInjector : IDependencyInjector
         return Expression.Block(new[] { variable }, blockItems);
     }
 
-    private IEnumerable<(MemberInfo Member, Expression Expression)> GetTypeMembersExpressions(
-        Type type
-    )
+    private List<(MemberInfo Member, Expression Expression)> GetTypeMembersExpressions(Type type)
     {
+        var list = new List<(MemberInfo Member, Expression Expression)>();
+
         foreach (var member in GetAutoInjectMembers(type))
         {
-            yield return (member, GetAutoInjectsExpression(type, member));
+            list.Add((member, GetAutoInjectsExpression(type, member)));
         }
+
+        return list;
     }
 
     private Expression GetAutoInjectsExpression(Type type, MemberInfo member)
@@ -157,9 +159,12 @@ public class DependencyInjector : IDependencyInjector
         return call;
     }
 
-    private IEnumerable<MemberInfo> GetAutoInjectMembers(Type type)
+    private List<MemberInfo> GetAutoInjectMembers(Type type)
     {
-        var members = type.GetMembers();
+        var result = new List<MemberInfo>();
+
+        var members = type.GetMembers()
+            .Where(x => x is PropertyInfo { CanWrite: true } or FieldInfo { IsInitOnly: false });
 
         foreach (var member in members)
         {
@@ -170,8 +175,10 @@ public class DependencyInjector : IDependencyInjector
                 continue;
             }
 
-            yield return member;
+            result.Add(member);
         }
+
+        return result;
     }
 
 #endregion
@@ -333,14 +340,10 @@ public class DependencyInjector : IDependencyInjector
         var expressions = ConstructorParametersToExpressions(type, parameters);
         var instance = injector.Delegate.Target.ThrowIfNull().ToConstant();
         var newExpression = injector.Delegate.Method.ToCall(instance, expressions);
-
-        var func = newExpression
-            .Convert(typeof(object))
-            .Lambda()
-            .Compile()
-            .ThrowIfIsNot<Func<object>>();
-
         var result = GetAutoInjectExpression(type, newExpression);
+
+        var func = result.Convert(typeof(object)).Lambda().Compile().ThrowIfIsNot<Func<object>>();
+
         cacheExpressions.Add(type, result);
         cacheTransientValues.Add(type, func);
     }
@@ -359,14 +362,10 @@ public class DependencyInjector : IDependencyInjector
         var parameters = constructor.GetParameters();
         var expressions = ConstructorParametersToExpressions(type, parameters);
         var newExpression = constructor.ToNew(expressions);
-
-        var obj = newExpression
-            .Convert(typeof(object))
-            .Lambda()
-            .Compile()
-            .ThrowIfIsNot<Func<object>>();
-
         var result = GetAutoInjectExpression(type, newExpression);
+
+        var obj = result.Convert(typeof(object)).Lambda().Compile().ThrowIfIsNot<Func<object>>();
+
         cacheExpressions.Add(type, result);
         cacheTransientValues.Add(type, obj);
     }
@@ -382,7 +381,8 @@ public class DependencyInjector : IDependencyInjector
         var result = GetAutoInjectExpression(type, obj);
         cacheExpressions.Add(type, result);
 
-        var transientValue = obj.Convert(typeof(object))
+        var transientValue = result
+            .Convert(typeof(object))
             .Lambda()
             .Compile()
             .ThrowIfIsNot<Func<object>>();
@@ -418,8 +418,9 @@ public class DependencyInjector : IDependencyInjector
 
         var obj = newExpression.DynamicInvoke().ThrowIfNull();
         var result = GetAutoInjectExpression(type, obj.ToConstant());
+        var resultObj = result.Lambda().Compile().DynamicInvoke().ThrowIfNull();
         cacheExpressions.Add(type, result);
-        cacheSingletonValues.Add(type, obj);
+        cacheSingletonValues.Add(type, resultObj);
     }
 
     private void CacheSingletonValueTypeValue(Type type)
@@ -432,7 +433,7 @@ public class DependencyInjector : IDependencyInjector
         var obj = Activator.CreateInstance(type).ThrowIfNull();
         var result = GetAutoInjectExpression(type, obj.ToConstant());
         cacheExpressions.Add(type, result);
-        cacheSingletonValues.Add(type, obj);
+        cacheSingletonValues.Add(type, result.Lambda().Compile().DynamicInvoke().ThrowIfNull());
     }
 
     private void CacheSingletonDefaultValue(Type type)
@@ -452,7 +453,7 @@ public class DependencyInjector : IDependencyInjector
         var obj = newExpression.DynamicInvoke().ThrowIfNull();
         var result = GetAutoInjectExpression(type, obj.ToConstant());
         cacheExpressions.Add(type, result);
-        cacheSingletonValues.Add(type, obj);
+        cacheSingletonValues.Add(type, result.Lambda().Compile().DynamicInvoke().ThrowIfNull());
     }
 
 #endregion
@@ -461,7 +462,6 @@ public class DependencyInjector : IDependencyInjector
 
     private void CacheReserveValue(Type type, ParameterInfo parameter)
     {
-        var name = parameter.Name.ThrowIfNull();
         var reserveIdentifier = new ReserveIdentifier(type, parameter);
 
         if (!reserves.TryGetValue(reserveIdentifier, out var injectorItem))
@@ -517,13 +517,6 @@ public class DependencyInjector : IDependencyInjector
         var parameters = constructor.GetParameters();
         var expressions = ConstructorParametersToExpressions(parameter.ParameterType, parameters);
         var newExpression = constructor.ToNew(expressions);
-
-        var obj = newExpression
-            .Convert(typeof(object))
-            .Lambda()
-            .Compile()
-            .ThrowIfIsNot<Func<object>>();
-
         cacheReservesExpressions.Add(reserveIdentifier, newExpression);
     }
 

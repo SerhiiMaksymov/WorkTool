@@ -2,9 +2,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="WorkTool.Core.Modules.FileSystem.View.DiskUsageView">
-    <Panel>
-        <Ellipse Height="100" Width="100" Fill="Green"/>
-    </Panel>
+    <Grid RowDefinitions="Auto, Auto, *">
+        <StackPanel Orientation="Horizontal">
+            <controls:ButtonIcon Classes="play" Command="{Binding StartCommand}" />
+            <controls:ButtonIcon Classes="stop" Command="{Binding StopCommand}" />
+        </StackPanel>
+        
+        <TextBox Grid.Row="1" Text="{Binding Directory}"/>
+        
+        <TreeView Grid.Row="2" Items="{Binding Roots}" SelectedItem="{Binding SelectedNode}" SelectionMode="Single">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Directories}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Size, StringFormat=(\{0\})}" />
+                    </StackPanel>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </Grid>
 </UserControl>

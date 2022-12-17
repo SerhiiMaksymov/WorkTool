@@ -1,4 +1,4 @@
-﻿namespace WorkTool.Core.Modules.AvaloniaUi.ViewModels;
+﻿namespace WorkTool.Core.Modules.ReactiveUI.ViewModels;
 
 public class ViewModelBase : ReactiveObject
 {
@@ -30,7 +30,7 @@ public class ViewModelBase : ReactiveObject
         return ReactiveCommand.Create(CreateFunc(func), CanExecute);
     }
 
-    private Func<Task> CreateAction(Action action)
+    protected Func<Task> CreateAction(Action action)
     {
         return async () =>
         {
@@ -52,7 +52,7 @@ public class ViewModelBase : ReactiveObject
         };
     }
 
-    private Func<TValue, Task> CreateAction<TValue>(Action<TValue> action)
+    protected Func<TValue, Task> CreateAction<TValue>(Action<TValue> action)
     {
         return async value =>
         {
@@ -74,7 +74,7 @@ public class ViewModelBase : ReactiveObject
         };
     }
 
-    private Func<Task> CreateFunc(Func<Task> func)
+    protected Func<Task> CreateFunc(Func<Task> func)
     {
         return async () =>
         {

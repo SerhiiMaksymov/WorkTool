@@ -32,8 +32,6 @@
 [assembly: FluentObject(typeof(FlyoutBase), null)]
 [assembly: FluentObject(typeof(Popup), null)]
 [assembly: FluentObject(typeof(Binding), null)]
-[assembly: FluentObject(typeof(ControlTheme), null)]
-[assembly: FluentObject(typeof(StyleBase), null)]
 [assembly: FluentObject(typeof(MenuFlyout), null)]
 [assembly: FluentObject(typeof(RelativeSource), null)]
 [assembly: FluentObject(typeof(Border), null)]

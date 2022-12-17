@@ -5,7 +5,7 @@ public class ControlPanelViewModel : ViewModelBase
     private readonly ISmsClubSender<object> smsClubSender;
     private double balance;
     private string? currency;
-    private string? smsIds;
+    private string? smsIdsString;
     private string? info;
     private string? selectedOriginator;
     private string? text;
@@ -39,10 +39,10 @@ public class ControlPanelViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref currency, value);
     }
 
-    public string? SmsIds
+    public string? SmsIdsString
     {
-        get => smsIds;
-        set => this.RaiseAndSetIfChanged(ref smsIds, value);
+        get => smsIdsString;
+        set => this.RaiseAndSetIfChanged(ref smsIdsString, value);
     }
 
     public string? Info
@@ -84,8 +84,8 @@ public class ControlPanelViewModel : ViewModelBase
 
     private async Task GetSmsesStatusAsync()
     {
-        var smsIdsString = SmsIds.ThrowIfNullOrWhiteSpace();
-        var smsIds = smsIdsString.Split(',').Select(x => x.Trim());
+        var smsIdsStr = SmsIdsString.ThrowIfNullOrWhiteSpace();
+        var smsIds = smsIdsStr.Split(',').Select(x => x.Trim());
         var status = await smsClubSender.GetSmsStatusAsync(smsIds);
 
         Info = Info.AddLine(

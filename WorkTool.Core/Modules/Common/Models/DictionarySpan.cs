@@ -73,30 +73,30 @@ public readonly ref struct DictionarySpan<TKey, TValue> where TKey : notnull
 
     public ref struct Enumerator
     {
-        private readonly Span<KeyValuePair<TKey, TValue>> _span;
-        private int _index;
+        private readonly Span<KeyValuePair<TKey, TValue>> span;
+        private int index;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal Enumerator(Span<KeyValuePair<TKey, TValue>> span)
         {
-            _span = span;
-            _index = -1;
+            this.span = span;
+            index = -1;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
-            int num = _index + 1;
-            if (num >= _span.Length)
+            int num = index + 1;
+            if (num >= span.Length)
                 return false;
-            _index = num;
+            index = num;
             return true;
         }
 
         public ref KeyValuePair<TKey, TValue> Current
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref _span[_index];
+            get => ref span[index];
         }
     }
 }

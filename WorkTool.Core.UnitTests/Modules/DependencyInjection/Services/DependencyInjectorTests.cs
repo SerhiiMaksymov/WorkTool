@@ -184,7 +184,7 @@ public class DependencyInjectorTests
     {
         public ClassWith2Constructors() { }
 
-        public ClassWith2Constructors(int value) { }
+        public ClassWith2Constructors(int _) { }
     }
 
     private class ClassWithoutConstructors

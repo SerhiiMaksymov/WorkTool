@@ -1,17 +1,15 @@
-﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+﻿<Styles xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:views="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Views"
                     xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls">
-    <ControlTheme x:Key="{x:Type views:MainView}"
-                  TargetType="views:MainView"
-                  BasedOn="{StaticResource {x:Type controls:TabbedControl}}">
+    <Style Selector="views|MainView">
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid RowDefinitions="Auto,*">
-                    <Menu x:Name="{x:Static controls:TabbedControl.MenuPartName}" />
-                    <TabControl Grid.Row="1" x:Name="{x:Static controls:TabbedControl.TabControlPartName}" />
+                    <Menu Name="{x:Static controls:TabbedControl.MenuPartName}" />
+                    <TabControl Grid.Row="1" Name="{x:Static controls:TabbedControl.TabControlPartName}" />
                 </Grid>
             </ControlTemplate>
         </Setter>
-    </ControlTheme>
-</ResourceDictionary>
+    </Style>
+</Styles>

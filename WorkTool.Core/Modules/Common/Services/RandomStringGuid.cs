@@ -9,7 +9,7 @@ public class RandomStringGuid : IRandom<string>
 
     public string Format { get; }
 
-    public string? GetRandom()
+    public string GetRandom()
     {
         return Guid.NewGuid().ToString(Format);
     }

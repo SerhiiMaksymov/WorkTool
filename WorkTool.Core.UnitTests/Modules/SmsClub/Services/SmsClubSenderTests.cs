@@ -178,7 +178,7 @@ public class SmsClubSenderTests : IDisposable
             .And.ContainKey(smsId.ToString())
             .And.ContainValue(successPhoneNumber);
 
-        httpMessageHandlerMock.VerifyRequest(r => true, Times.Once());
+        httpMessageHandlerMock.VerifyRequest(_ => true, Times.Once());
     }
 
     [Test]
@@ -202,7 +202,7 @@ public class SmsClubSenderTests : IDisposable
             .And.ContainKey(smsId.ToString())
             .And.ContainValue(successPhoneNumber);
 
-        httpMessageHandlerMock.VerifyRequest(r => true, Times.Once());
+        httpMessageHandlerMock.VerifyRequest(_ => true, Times.Once());
     }
 
     [Test]

@@ -14,9 +14,9 @@ public class DoublePropertyInfoTemplatedControl
             {
                 control
                     .GetObservable(NumericUpDown.ValueProperty)
-                    .Subscribe(x => property.Value = (double?)x ?? 0);
+                    .Subscribe(x => property.Value = x);
 
-                property.GetObservable(ValueProperty).Subscribe(x => control.Value = (decimal)x);
+                property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
             }
         ) { }
 }

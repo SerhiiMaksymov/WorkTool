@@ -78,7 +78,7 @@ public static class AvaloniaObjectExtension
 
         var binding = new Binding(path).SetSource(source);
 
-        return target.BindValue(targetProperty, binding, null);
+        return target.BindValue(targetProperty, binding);
     }
 
     public static DisposableItem<TAvaloniaObject> BindBindingValue<TAvaloniaObject>(

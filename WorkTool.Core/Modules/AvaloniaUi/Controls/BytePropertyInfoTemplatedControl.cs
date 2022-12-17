@@ -13,7 +13,7 @@ public class BytePropertyInfoTemplatedControl : PropertyInfoTemplatedControl<byt
             {
                 control
                     .GetObservable(NumericUpDown.ValueProperty)
-                    .Subscribe(x => property.Value = x.HasValue ? (byte)x.Value : (byte)0);
+                    .Subscribe(x => property.Value = (byte)x);
 
                 property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
             }

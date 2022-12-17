@@ -15,7 +15,7 @@ public class UInt16PropertyInfoTemplatedControl
             {
                 control
                     .GetObservable(NumericUpDown.ValueProperty)
-                    .Subscribe(x => property.Value = x.HasValue ? (ushort)x.Value : (ushort)0);
+                    .Subscribe(x => property.Value = (ushort)x);
 
                 property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
             }

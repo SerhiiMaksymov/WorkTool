@@ -17,9 +17,7 @@ public static class MenuFlyoutExtension
             return menuFlyout;
         }
 
-        var result = new AvaloniaList<object>(
-            menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>()
-        );
+        var result = new AvaloniaList<object>(menuFlyout.Items.OfType<object>());
         result.AddRange(items);
         menuFlyout.Items = result;
 
@@ -41,9 +39,7 @@ public static class MenuFlyoutExtension
             return menuFlyout;
         }
 
-        var result = new AvaloniaList<object>(
-            menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>()
-        );
+        var result = new AvaloniaList<object>(menuFlyout.Items.OfType<object>());
         result.AddRange(items);
         menuFlyout.Items = result;
 
@@ -60,12 +56,7 @@ public static class MenuFlyoutExtension
             return menuFlyout;
         }
 
-        var items = new AvaloniaList<object>(
-            menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>()
-        )
-        {
-            item
-        };
+        var items = new AvaloniaList<object>(menuFlyout.Items.OfType<object>()) { item };
 
         menuFlyout.Items = items;
 
@@ -82,9 +73,7 @@ public static class MenuFlyoutExtension
             return menuFlyout;
         }
 
-        var items = new AvaloniaList<object>(
-            menuFlyout.Items?.OfType<object>() ?? Enumerable.Empty<object>()
-        );
+        var items = new AvaloniaList<object>(menuFlyout.Items.OfType<object>());
         items.Remove(item);
         menuFlyout.Items = items;
 
