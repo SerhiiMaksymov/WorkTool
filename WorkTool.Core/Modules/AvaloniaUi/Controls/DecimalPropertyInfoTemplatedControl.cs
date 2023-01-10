@@ -14,9 +14,9 @@ public class DecimalPropertyInfoTemplatedControl
             {
                 control
                     .GetObservable(NumericUpDown.ValueProperty)
-                    .Subscribe(x => property.Value = (decimal)x);
+                    .Subscribe(x => property.Value = x ?? 0);
 
-                property.GetObservable(ValueProperty).Subscribe(x => control.Value = (double)x);
+                property.GetObservable(ValueProperty).Subscribe(x => control.Value = x);
             }
         ) { }
 }

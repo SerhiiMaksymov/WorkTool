@@ -1,1 +1,1 @@
-﻿[assembly: FluentObject(typeof(DependencyInjectorBuilder), null)]
+﻿[assembly: FluentObject(typeof(ReadOnlyDependencyInjectorRegister), null)]

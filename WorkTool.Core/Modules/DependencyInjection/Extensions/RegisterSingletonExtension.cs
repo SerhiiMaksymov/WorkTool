@@ -10,10 +10,14 @@ public static class RegisterSingletonExtension
         registerSingleton.RegisterSingleton(typeof(T), @delegate);
     }
 
-    public static void RegisterSingleton<T, TImp>(this IRegisterSingleton registerSingleton)
-        where T : TImp
-        where TImp : notnull
+    public static void RegisterSingleton<T>(this IRegisterSingleton registerSingleton, object value)
     {
-        registerSingleton.RegisterSingleton<T>((IResolver resolver) => resolver.Resolve<TImp>());
+        registerSingleton.RegisterSingleton(typeof(T), () => value);
+    }
+
+    public static void RegisterSingleton<T, TImp>(this IRegisterSingleton registerSingleton)
+        where TImp : notnull, T
+    {
+        registerSingleton.RegisterSingleton<T>((TImp imp) => imp);
     }
 }

@@ -9,4 +9,14 @@ public readonly record struct FileName(ReadOnlyMemory<char> Name, ReadOnlyMemory
 
         return new(name, extension);
     }
+
+    public override string ToString()
+    {
+        if (Extension.IsEmpty)
+        {
+            return Name.ToString();
+        }
+        
+        return $"{Name}.{Extension}";
+    }
 }

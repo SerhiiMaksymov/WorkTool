@@ -14,4 +14,17 @@ public static class MessageBoxViewExtension
             MessageBoxViewItem.OkResults
         );
     }
+
+    public static Task ShowInfoAsync<TMessageBoxView>(
+        this TMessageBoxView messageBoxView,
+        object message
+    ) where TMessageBoxView : IMessageBoxView
+    {
+        return messageBoxView.ShowAsync(
+            "Info",
+            message,
+            SystemColor.Aquamarine,
+            MessageBoxViewItem.OkResults
+        );
+    }
 }

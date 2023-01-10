@@ -12,10 +12,11 @@ public class ControlPanelViewModel : ViewModelBase
     private string? phoneNumbers;
 
     public ControlPanelViewModel(
+        IScheduler scheduler,
         IHumanizing<Exception, object> humanizing,
         IMessageBoxView messageBoxView,
         ISmsClubSender<object> smsClubSender
-    ) : base(humanizing, messageBoxView)
+    ) : base(scheduler, humanizing, messageBoxView)
     {
         this.smsClubSender = smsClubSender;
         Originators = new AvaloniaList<string>();
@@ -102,7 +103,7 @@ public class ControlPanelViewModel : ViewModelBase
         PhoneNumbers = PhoneNumbers.ThrowIfNull();
 
         var response = await smsClubSender.SendSmsAsync(
-            new SendSmsRequest()
+            new SendSmsRequest
             {
                 Recipient = SelectedOriginator,
                 Message = Text,

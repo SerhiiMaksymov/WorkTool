@@ -1,11 +1,20 @@
 ﻿namespace WorkTool.Core.Modules.Common.Services;
 
-public class RandomUInt16 : IRandom<ushort, Interval<ushort>>
+public class RandomUInt16 : IRandom<ushort>
 {
-    public ushort GetRandom(Interval<ushort> options)
-    {
-        var value = CommonConstants.Random.Next(options.Min, options.Max + 1);
+    private readonly IRandom<ushort, Interval<ushort>> random;
+    private readonly Interval<ushort> interval;
 
-        return (ushort)value;
+    public RandomUInt16(IRandom<ushort, Interval<ushort>> random, Interval<ushort> interval)
+    {
+        this.random = random;
+        this.interval = interval;
+    }
+
+    public ushort GetRandom()
+    {
+        var value = random.GetRandom(interval);
+
+        return value;
     }
 }

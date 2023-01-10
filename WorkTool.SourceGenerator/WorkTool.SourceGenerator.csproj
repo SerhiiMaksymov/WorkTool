@@ -17,6 +17,9 @@
         <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\NotEqualsException.cs">
             <Link>Links\NotEqualsException.cs</Link>
         </Compile>
+        <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\ObjectDisposedException.cs">
+          <Link>Links\ObjectDisposedException.cs</Link>
+        </Compile>
         <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\TypeInvalidCastException.cs">
           <Link>Links\TypeInvalidCastException.cs</Link>
         </Compile>

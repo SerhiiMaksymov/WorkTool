@@ -4,7 +4,7 @@ class Program
 {
     public static async Task Main(string[] args)
     {
-        var setup = DependencyInjectorHelper.CreateIndexOperation();
+        var setup = DependencyInjectorHelper.CreateDependencyInjector();
         var applicationCommandLine = setup.Resolve<IApplicationCommandLine>();
         var arguments = new List<string> { "Root" };
         arguments.AddRange(args);

@@ -1,15 +1,22 @@
 ﻿namespace WorkTool.Core.Modules.FileSystem.Services;
 
-public readonly struct FileSystemRootGetter : IFileSystemRootGetter
+public class FileSystemRootGetter : IFileSystemRootGetter
 {
-    public Span<FileSystemDirectory> GetFileSystemRoot()
+    private readonly IDirectoryService directoryService;
+
+    public FileSystemRootGetter(IDirectoryService directoryService)
+    {
+        this.directoryService = directoryService;
+    }
+
+    public Span<IDirectory> GetFileSystemRoot()
     {
         var drives = DriveInfo.GetDrives();
         var roots = new FileSystemDirectory[drives.Length];
 
         for (var index = 0; index < drives.Length; index++)
         {
-            roots[index] = drives[index].RootDirectory;
+            roots[index] = new FileSystemDirectory(drives[index].RootDirectory, directoryService);
         }
 
         return roots;

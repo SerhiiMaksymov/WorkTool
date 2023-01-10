@@ -4,4 +4,8 @@
     <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/Path.axaml"/>
     <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/TabbedControl.axaml"/>
     <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/MainView.axaml"/>
+    <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/PopupDialogControl.axaml" />
+    <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/WindowPopup.axaml" />
+    <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/DialogControl.axaml" />
+    <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/MessageView.axaml" />
 </Styles>

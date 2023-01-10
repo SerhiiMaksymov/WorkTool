@@ -2,5 +2,5 @@
 
 public interface IDependencyInjectorConfiguration
 {
-    void Configure(IDependencyInjectorBuilder dependencyInjectorBuilder);
+    void Configure(IDependencyInjectorRegister dependencyInjectorRegister);
 }

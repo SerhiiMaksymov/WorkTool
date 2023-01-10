@@ -9,11 +9,11 @@ public class AvaloniaUiApplicationCommandLine : IApplicationCommandLine
             _ => throw new Exception("Default CommandLineContextItem.")
         );
     private readonly CommandLineContext commandLineContext;
-    private readonly IResolver resolver;
+    private readonly AvaloniaUiApplication app;
 
-    public AvaloniaUiApplicationCommandLine(IResolver resolver)
+    public AvaloniaUiApplicationCommandLine(AvaloniaUiApplication app)
     {
-        this.resolver = resolver;
+        this.app = app;
         var parser = new CommandLineArgumentParser();
         var builder = new CommandLineContextBuilder(parser);
         AddCommand(builder);
@@ -31,6 +31,11 @@ public class AvaloniaUiApplicationCommandLine : IApplicationCommandLine
         return commandLineContext.Contains(names);
     }
 
+    public void Run(string[] args)
+    {
+        RunAsync(args).GetAwaiter().GetResult();
+    }
+
     public Task RunAsync(string[] args)
     {
         return commandLineContext.RunAsync(args);
@@ -45,13 +50,7 @@ public class AvaloniaUiApplicationCommandLine : IApplicationCommandLine
         {
             Value = new CommandLineContextItem(
                 new CommandLineArgumentMetaCollections(new ICommandLineArgumentMeta<object>[] { }),
-                _ =>
-                {
-                    var desktopAvaloniaUiApplication =
-                        resolver.Resolve<DesktopAvaloniaUiApplication>();
-
-                    return desktopAvaloniaUiApplication.RunAsync(new string[0]);
-                }
+                _ => app.RunAsync(Array.Empty<string>())
             )
         };
     }

@@ -1,0 +1,29 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
+        xmlns:helpers="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Helpers">
+    <Style Selector="controls|PopupDialogControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Popup IsOpen="{TemplateBinding IsVisibleDialog}"
+                       Height="{Binding $parent[Window].Height}"
+                       Width="{Binding $parent[Window].Width}"
+                       PlacementAnchor="TopLeft"
+                       PlacementGravity="TopLeft"
+                       PlacementMode="AnchorAndGravity"
+                       PlacementTarget="{Binding $parent[Window]}">
+                    <ContentPresenter Name="{x:Static helpers:ControlNames.PartContentPresenter}"
+                                      Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      CornerRadius="{TemplateBinding CornerRadius}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Content="{TemplateBinding Content}"
+                                      Padding="{TemplateBinding Padding}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                </Popup>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

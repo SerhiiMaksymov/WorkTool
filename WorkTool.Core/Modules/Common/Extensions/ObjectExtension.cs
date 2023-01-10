@@ -2,6 +2,11 @@
 
 public static class ObjectExtension
 {
+    public static void ThrowDisposedException<T>(this T obj) where T : notnull
+    {
+        throw new ObjectDisposedException<T>(obj);
+    }
+
     public static T ThrowIfIsNot<T>(this object obj)
     {
         if (obj is not T result)

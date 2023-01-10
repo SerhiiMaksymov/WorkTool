@@ -23,6 +23,9 @@ global using System.Text.Json.Serialization;
 global using System.ComponentModel;
 global using System.Diagnostics;
 global using System.Diagnostics.CodeAnalysis;
+global using System.Reactive.Concurrency;
+global using System.Numerics;
+global using System.Reactive;
 
 global using Avalonia.Controls.Notifications;
 global using Avalonia.Threading;
@@ -46,6 +49,7 @@ global using Avalonia.Metadata;
 global using Avalonia.Styling;
 global using Avalonia.Markup.Xaml;
 global using Avalonia.ReactiveUI;
+global using Avalonia.Markup.Xaml.Styling;
 
 global using DynamicData;
 
@@ -62,8 +66,12 @@ global using ReactiveUI;
 
 global using FormatWith;
 
+global using WorkTool.Core.Modules.FileSystem.Models;
+global using WorkTool.Core.Modules.AvaloniaUi.Exceptions;
+global using WorkTool.Core.Modules.FileSystem.ViewModels;
+global using WorkTool.Core.Modules.FileSystem.Extensions;
+global using WorkTool.Core.Modules.FileSystem.Views;
 global using WorkTool.Core.Modules.ReactiveUI.ViewModels;
-global using WorkTool.Core.Modules.FileSystem.ViewModel;
 global using WorkTool.Core.Modules.Json.Extensions;
 global using WorkTool.Core.Modules.SmsClub.Helpers;
 global using WorkTool.Core.Modules.SmsClub.Services;
@@ -99,7 +107,6 @@ global using WorkTool.Core.Modules.Common.Models;
 global using WorkTool.Core.Modules.Crypto.Interfaces;
 global using WorkTool.Core.Modules.EntityFrameworkCore.Exceptions;
 global using WorkTool.Core.Modules.EntityFrameworkCore.Models;
-global using WorkTool.Core.Modules.Expressions;
 global using WorkTool.Core.Modules.Graph.Models;
 global using WorkTool.Core.Modules.Graph.Services;
 global using WorkTool.Core.Modules.Hash.Interfaces;
@@ -130,15 +137,14 @@ global using WorkTool.Core.Modules.DependencyInjection.Exceptions;
 global using WorkTool.Core.Modules.Common.Services;
 global using WorkTool.Core.Modules.FileSystem.Interfaces;
 global using WorkTool.Core.Modules.FileSystem.Services;
-global using WorkTool.Core.Modules.FileSystem.View;
 
 global using LibGit2Sharp;
 
-global using SystemPath = System.IO.Path;
-global using FileSystemFile = WorkTool.Core.Modules.FileSystem.Models.File;
-global using FileSystemDirectory = WorkTool.Core.Modules.FileSystem.Models.Directory;
-global using SystemDirectory = System.IO.Directory;
+global using AvaloniaNotification = Avalonia.Controls.Notifications.Notification;
 global using FileSystemPath = WorkTool.Core.Modules.FileSystem.Models.Path;
+global using FileSystemDirectory = WorkTool.Core.Modules.FileSystem.Services.Directory;
+global using SystemPath = System.IO.Path;
+global using SystemDirectory = System.IO.Directory;
 global using CommonConstants = WorkTool.Core.Modules.Common.Helpers.Constants;
 global using AdoDotNetConstants = WorkTool.Core.Modules.AdoDotNet.Helpers.Constants;
 global using ConfigurationConstants = WorkTool.Core.Modules.Configuration.Helpers.Constants;

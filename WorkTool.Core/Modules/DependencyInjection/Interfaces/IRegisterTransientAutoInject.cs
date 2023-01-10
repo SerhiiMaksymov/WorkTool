@@ -2,5 +2,5 @@
 
 public interface IRegisterTransientAutoInject
 {
-    public void RegisterTransientAutoInject(AutoInjectIdentifier identifier, Delegate @delegate);
+    public void RegisterTransientAutoInject(AutoInjectIdentifier identifier, Delegate del);
 }

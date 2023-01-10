@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CliWrap" Version="3.5.0" />
+    <PackageReference Include="CliWrap" Version="3.6.0" />
     <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
-    <PackageReference Include="Nuke.Common" Version="6.2.1" Aliases="NC" />
+    <PackageReference Include="Nuke.Common" Version="6.3.0" Aliases="NC" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +26,9 @@
     </Compile>
     <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\NotEqualsException.cs">
       <Link>Links\NotEqualsException.cs</Link>
+    </Compile>
+    <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\ObjectDisposedException.cs">
+      <Link>Links\ObjectDisposedException.cs</Link>
     </Compile>
     <Compile Include="..\WorkTool.Core\Modules\Common\Exceptions\TypeInvalidCastException.cs">
       <Link>Links\TypeInvalidCastException.cs</Link>

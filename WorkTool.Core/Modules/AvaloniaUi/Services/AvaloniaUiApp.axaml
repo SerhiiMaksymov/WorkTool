@@ -3,5 +3,6 @@
              x:Class="WorkTool.Core.Modules.AvaloniaUi.Services.AvaloniaUiApp">
     <Application.Styles>
         <FluentTheme Mode="Light"/>
+        <StyleInclude Source="avares://WorkTool.Core/Modules/AvaloniaUi/Styles/Controls.axaml"/>
     </Application.Styles>
 </Application>

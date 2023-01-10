@@ -2,5 +2,5 @@
 
 public interface IRegisterSingletonAutoInject
 {
-    public void RegisterSingletonAutoInject(AutoInjectIdentifier identifier, Delegate @delegate);
+    public void RegisterSingletonAutoInject(AutoInjectIdentifier identifier, Delegate del);
 }

@@ -2,29 +2,29 @@
 
 public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
-    public void Configure(IDependencyInjectorBuilder dependencyInjectorBuilder)
+    public void Configure(IDependencyInjectorRegister dependencyInjectorRegister)
     {
-        dependencyInjectorBuilder.RegisterTransient<IConfiguration, ConfigurationRoot>();
+        dependencyInjectorRegister.RegisterTransient<IConfiguration, ConfigurationRoot>();
 
-        dependencyInjectorBuilder.RegisterTransient<IList<IConfigurationProvider>>(
+        dependencyInjectorRegister.RegisterTransient<IList<IConfigurationProvider>>(
             (JsonConfigurationProvider jsonProvider) =>
                 new List<IConfigurationProvider> { jsonProvider }
         );
 
-        dependencyInjectorBuilder.RegisterTransient<IFileProvider>(
+        dependencyInjectorRegister.RegisterTransient<IFileProvider>(
             () => new PhysicalFileProvider(SystemDirectory.GetCurrentDirectory())
         );
 
-        dependencyInjectorBuilder.RegisterTransientAutoInject(
+        dependencyInjectorRegister.RegisterTransientAutoInject(
             (JsonConfigurationSource x) => x.Path,
             () => ConfigurationConstants.DefaultFileName
         );
 
-        dependencyInjectorBuilder.RegisterTransientAutoInject(
+        dependencyInjectorRegister.RegisterTransientAutoInject(
             (JsonConfigurationSource x) => x.FileProvider
         );
 
-        dependencyInjectorBuilder.RegisterTransient<
+        dependencyInjectorRegister.RegisterTransient<
             JsonConfigurationSource,
             JsonConfigurationSource
         >();

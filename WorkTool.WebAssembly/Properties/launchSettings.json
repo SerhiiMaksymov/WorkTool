@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "WorkTool.WebAssembly": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SMS_CLUB_API_KEY": "Eh2p1M8RLX5T2Kc"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+        "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
+    }
+  }
+}

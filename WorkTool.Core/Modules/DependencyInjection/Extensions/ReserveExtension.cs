@@ -31,4 +31,18 @@ public static class ReserveExtension
 
         throw new NotFondConstructorException(typeof(T), typeof(TParameter));
     }
+
+    public static void RegisterReserveTransient<T, TParameter, TValue>(
+        this IRegisterReserveTransient registerReserveTransient
+    )
+    {
+        registerReserveTransient.RegisterReserveTransient<T, TParameter>((TValue value) => value);
+    }
+
+    public static void RegisterReserveTransient<T, TParameter>(
+        this IRegisterReserveTransient registerReserveTransient
+    )
+    {
+        registerReserveTransient.RegisterReserveTransient<T, TParameter, TParameter>();
+    }
 }

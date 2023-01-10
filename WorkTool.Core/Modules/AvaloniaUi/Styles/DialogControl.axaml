@@ -1,0 +1,34 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
+        xmlns:helpers="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Helpers">
+    <Style Selector="controls|DialogControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <ContentPresenter Name="{x:Static helpers:ControlNames.PartContentPresenter}"
+                                      Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      CornerRadius="{TemplateBinding CornerRadius}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Content="{TemplateBinding Content}"
+                                      Padding="{TemplateBinding Padding}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                    <ContentPresenter Name="{x:Static controls:DialogControl.PartDialogContentPresenter}"
+                                      Background="{TemplateBinding BackgroundDialog}"
+                                      BorderBrush="{TemplateBinding BorderBrushDialog}"
+                                      BorderThickness="{TemplateBinding BorderThicknessDialog}"
+                                      CornerRadius="{TemplateBinding CornerRadiusDialog}"
+                                      ContentTemplate="{TemplateBinding ContentTemplateDialog}"
+                                      Content="{TemplateBinding Dialog}"
+                                      Padding="{TemplateBinding PaddingDialog}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignmentDialog}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignmentDialog}"
+                                      IsVisible="{TemplateBinding IsVisibleDialog}" />
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

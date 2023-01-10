@@ -86,7 +86,7 @@ public readonly ref struct DictionarySpan<TKey, TValue> where TKey : notnull
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
-            int num = index + 1;
+            var num = index + 1;
             if (num >= span.Length)
                 return false;
             index = num;

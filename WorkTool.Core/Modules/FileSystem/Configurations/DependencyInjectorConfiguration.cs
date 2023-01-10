@@ -2,11 +2,9 @@
 
 public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
-    public void Configure(IDependencyInjectorBuilder dependencyInjectorBuilder)
+    public void Configure(IDependencyInjectorRegister dependencyInjectorRegister)
     {
-        dependencyInjectorBuilder.RegisterTransient<IFileSystemRootGetter, FileSystemRootGetter>();
-        dependencyInjectorBuilder.RegisterTransientAutoInject(
-            (DiskUsageView view) => view.ViewModel
-        );
+        dependencyInjectorRegister.RegisterTransient<IFileSystemRootGetter, FileSystemRootGetter>();
+        dependencyInjectorRegister.RegisterTransient<IDirectoryService, DirectoryService>();
     }
 }

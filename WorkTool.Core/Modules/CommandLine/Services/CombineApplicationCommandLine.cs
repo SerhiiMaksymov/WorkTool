@@ -22,6 +22,11 @@ public class CombineApplicationCommandLine : IApplicationCommandLine
         return false;
     }
 
+    public void Run(string[] args)
+    {
+        RunAsync(args).GetAwaiter().GetResult();
+    }
+
     public Task RunAsync(string[] args)
     {
         foreach (var application in applications)
@@ -34,6 +39,6 @@ public class CombineApplicationCommandLine : IApplicationCommandLine
             return application.RunAsync(args);
         }
 
-        throw new Exception($"Not know {args}.");
+        throw new Exception($"Not know {args.JoinString(" ")}.");
     }
 }

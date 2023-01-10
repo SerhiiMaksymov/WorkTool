@@ -2,5 +2,5 @@
 
 public interface IRegisterTransient
 {
-    void RegisterTransient(Type type, Delegate @delegate);
+    void RegisterTransient(Type type, Delegate del);
 }

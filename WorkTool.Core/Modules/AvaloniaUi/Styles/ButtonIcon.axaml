@@ -3,13 +3,15 @@
         xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
         xmlns:helpers="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Helpers">
     <Style Selector="controls|ButtonIcon">
-        <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
-        <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+        <Setter Property="Background" Value="#33000000" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="Black" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="4" />
+        <Setter Property="Padding" Value="8,5,8,6" />
+        <Setter Property="CornerRadius" Value="3,3,3,3" />
+        <Setter Property="Width" Value="NaN" />
         <Setter Property="Template" >
             <ControlTemplate>
                 <Border Background="{TemplateBinding Background}"
@@ -66,6 +68,10 @@
     
     <Style Selector="controls|ButtonIcon.stop">
         <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.Stop}"/>
+    </Style>
+    
+    <Style Selector="controls|ButtonIcon.skipNext">
+        <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.SkipNext}"/>
     </Style>
 </Styles>
 

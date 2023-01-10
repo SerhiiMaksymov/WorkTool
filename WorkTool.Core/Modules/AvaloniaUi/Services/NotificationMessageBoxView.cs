@@ -21,7 +21,7 @@ public class NotificationMessageBoxView : IMessageBoxView
     )
     {
         managedNotificationManager.Show(
-            new Notification("Test", message.ToString(), NotificationType.Warning)
+            new AvaloniaNotification("Test", message.ToString(), NotificationType.Warning)
         );
 
         return Task.CompletedTask;

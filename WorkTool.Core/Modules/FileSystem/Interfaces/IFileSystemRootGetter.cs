@@ -2,5 +2,5 @@
 
 public interface IFileSystemRootGetter
 {
-    Span<FileSystemDirectory> GetFileSystemRoot();
+    Span<IDirectory> GetFileSystemRoot();
 }

@@ -19,4 +19,25 @@ public static class AvaloniaListExtension
         avaloniaList.Clear();
         avaloniaList.Add(item);
     }
+
+    public static void UpdateIfNeed<T>(this AvaloniaList<T> avaloniaList, T item) where T : notnull
+    {
+        if (avaloniaList.Count == 1 && avaloniaList[0].Equals(item))
+        {
+            return;
+        }
+
+        avaloniaList.Update(item);
+    }
+
+    public static void AddIfNotContains<T>(this AvaloniaList<T> avaloniaList, T item)
+        where T : notnull
+    {
+        if (avaloniaList.Contains(item))
+        {
+            return;
+        }
+
+        avaloniaList.Add(item);
+    }
 }

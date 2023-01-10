@@ -2,5 +2,5 @@
 
 public interface IRegisterSingleton
 {
-    void RegisterSingleton(Type type, Delegate @delegate);
+    void RegisterSingleton(Type type, Delegate del);
 }

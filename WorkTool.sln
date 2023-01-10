@@ -10,9 +10,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.SourceGenerator.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.Benchmark", "WorkTool.Benchmark\WorkTool.Benchmark.csproj", "{9C058832-0433-41DE-9911-3A9F7B31CAD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.Core.UnitTests", "WorkTool.Core.UnitTests\WorkTool.Core.UnitTests.csproj", "{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.Core.NUnitTests", "WorkTool.Core.NUnitTests\WorkTool.Core.NUnitTests.csproj", "{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{82098CDB-A59D-495B-B7F7-728485C4A480}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.Core.XUnitTests", "WorkTool.Core.XUnitTests\WorkTool.Core.XUnitTests.csproj", "{CEDB288A-06A1-4CC7-B6B9-88B5386C0D79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.WebAssembly", "WorkTool.WebAssembly\WorkTool.WebAssembly.csproj", "{B90B170A-8757-49BB-8620-96A835277A72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.Core.Modules.AvaloniaUi.Desktop", "WorkTool.Core.Modules.AvaloniaUi.Desktop\WorkTool.Core.Modules.AvaloniaUi.Desktop.csproj", "{57A516D1-641A-4985-BFE7-93FCEE170C50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkTool.Core.Modules.AvaloniaUi.WebAssembly", "WorkTool.Core.Modules.AvaloniaUi.WebAssembly\WorkTool.Core.Modules.AvaloniaUi.WebAssembly.csproj", "{15BE0017-6305-4382-ADBD-D2E08052E632}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,5 +54,21 @@ Global
 		{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8AABB66-8FEF-46B6-BE08-9517F7C4B0A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEDB288A-06A1-4CC7-B6B9-88B5386C0D79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEDB288A-06A1-4CC7-B6B9-88B5386C0D79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEDB288A-06A1-4CC7-B6B9-88B5386C0D79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEDB288A-06A1-4CC7-B6B9-88B5386C0D79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B90B170A-8757-49BB-8620-96A835277A72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B90B170A-8757-49BB-8620-96A835277A72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B90B170A-8757-49BB-8620-96A835277A72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B90B170A-8757-49BB-8620-96A835277A72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57A516D1-641A-4985-BFE7-93FCEE170C50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57A516D1-641A-4985-BFE7-93FCEE170C50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57A516D1-641A-4985-BFE7-93FCEE170C50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57A516D1-641A-4985-BFE7-93FCEE170C50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15BE0017-6305-4382-ADBD-D2E08052E632}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15BE0017-6305-4382-ADBD-D2E08052E632}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15BE0017-6305-4382-ADBD-D2E08052E632}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15BE0017-6305-4382-ADBD-D2E08052E632}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

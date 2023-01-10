@@ -1,1 +1,1 @@
-﻿Console.WriteLine("Test");
+﻿BenchmarkRunner.Run<TypeBenchmark>();

@@ -2,22 +2,29 @@
 
 public static class DependencyInjectorHelper
 {
-    public static IDependencyInjector CreateIndexOperation()
+    public static IReadOnlyDependencyInjector CreateDependencyInjector()
     {
-        var dependencyInjectorBuilder = new DependencyInjectorBuilder();
-        dependencyInjectorBuilder.AddConfigurationFromAssemblies();
-        dependencyInjectorBuilder.RegisterTransient<IDelay, DelayService>();
-        dependencyInjectorBuilder.RegisterTransient(() => SmsSenderEndpointsOptions.Default);
-        dependencyInjectorBuilder.RegisterTransient(() => SmsSenderOptions.Default);
-        dependencyInjectorBuilder.RegisterTransient<MainView>();
-        dependencyInjectorBuilder.RegisterTransient<IMessageBoxView, AvaloniaMessageBoxView>();
+        var dependencyInjectorBuilder = new ReadOnlyDependencyInjectorRegister();
+        dependencyInjectorBuilder.RegisterConfigurationFromAssemblies();
         dependencyInjectorBuilder.RegisterTransient<CommandLineContextBuilder>();
-        dependencyInjectorBuilder.RegisterTransient(() => AppBaseUri.AppStyleUri);
-        dependencyInjectorBuilder.RegisterTransient<IStyleLoader, StyleLoader>();
-        dependencyInjectorBuilder.RegisterTransient<IResourceLoader, ResourceLoader>();
         dependencyInjectorBuilder.RegisterTransient<IApplication, DesktopAvaloniaUiApplication>();
         dependencyInjectorBuilder.RegisterTransient<AvaloniaUiApplicationCommandLine>();
-        dependencyInjectorBuilder.RegisterTransientAutoInject((AvaloniaUiApp app) => app.Resolver);
+        dependencyInjectorBuilder.RegisterTransient(
+            () =>
+            {
+                var window = new Window();
+                window.AttachDevTools();
+
+                return window;
+            });
+
+        dependencyInjectorBuilder.RegisterTransient(() =>
+        {
+            var window = new WindowPopup();
+            window.AttachDevTools();
+
+            return window;
+        });
 
         dependencyInjectorBuilder.RegisterTransient<IManagedNotificationManager>(() =>
         {
@@ -31,16 +38,6 @@ public static class DependencyInjectorHelper
         });
 
         dependencyInjectorBuilder.RegisterTransient<
-            IHumanizing<Exception, object>,
-            ExceptionHumanizing
-        >();
-
-        dependencyInjectorBuilder.RegisterTransient<
-            IHumanizing<Exception, string>,
-            ToStringHumanizing<Exception>
-        >();
-
-        dependencyInjectorBuilder.RegisterTransient<
             IStreamParser<ICommandLineToken, string>,
             CommandLineArgumentParser
         >();
@@ -50,55 +47,6 @@ public static class DependencyInjectorHelper
                 PropertyInfoItemsControlContextBuilder
                     .CreateDefaultBuilder(resolver, uiContext)
                     .Build()
-        );
-
-        dependencyInjectorBuilder.RegisterTransient<Control>(
-            (MainView mainView, MessageControl messageControl) =>
-                new DialogControl()
-                    .SetName(AvaloniaMessageBoxView.DialogControlName)
-                    .SetContent(mainView)
-                    .SetDialog(messageControl)
-        );
-
-        dependencyInjectorBuilder.RegisterTransient<UiContext>(
-            (UiContextBuilder uiContextBuilder) =>
-                uiContextBuilder.AddFromAssembly(typeof(WorkToolCoreMarcType).Assembly).Build()
-        );
-
-        dependencyInjectorBuilder.RegisterTransient<IEnumerable<IResourceProvider>>(
-            (IResourceLoader resourceLoader) => resourceLoader.LoadResources()
-        );
-
-        dependencyInjectorBuilder.RegisterTransient<IEnumerable<IStyle>>(
-            (IStyleLoader styleLoader, Uri uri) =>
-            {
-                var result = new List<IStyle>
-                {
-                    new StyleInclude(uri) { Source = AvaloniaUriBase.DataGridThemeFluentUri }
-                };
-
-                var styles = styleLoader.LoadStyles();
-                result.AddRange(styles);
-                result.Add(new StyleInclude(uri) { Source = AvaloniaUriBase.ControlsStylesUri });
-
-                return result;
-            }
-        );
-
-        dependencyInjectorBuilder.RegisterTransient<Window>(
-            (Control control) =>
-            {
-                var window = new Window().SetContent(control);
-
-                window.AttachDevTools();
-
-                return window;
-            }
-        );
-
-        dependencyInjectorBuilder.RegisterTransient<AppBuilder>(
-            (AvaloniaUiApp avaloniaUiApp) =>
-                AppBuilder.Configure(() => avaloniaUiApp).UseReactiveUI().UsePlatformDetect()
         );
 
         dependencyInjectorBuilder.RegisterTransient<

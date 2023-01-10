@@ -15,7 +15,6 @@ public class MainView
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
         this.uiContext = uiContext;
-
         argumentValues = new() { { GetType(), this }, { typeof(ITabControlView), this } };
 
         this.WhenActivated(disposables =>

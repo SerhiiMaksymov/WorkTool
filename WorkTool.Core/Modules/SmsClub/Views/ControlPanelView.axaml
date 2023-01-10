@@ -20,7 +20,7 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <controls:ButtonIcon Classes="download" Command="{Binding GetSmsesStatusCommand}" />
-            <TextBox Text="{Binding SmsIds}" MinWidth="200" Watermark="Sms Ids" />
+            <TextBox Text="{Binding SmsIdsString}" MinWidth="200" Watermark="Sms Ids" />
         </StackPanel>
 
         <Grid Grid.Row="2" ColumnDefinitions="*,*">

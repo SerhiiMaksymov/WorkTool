@@ -1,0 +1,43 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Views"
+        xmlns:helpers="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Helpers">
+    <Style Selector="views|MessageView">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <ContentPresenter Background="{TemplateBinding BackgroundTitle}"
+                                          BorderBrush="{TemplateBinding BorderBrushTitle}"
+                                          BorderThickness="{TemplateBinding BorderThicknessTitle}"
+                                          CornerRadius="{TemplateBinding CornerRadiusTitle}"
+                                          ContentTemplate="{TemplateBinding ContentTemplateTitle}"
+                                          Content="{TemplateBinding Title}"
+                                          Padding="{TemplateBinding PaddingTitle}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignmentTitle}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignmentTitle}" />
+                        <ContentPresenter Grid.Row="1"
+                                          Background="{TemplateBinding BackgroundContent}"
+                                          BorderBrush="{TemplateBinding BorderBrushContent}"
+                                          BorderThickness="{TemplateBinding BorderThicknessContent}"
+                                          CornerRadius="{TemplateBinding CornerRadiusContent}"
+                                          ContentTemplate="{TemplateBinding ContentTemplateContent}"
+                                          Content="{TemplateBinding Content}"
+                                          Padding="{TemplateBinding PaddingContent}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignmentContent}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignmentContent}" />
+                        <ItemsPresenter Grid.Row="2"
+                                        Name="{x:Static helpers:ControlNames.PartItemsPresenter}"
+                                        Items="{TemplateBinding Items}"
+                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                        ItemTemplate="{TemplateBinding ItemTemplate}" />
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

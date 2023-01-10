@@ -2,32 +2,68 @@
 
 public class ViewModelBase : ReactiveObject
 {
-    private readonly IHumanizing<Exception, object> humanizing;
-    private readonly IMessageBoxView messageBoxView;
+    protected readonly IHumanizing<Exception, object> Humanizing;
+    protected readonly IMessageBoxView MessageBoxView;
+    protected readonly IScheduler Scheduler;
 
     public ReplaySubject<bool> CanExecute { get; }
 
-    public ViewModelBase(IHumanizing<Exception, object> humanizing, IMessageBoxView messageBoxView)
+    public ViewModelBase(
+        IScheduler scheduler,
+        IHumanizing<Exception, object> humanizing,
+        IMessageBoxView messageBoxView
+    )
     {
-        this.humanizing = humanizing.ThrowIfNull();
-        this.messageBoxView = messageBoxView.ThrowIfNull();
+        Scheduler = scheduler;
+        Humanizing = humanizing.ThrowIfNull();
+        MessageBoxView = messageBoxView.ThrowIfNull();
         CanExecute = new ReplaySubject<bool>(1);
         CanExecute.OnNext(true);
     }
 
-    public ICommand CreateCommand<TValue>(Action<TValue> action)
+    public ReactiveCommand<TValue, Unit> CreateCommand<TValue>(Action<TValue> action)
     {
-        return ReactiveCommand.CreateFromTask(CreateAction(action), CanExecute);
+        var command = ReactiveCommand.CreateFromTask(CreateAction(action), CanExecute,Scheduler);
+        command.ThrownExceptions.Subscribe(x => ShowExceptionAsync(x));
+
+        return command;
     }
 
-    public ICommand CreateCommand(Action action)
+    public ReactiveCommand<Unit, Unit> CreateCommand(Action action)
     {
-        return ReactiveCommand.Create(CreateAction(action), CanExecute);
+        var command = ReactiveCommand.CreateFromTask(CreateAction(action), CanExecute, Scheduler);
+        command.ThrownExceptions.Subscribe(x => ShowExceptionAsync(x));
+
+        return command;
     }
 
-    public ICommand CreateCommand(Func<Task> func)
+    public ReactiveCommand<Unit, Unit> CreateCommand(Func<Task> func, IScheduler outputScheduler)
     {
-        return ReactiveCommand.Create(CreateFunc(func), CanExecute);
+        var command = ReactiveCommand.CreateFromTask(
+            CreateFunc(func),
+            CanExecute,
+            outputScheduler: outputScheduler
+        );
+        
+        command.ThrownExceptions.Subscribe(x => ShowExceptionAsync(x));
+
+        return command;
+    }
+
+    public ReactiveCommand<Unit, Unit> CreateCommand(Func<Task> func)
+    {
+        var command = ReactiveCommand.CreateFromTask(CreateFunc(func), CanExecute, Scheduler);
+        command.ThrownExceptions.Subscribe(x => ShowExceptionAsync(x));
+
+        return command;
+    }
+
+    private Task ShowExceptionAsync(Exception exception)
+    {
+        Console.WriteLine(exception);
+        var view = Humanizing.Humanize(exception);
+        
+        return MessageBoxView.ShowErrorAsync(view);
     }
 
     protected Func<Task> CreateAction(Action action)
@@ -42,8 +78,7 @@ public class ViewModelBase : ReactiveObject
             }
             catch (Exception exception)
             {
-                var view = humanizing.Humanize(exception);
-                await messageBoxView.ShowErrorAsync(view);
+                await ShowExceptionAsync(exception);
             }
             finally
             {
@@ -64,8 +99,7 @@ public class ViewModelBase : ReactiveObject
             }
             catch (Exception exception)
             {
-                var view = humanizing.Humanize(exception);
-                await messageBoxView.ShowErrorAsync(view);
+                await ShowExceptionAsync(exception);
             }
             finally
             {
@@ -86,8 +120,7 @@ public class ViewModelBase : ReactiveObject
             }
             catch (Exception exception)
             {
-                var view = humanizing.Humanize(exception);
-                await messageBoxView.ShowErrorAsync(view);
+                await ShowExceptionAsync(exception);
             }
             finally
             {

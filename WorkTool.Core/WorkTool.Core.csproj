@@ -10,9 +10,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.18" />
-        <PackageReference Include="Avalonia.Xaml.Interactions" Version="0.10.18" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia.Web" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.0-preview4" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
         <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.3" />
         <PackageReference Include="FormatWith" Version="3.0.1" />

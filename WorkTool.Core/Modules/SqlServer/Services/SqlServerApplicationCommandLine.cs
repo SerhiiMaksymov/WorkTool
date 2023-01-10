@@ -22,6 +22,11 @@ public class SqlServerApplicationCommandLine : IApplicationCommandLine
         return commandLineContext.Contains(names);
     }
 
+    public void Run(string[] args)
+    {
+        RunAsync(args).GetAwaiter().GetResult();
+    }
+
     public Task RunAsync(string[] args)
     {
         return commandLineContext.RunAsync(args);

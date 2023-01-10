@@ -1,0 +1,35 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Focusable="True"
+             x:Class="WorkTool.Core.Modules.FileSystem.Views.DiskUsageView">
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="T" Command="{Binding StopCommand}" />
+    </UserControl.KeyBindings>
+
+    <Grid RowDefinitions="Auto, Auto, *">
+        <StackPanel Orientation="Horizontal">
+            <TextBox Text="{Binding Count}" />
+            <controls:ButtonIcon Classes="play" Command="{Binding StartCommand}" />
+            <controls:ButtonIcon Classes="skipNext" Command="{Binding ContinueCommand}" />
+            <controls:ButtonIcon Classes="stop" Command="{Binding StopCommand}" />
+            <CheckBox IsChecked="{Binding ShowEmptyFolgers}" Content="Show empty folgers" />
+        </StackPanel>
+
+        <TextBox Grid.Row="1" Text="{Binding Directory}" />
+
+        <TreeView Grid.Row="2" Items="{Binding Roots}" SelectedItem="{Binding SelectedNode}" SelectionMode="Single">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Directories}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Size, StringFormat=(\{0\})}" />
+                    </StackPanel>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </Grid>
+</UserControl>

@@ -2,6 +2,18 @@
 
 public static class ControlExtension
 {
+    public static T FindControlThrowIfNotFound<T>(this IControl control, string name) where T : class, IControl
+    {
+        var child = control.FindControl<T>(name);
+
+        if (child is null)
+        {
+            throw new NotFoundNamedControlException(name, typeof(T));
+        }
+
+        return child;
+    }
+
     public static TControl SetAttachedFlyout<TControl>(this TControl control, FlyoutBase flyoutBase)
         where TControl : Control
     {
@@ -41,8 +53,8 @@ public static class ControlExtension
     }
 
     public static TControl SetHorizontalScrollBarVisibility<TControl>(
-        this TControl control,
-        ScrollBarVisibility value
+    this TControl       control,
+    ScrollBarVisibility value
     ) where TControl : Control
     {
         control.SetValue(ScrollViewer.HorizontalScrollBarVisibilityProperty, value);
@@ -59,12 +71,27 @@ public static class ControlExtension
     }
 
     public static TControl SetVerticalScrollBarVisibility<TControl>(
-        this TControl control,
-        ScrollBarVisibility value
+    this TControl       control,
+    ScrollBarVisibility value
     ) where TControl : Control
     {
         control.SetValue(ScrollViewer.VerticalScrollBarVisibilityProperty, value);
 
         return control;
+    }
+
+    public static TParent? FindParent<TParent>(this IControl control)
+    {
+        if (control.Parent is null)
+        {
+            return default;
+        }
+        
+        if (control.Parent is TParent parent)
+        {
+            return parent;
+        }
+
+        return control.Parent.FindParent<TParent>();
     }
 }
