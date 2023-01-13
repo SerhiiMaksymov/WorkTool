@@ -42,24 +42,24 @@ public class DirectoryViewModel : NotifyBase
         foreach (var file in files)
         {
             $"File:{file.ToPathString()}".ToConsoleLine();
-            
+
             if (token.IsCancellationRequested)
             {
                 yield break;
             }
-            
+
             Size += file.Size;
 
             yield return file.Size;
         }
 
         var directories = Directory.GetDirectories().ToArray();
-        
+
         if (token.IsCancellationRequested)
         {
             yield break;
         }
-        
+
         var tasks =
             new List<(
                 DirectoryViewModel Directory,

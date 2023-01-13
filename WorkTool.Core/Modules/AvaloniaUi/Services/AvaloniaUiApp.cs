@@ -1,12 +1,11 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Services;
 
-public partial class AvaloniaUiApp : AvaloniaApplication
+public class AvaloniaUiApp : AvaloniaApplication
 {
     public IResolver? Resolver { get; set; }
 
     public override void Initialize()
     {
-        AvaloniaXamlLoader.Load(this);
         Resolver = Resolver.ThrowIfNull();
         var styles = Resolver.Resolve<IEnumerable<IStyle>>();
         var resourceProviders = Resolver.Resolve<IEnumerable<IResourceProvider>>();

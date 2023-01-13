@@ -13,6 +13,7 @@ public class NullablePropertyInfoReactiveItemsView
     {
         this.context = context.ThrowIfNull();
         DataContext = viewModel.ThrowIfNull();
+        this.WhenActivated(_ => { });
         avaloniaUiContext.InitView(this);
     }
 

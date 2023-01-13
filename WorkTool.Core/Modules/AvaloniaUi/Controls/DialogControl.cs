@@ -3,18 +3,18 @@
 public class DialogControl : ContentControl, IDialogView
 {
     private static readonly Dictionary<Window, DialogControl> windows;
-    private static          DialogControl?                    lastDialogControl;
-    
-    public static IReadOnlyDictionary<Window, DialogControl> Windows           => windows;
-    public static DialogControl?                             LastDialogControl => lastDialogControl;
-    
-    public const    string PartDialogContentPresenter = "PART_DialogContentPresenter";
-    
+    private static DialogControl? lastDialogControl;
+
+    public static IReadOnlyDictionary<Window, DialogControl> Windows => windows;
+    public static DialogControl? LastDialogControl => lastDialogControl;
+
+    public const string PartDialogContentPresenter = "PART_DialogContentPresenter";
+
     public static readonly StyledProperty<bool> IsVisibleDialogProperty = AvaloniaProperty.Register<
         DialogControl,
         bool
     >(nameof(IsVisibleDialog));
-    
+
     public static readonly StyledProperty<object?> DialogProperty = AvaloniaProperty.Register<
         DialogControl,
         object?
@@ -22,27 +22,31 @@ public class DialogControl : ContentControl, IDialogView
 
     public static readonly StyledProperty<IBrush?> BackgroundDialogProperty =
         AvaloniaProperty.Register<DialogControl, IBrush?>(nameof(BackgroundDialog));
-    
+
     public static readonly StyledProperty<IBrush?> BorderBrushDialogProperty =
         Border.BorderBrushProperty.AddOwner<DialogControl>();
-    
+
     public static readonly StyledProperty<Thickness> BorderThicknessDialogProperty =
         Border.BorderThicknessProperty.AddOwner<DialogControl>();
-    
+
     public static readonly StyledProperty<CornerRadius> CornerRadiusDialogProperty =
         Border.CornerRadiusProperty.AddOwner<DialogControl>();
-    
+
     public static readonly StyledProperty<IDataTemplate?> ContentTemplateDialogProperty =
         AvaloniaProperty.Register<DialogControl, IDataTemplate?>(nameof(ContentTemplateDialog));
 
     public static readonly StyledProperty<Thickness> PaddingDialogProperty =
         Decorator.PaddingProperty.AddOwner<DialogControl>();
-    
+
     public static readonly StyledProperty<VerticalAlignment> VerticalContentAlignmentDialogProperty =
-        AvaloniaProperty.Register<DialogControl, VerticalAlignment>(nameof(VerticalContentAlignmentDialog));
-  
+        AvaloniaProperty.Register<DialogControl, VerticalAlignment>(
+            nameof(VerticalContentAlignmentDialog)
+        );
+
     public static readonly StyledProperty<HorizontalAlignment> HorizontalContentAlignmentDialogProperty =
-        AvaloniaProperty.Register<DialogControl, HorizontalAlignment>(nameof(HorizontalContentAlignmentDialog));
+        AvaloniaProperty.Register<DialogControl, HorizontalAlignment>(
+            nameof(HorizontalContentAlignmentDialog)
+        );
 
     private TaskCompletionSource<bool> taskCompletionSource;
 
@@ -55,43 +59,43 @@ public class DialogControl : ContentControl, IDialogView
     {
         taskCompletionSource = new TaskCompletionSource<bool>();
     }
-    
+
     public HorizontalAlignment HorizontalContentAlignmentDialog
     {
         get => GetValue(HorizontalContentAlignmentDialogProperty);
         set => SetValue(HorizontalContentAlignmentDialogProperty, value);
     }
-    
+
     public VerticalAlignment VerticalContentAlignmentDialog
     {
         get => GetValue(VerticalContentAlignmentDialogProperty);
         set => SetValue(VerticalContentAlignmentDialogProperty, value);
     }
-    
+
     public Thickness PaddingDialog
     {
         get { return GetValue(PaddingDialogProperty); }
         set { SetValue(PaddingDialogProperty, value); }
     }
-    
+
     public IDataTemplate? ContentTemplateDialog
     {
         get => GetValue(ContentTemplateDialogProperty);
         set => SetValue(ContentTemplateDialogProperty, value);
     }
-    
+
     public CornerRadius CornerRadiusDialog
     {
         get => GetValue(CornerRadiusDialogProperty);
         set => SetValue(CornerRadiusDialogProperty, value);
     }
-    
+
     public Thickness BorderThicknessDialog
     {
         get => GetValue(BorderThicknessDialogProperty);
         set => SetValue(BorderThicknessDialogProperty, value);
     }
-    
+
     public IBrush? BorderBrushDialog
     {
         get => GetValue(BorderBrushDialogProperty);

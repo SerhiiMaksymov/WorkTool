@@ -50,10 +50,13 @@ global using Avalonia.Styling;
 global using Avalonia.Markup.Xaml;
 global using Avalonia.ReactiveUI;
 global using Avalonia.Markup.Xaml.Styling;
+global using Avalonia.Themes.Fluent;
 
 global using DynamicData;
 
 global using EntityFrameworkCore.Triggers;
+
+global using Material.Styles.Themes;
 
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
@@ -140,6 +143,10 @@ global using WorkTool.Core.Modules.FileSystem.Services;
 
 global using LibGit2Sharp;
 
+global using ModularSystemModule = WorkTool.Core.Modules.ModularSystem.Services.Module;
+global using SystemModule = System.Reflection.Module;
+global using AvaloniaUriBase = WorkTool.Core.Modules.AvaloniaUi.Helpers.UriBase;
+global using MaterialDesignUriBase = WorkTool.Core.Modules.MaterialDesign.Helpers.UriBase;
 global using AvaloniaNotification = Avalonia.Controls.Notifications.Notification;
 global using FileSystemPath = WorkTool.Core.Modules.FileSystem.Models.Path;
 global using FileSystemDirectory = WorkTool.Core.Modules.FileSystem.Services.Directory;

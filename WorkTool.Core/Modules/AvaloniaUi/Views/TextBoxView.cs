@@ -2,7 +2,7 @@
 
 public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISetParameter
 {
-    private readonly IInvoker invoker;
+    private readonly IInvoker                 invoker;
     private readonly Dictionary<Type, object> parameters;
 
     public TextBoxView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
@@ -10,6 +10,7 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
         parameters = new() { { GetType(), this } };
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
+        this.WhenActivated(_ => { });
         avaloniaUiContext.InitView(this);
     }
 

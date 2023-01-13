@@ -3,11 +3,11 @@ namespace WorkTool.Core.Modules.DependencyInjection.Services;
 public class MutDependencyInjector : IMutDependencyInjector
 {
     private readonly Dictionary<AutoInjectIdentifier, InjectorItem> autoInjects;
-    private readonly Dictionary<Type, InjectorItem> injectors;
-    private readonly Dictionary<ReserveIdentifier, InjectorItem> reserves;
-    private readonly Dictionary<Type, object> singletonInjectors;
-    private readonly Dictionary<ReserveIdentifier, object> singletonReserves;
-    private readonly Dictionary<AutoInjectIdentifier, object> singletonAutoInjects;
+    private readonly Dictionary<Type, InjectorItem>                 injectors;
+    private readonly Dictionary<ReserveIdentifier, InjectorItem>    reserves;
+    private readonly Dictionary<Type, object>                       singletonInjectors;
+    private readonly Dictionary<ReserveIdentifier, object>          singletonReserves;
+    private readonly Dictionary<AutoInjectIdentifier, object>       singletonAutoInjects;
 
     public MutDependencyInjector()
     {
@@ -24,6 +24,15 @@ public class MutDependencyInjector : IMutDependencyInjector
             { typeof(IInvoker), injectorItem }
         };
     }
+
+    public IEnumerable<Type> Inputs =>
+        injectors
+            .SelectMany(x => x.Value.Delegate.GetParameterTypes())
+            .Concat(autoInjects.SelectMany(x => x.Value.Delegate.GetParameterTypes()))
+            .Distinct()
+            .Where(x => !Outputs.Contains(x))
+            .ToArray();
+    public IEnumerable<Type> Outputs => injectors.Select(x => x.Key).ToArray();
 
     public object Resolve(Type type)
     {
@@ -178,7 +187,7 @@ public class MutDependencyInjector : IMutDependencyInjector
     private ConstructorInfo? GetSingleConstructor(Type type)
     {
         var constructors = type.GetConstructors();
-
+        
         if (constructors.Length == 0)
         {
             return null;
@@ -336,5 +345,20 @@ public class MutDependencyInjector : IMutDependencyInjector
     public void RegisterConfiguration(IDependencyInjectorConfiguration configuration)
     {
         configuration.Configure(this);
+    }
+
+    public void RegisterSingletonItem(Type type, Delegate del)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RegisterTransientItem(Type type, Delegate del)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Clear(Type type)
+    {
+        throw new NotImplementedException();
     }
 }

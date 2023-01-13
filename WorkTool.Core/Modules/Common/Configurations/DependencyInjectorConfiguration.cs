@@ -2,31 +2,23 @@
 
 public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
-    public void Configure(IDependencyInjectorRegister dependencyInjectorRegister)
+    public void Configure(IDependencyInjectorRegister register)
     {
-        dependencyInjectorRegister.RegisterTransient<IDelay, DelayService>();
+        register.RegisterTransient<IDelay, DelayService>();
+        register.RegisterTransient<IHumanizing<Exception, object>, ExceptionHumanizing>();
+        register.RegisterTransient<IHumanizing<Exception, string>, ToStringHumanizing<Exception>>();
 
-        dependencyInjectorRegister.RegisterTransient<
+        register.RegisterTransient<
             ITaskCompletionSourceEnumerator,
             TaskCompletionSourceEnumerator
         >();
 
-        dependencyInjectorRegister.RegisterTransient<
-            IHumanizing<Exception, object>,
-            ExceptionHumanizing
-        >();
-
-        dependencyInjectorRegister.RegisterTransient<
-            IHumanizing<Exception, string>,
-            ToStringHumanizing<Exception>
-        >();
-
-        dependencyInjectorRegister.RegisterTransient<
+        register.RegisterTransient<
             IIdentifierGenerator<string>,
             RandomIdentifierGenerator<string>
         >();
 
-        dependencyInjectorRegister.RegisterReserveTransient<
+        register.RegisterReserveTransient<
             RandomIdentifierGenerator<string>,
             IRandom<string>,
             RandomGuid

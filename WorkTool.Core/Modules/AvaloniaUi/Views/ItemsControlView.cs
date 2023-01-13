@@ -5,6 +5,7 @@ public class ItemsControlView : ReactiveItemsControl<ViewModelBase>, IChildrenVi
     public ItemsControlView(UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
         DataContext = viewModel;
+        this.WhenActivated(_ => { });
         avaloniaUiContext.InitView(this);
     }
 

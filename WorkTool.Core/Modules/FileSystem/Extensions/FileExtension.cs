@@ -8,7 +8,7 @@ public static class FileExtension
         {
             return file.FileName.ToString();
         }
-        
+
         return $"{file.Directory.ToPathString()}{SystemPath.DirectorySeparatorChar}{file.FileName}";
     }
 }

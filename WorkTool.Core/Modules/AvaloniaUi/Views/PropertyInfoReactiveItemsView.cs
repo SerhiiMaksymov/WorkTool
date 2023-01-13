@@ -32,6 +32,7 @@ public class PropertyInfoReactiveItemsView : ReactivePropertyInfoReactiveItemsCo
     {
         this.context = context.ThrowIfNull();
         DataContext = viewModel.ThrowIfNull();
+        this.WhenActivated(_ => { });
         avaloniaUiContext.InitView(this);
     }
 

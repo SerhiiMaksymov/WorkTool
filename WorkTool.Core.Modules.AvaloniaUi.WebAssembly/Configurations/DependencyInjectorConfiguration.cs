@@ -2,14 +2,11 @@
 
 public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
-    public void Configure(IDependencyInjectorRegister dependencyInjectorRegister)
+    public void Configure(IDependencyInjectorRegister register)
     {
-        dependencyInjectorRegister.RegisterTransient<
-            AvaloniaUiApplication,
-            BrowserAvaloniaUiApplication
-        >();
+        register.RegisterTransient<AvaloniaUiApplication, BrowserAvaloniaUiApplication>();
 
-        dependencyInjectorRegister.RegisterTransient<AppBuilder>(
+        register.RegisterTransient<AppBuilder>(
             (AvaloniaUiApp avaloniaUiApp) =>
                 AppBuilder.Configure(() => avaloniaUiApp).UseReactiveUI()
         );

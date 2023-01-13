@@ -2,9 +2,9 @@
 
 public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
-    public void Configure(IDependencyInjectorRegister dependencyInjectorRegister)
+    public void Configure(IDependencyInjectorRegister register)
     {
-        dependencyInjectorRegister.RegisterTransient<IFileSystemRootGetter, FileSystemRootGetter>();
-        dependencyInjectorRegister.RegisterTransient<IDirectoryService, DirectoryService>();
+        register.RegisterTransient<IFileSystemRootGetter, FileSystemRootGetter>();
+        register.RegisterTransient<IDirectoryService, DirectoryService>();
     }
 }

@@ -2,21 +2,21 @@
 
 public static class DependencyInjectorHelper
 {
-    public static IReadOnlyDependencyInjector CreateDependencyInjector()
+    public static IDependencyInjector CreateDependencyInjector()
     {
         var dependencyInjectorBuilder = new ReadOnlyDependencyInjectorRegister();
         dependencyInjectorBuilder.RegisterConfigurationFromAssemblies();
         dependencyInjectorBuilder.RegisterTransient<CommandLineContextBuilder>();
         dependencyInjectorBuilder.RegisterTransient<IApplication, DesktopAvaloniaUiApplication>();
         dependencyInjectorBuilder.RegisterTransient<AvaloniaUiApplicationCommandLine>();
-        dependencyInjectorBuilder.RegisterTransient(
-            () =>
-            {
-                var window = new Window();
-                window.AttachDevTools();
 
-                return window;
-            });
+        dependencyInjectorBuilder.RegisterTransient(() =>
+        {
+            var window = new Window();
+            window.AttachDevTools();
+
+            return window;
+        });
 
         dependencyInjectorBuilder.RegisterTransient(() =>
         {

@@ -5,4 +5,5 @@ public interface IDependencyInjectorRegister
         IRegisterSingleton,
         IRegisterRegisterRegisterReserve,
         IRegisterAutoInject,
-        IRegisterConfiguration { }
+        IRegisterConfiguration,
+        IRegisterCollection { }

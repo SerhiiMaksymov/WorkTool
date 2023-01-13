@@ -23,7 +23,7 @@ public class ViewModelBase : ReactiveObject
 
     public ReactiveCommand<TValue, Unit> CreateCommand<TValue>(Action<TValue> action)
     {
-        var command = ReactiveCommand.CreateFromTask(CreateAction(action), CanExecute,Scheduler);
+        var command = ReactiveCommand.CreateFromTask(CreateAction(action), CanExecute, Scheduler);
         command.ThrownExceptions.Subscribe(x => ShowExceptionAsync(x));
 
         return command;
@@ -44,7 +44,7 @@ public class ViewModelBase : ReactiveObject
             CanExecute,
             outputScheduler: outputScheduler
         );
-        
+
         command.ThrownExceptions.Subscribe(x => ShowExceptionAsync(x));
 
         return command;
@@ -62,7 +62,7 @@ public class ViewModelBase : ReactiveObject
     {
         Console.WriteLine(exception);
         var view = Humanizing.Humanize(exception);
-        
+
         return MessageBoxView.ShowErrorAsync(view);
     }
 

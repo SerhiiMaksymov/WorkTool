@@ -21,15 +21,15 @@ public class DiskUsageViewModel : ViewModelBase
         ITaskCompletionSourceEnumerator taskCompletionSourceEnumerator
     ) : base(scheduler, humanizing, messageBoxView)
     {
-        this.directoryService               = directoryService;
-        cancellationTokenSource             = new();
+        this.directoryService = directoryService;
+        cancellationTokenSource = new();
         this.taskCompletionSourceEnumerator = taskCompletionSourceEnumerator;
-        count                               = 500;
-        Roots                               = new();
-        directory                           = "/";
-        StopCommand                         = CreateCommand(StopAsync);
-        StartCommand                        = CreateCommand(StartAsync);
-        ContinueCommand                     = CreateCommand(Continue);
+        count = 500;
+        Roots = new();
+        directory = "/";
+        StopCommand = CreateCommand(StopAsync);
+        StartCommand = CreateCommand(StartAsync);
+        ContinueCommand = CreateCommand(Continue);
 
         this.WhenAnyValue(x => x.SelectedNode)
             .Subscribe(x =>
@@ -48,10 +48,10 @@ public class DiskUsageViewModel : ViewModelBase
             });
     }
 
-    public AvaloniaList<DirectoryViewModel> Roots           { get; }
-    public ICommand                         StartCommand    { get; }
-    public ICommand                         StopCommand     { get; }
-    public ICommand                         ContinueCommand { get; }
+    public AvaloniaList<DirectoryViewModel> Roots { get; }
+    public ICommand StartCommand { get; }
+    public ICommand StopCommand { get; }
+    public ICommand ContinueCommand { get; }
 
     public bool ShowEmptyFolgers
     {
@@ -117,12 +117,12 @@ public class DiskUsageViewModel : ViewModelBase
                 CanExecute.OnNext(true);
                 await taskCompletionSourceEnumerator.Current;
                 CanExecute.OnNext(false);
-                
+
                 if (cancellationTokenSource.Token.IsCancellationRequested)
                 {
                     return;
                 }
-                
+
                 currentCount = 0;
             }
         }

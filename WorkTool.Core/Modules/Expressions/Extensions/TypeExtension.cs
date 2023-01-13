@@ -16,4 +16,17 @@ public static class TypeExtension
     {
         return Expression.Label(type);
     }
+
+    public static NewArrayExpression ToNewArrayInit(this Type type)
+    {
+        return Expression.NewArrayInit(type);
+    }
+
+    public static NewArrayExpression ToNewArrayInit(
+        this Type type,
+        IEnumerable<Expression> expressions
+    )
+    {
+        return Expression.NewArrayInit(type, expressions);
+    }
 }

@@ -3,7 +3,7 @@
 public class DialogControlMessageBoxView : IMessageBoxView
 {
     public const string DialogControlName = "MainDialogControl";
-    
+
     private readonly IResolver resolver;
 
     public DialogControlMessageBoxView(IResolver resolver)
@@ -25,7 +25,7 @@ public class DialogControlMessageBoxView : IMessageBoxView
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
             {
-                var window  = GetDefaultWindow(desktop);
+                var window = GetDefaultWindow(desktop);
 
                 if (!DialogControl.Windows.TryGetValue(window, out var dialogControl))
                 {
@@ -56,7 +56,7 @@ public class DialogControlMessageBoxView : IMessageBoxView
             }
         }
     }
-    
+
     private Window GetDefaultWindow(IClassicDesktopStyleApplicationLifetime desktop)
     {
         if (desktop.Windows.Count == 0)
@@ -76,7 +76,7 @@ public class DialogControlMessageBoxView : IMessageBoxView
         {
             return desktop.MainWindow;
         }
-        
+
         return desktop.Windows[0];
     }
 

@@ -11,7 +11,6 @@ public class ReactiveCommandsControl<TViewModel> : CommandsControl, IViewFor<TVi
     public ReactiveCommandsControl()
     {
         this.WhenActivated(_ => { });
-
         this.GetObservable(ViewModelProperty).Subscribe(OnViewModelChanged);
     }
 

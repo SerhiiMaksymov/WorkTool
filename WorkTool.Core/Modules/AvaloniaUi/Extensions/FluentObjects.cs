@@ -39,3 +39,4 @@
 [assembly: FluentObject(typeof(TemplatedControl), null)]
 [assembly: FluentObject(typeof(WindowNotificationManager), null)]
 [assembly: FluentObject(typeof(WrapPanel), null)]
+[assembly: FluentObject(typeof(RoutedViewHost), null)]

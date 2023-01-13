@@ -2,35 +2,45 @@
 
 public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
-    public void Configure(IDependencyInjectorRegister dependencyInjectorRegister)
+    public void Configure(IDependencyInjectorRegister register)
     {
-        dependencyInjectorRegister.RegisterTransient(() => UriBase.AppStyleUri);
-        dependencyInjectorRegister.RegisterTransientAutoInject((AvaloniaUiApp app) => app.Resolver);
-        dependencyInjectorRegister.RegisterTransient<IStyleLoader, StyleLoader>();
-        dependencyInjectorRegister.RegisterTransient<IResourceLoader, ResourceLoader>();
-        dependencyInjectorRegister.RegisterTransient(() => new Window());
-        ConfigureViewModels(dependencyInjectorRegister);
-        dependencyInjectorRegister.RegisterTransient(() => Enumerable.Empty<IStyle>());
+        register.RegisterTransient(() => UriBase.AppStyleUri);
+        register.RegisterTransientAutoInject((AvaloniaUiApp app) => app.Resolver);
+        register.RegisterTransient<IStyleLoader, StyleLoader>();
+        register.RegisterTransient<IResourceLoader, ResourceLoader>();
+        register.RegisterTransientItem<IStyle>((Uri uri) => new FluentTheme(uri));
+        register.RegisterTransient(() => new Window());
+        ConfigureViewModels(register);
 
-        dependencyInjectorRegister.RegisterTransient<Control>(
-            (MainView mainView, MessageControl messageControl) =>
+        register.RegisterTransientItem<IStyle>(
+            (Uri uri) => new StyleInclude(uri) { Source = UriBase.ControlsStylesUri }
+        );
+
+        register.RegisterTransient<IViewLocator>(
+            (AppViewLocatorBuilder builder) => builder.Build()
+        );
+
+        register.RegisterTransient<Control>(
+            (MessageControl messageControl, RoutedViewHost routedViewHost) =>
                 new DialogControl()
                     .SetName(DialogControlMessageBoxView.DialogControlName)
-                    .SetContent(mainView)
+                    .SetContent(routedViewHost)
                     .SetDialog(messageControl)
         );
 
-        dependencyInjectorRegister.RegisterTransient<
-            IMessageBoxView,
-            DialogControlMessageBoxView
-        >();
+        register.RegisterTransient<RoutedViewHost>(
+            (MainView mainView, IViewLocator viewLocator) =>
+                new RoutedViewHost().SetDefaultContent(mainView).SetViewLocator(viewLocator)
+        );
 
-        dependencyInjectorRegister.RegisterTransientAutoInject(
+        register.RegisterTransient<IMessageBoxView, DialogControlMessageBoxView>();
+
+        register.RegisterTransientAutoInject(
             (Window window) => window.Content,
             (Control control) => control
         );
 
-        dependencyInjectorRegister.RegisterTransient<IEnumerable<IResourceProvider>>(
+        register.RegisterTransient<IEnumerable<IResourceProvider>>(
             (IResourceLoader resourceLoader) => resourceLoader.LoadResources()
         );
     }

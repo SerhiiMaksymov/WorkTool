@@ -5,6 +5,7 @@ public class WrapPanelView : ReactiveWrapPanel<ViewModelBase>, IChildrenView
     public WrapPanelView(UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
         DataContext = viewModel;
+        this.WhenActivated(_ => { });
         avaloniaUiContext.InitView(this);
     }
 

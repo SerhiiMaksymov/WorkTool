@@ -10,7 +10,12 @@ public static class RegisterSingletonExtension
         registerSingleton.RegisterSingleton(typeof(T), @delegate);
     }
 
-    public static void RegisterSingleton<T>(this IRegisterSingleton registerSingleton, object value)
+    public static void RegisterSingleton<T>(this IRegisterSingleton registerSingleton)
+    {
+        registerSingleton.RegisterSingleton<T>((T value) => value);
+    }
+
+    public static void RegisterSingleton<T>(this IRegisterSingleton registerSingleton, T value)
     {
         registerSingleton.RegisterSingleton(typeof(T), () => value);
     }

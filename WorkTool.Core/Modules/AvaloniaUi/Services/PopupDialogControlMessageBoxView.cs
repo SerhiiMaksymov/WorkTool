@@ -24,14 +24,16 @@ public class PopupDialogControlMessageBoxView : IMessageBoxView
             case IClassicDesktopStyleApplicationLifetime desktop:
             {
                 var window = GetDefaultWindow(desktop).ThrowIfIsNot<WindowPopup>();
-                var popup  = window.Popup.ThrowIfNull();
+                var popup = window.Popup.ThrowIfNull();
                 UpdatePopupControl(popup, title, message, background, messages);
 
                 return popup.ShowAsync();
             }
             case ISingleViewApplicationLifetime single:
             {
-                var popup = single.MainView.ThrowIfNull().FindControlThrowIfNotFound<PopupDialogControl>(WindowPopup.PartPopup);
+                var popup = single.MainView
+                    .ThrowIfNull()
+                    .FindControlThrowIfNotFound<PopupDialogControl>(WindowPopup.PartPopup);
                 UpdatePopupControl(popup, title, message, background, messages);
 
                 return popup.ShowAsync();
@@ -69,7 +71,7 @@ public class PopupDialogControlMessageBoxView : IMessageBoxView
         {
             return desktop.MainWindow;
         }
-        
+
         return desktop.Windows[0];
     }
 

@@ -3,6 +3,6 @@
 public interface IFile
 {
     QuantitiesInformation Size { get; }
-    IDirectory?            Directory { get; }
-    FileName              FileName  { get; }
+    IDirectory? Directory { get; }
+    FileName FileName { get; }
 }

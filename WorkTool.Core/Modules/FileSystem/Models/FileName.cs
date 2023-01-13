@@ -16,7 +16,7 @@ public readonly record struct FileName(ReadOnlyMemory<char> Name, ReadOnlyMemory
         {
             return Name.ToString();
         }
-        
+
         return $"{Name}.{Extension}";
     }
 }

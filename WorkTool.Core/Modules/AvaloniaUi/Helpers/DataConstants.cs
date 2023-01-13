@@ -2,9 +2,9 @@
 
 public static class DataConstants
 {
-    public const string Play     = "M8,5.14V19.14L19,12.14L8,5.14Z";
-    public const string Stop     = "M18,18H6V6H18V18Z";
-    public const string Send     = "M2,21L23,12L2,3V10L17,12L2,14V21Z";
+    public const string Play = "M8,5.14V19.14L19,12.14L8,5.14Z";
+    public const string Stop = "M18,18H6V6H18V18Z";
+    public const string Send = "M2,21L23,12L2,3V10L17,12L2,14V21Z";
     public const string Download = "M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z";
     public const string SkipNext = "M16,18H18V6H16M6,18L14.5,12L6,6V18Z";
 

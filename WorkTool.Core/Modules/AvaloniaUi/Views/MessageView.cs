@@ -3,13 +3,14 @@
 public class MessageView : ReactiveMessageControl<ViewModelBase>, ISetParameter
 {
     private readonly Dictionary<Type, object> argumentValues;
-    private readonly IInvoker invoker;
+    private readonly IInvoker                 invoker;
 
     public MessageView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {
         argumentValues = new() { { GetType(), this }, { typeof(ITabControlView), this } };
         DataContext = viewModel;
         this.invoker = invoker.ThrowIfNull();
+        this.WhenActivated(_ => { });
         avaloniaUiContext.InitView(this);
     }
 
