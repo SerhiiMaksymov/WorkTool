@@ -2,57 +2,53 @@
 
 public class DependencyInjector : IDependencyInjector
 {
-    private readonly Dictionary<ReserveIdentifier, InjectorItem>    reserves;
-    private readonly Dictionary<ReserveIdentifier, Expression>      cacheReservesExpressions;
-    private readonly Dictionary<AutoInjectIdentifier, InjectorItem> autoInjects;
-    private readonly Dictionary<Type, InjectorItem>                 injectors;
-    private readonly Dictionary<Type, object>                       cacheSingletonValues;
-    private readonly Dictionary<Type, Func<object>>                 cacheTransientValues;
-    private readonly Dictionary<Type, Expression>                   cacheExpressions;
-    private readonly Dictionary<Type, IEnumerable<InjectorItem>>    collections;
-    private readonly IRandom<string>                                randomString;
+    private readonly DependencyInjectorFields fields;
 
     public DependencyInjector(
-        IReadOnlyDictionary<Type, InjectorItem>                 injectors,
-        IReadOnlyDictionary<ReserveIdentifier, InjectorItem>    reserves,
+        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
         IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects,
-        IReadOnlyDictionary<Type, IEnumerable<InjectorItem>>    collections,
-        IRandom<string>                                         randomString
+        IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections,
+        IRandom<string> randomString,
+        InjectorItem resolver,
+        InjectorItem invoker
     )
     {
-        this.randomString = randomString;
-        this.collections = new(collections);
-        this.autoInjects = new(autoInjects);
-        this.injectors = new(injectors);
-        this.reserves = new(reserves);
-        cacheSingletonValues = new() { { typeof(IResolver), this }, { typeof(IInvoker), this } };
-        cacheTransientValues = new();
-        cacheReservesExpressions = new();
-        var enumerableType = typeof(IEnumerable<>);
+        Check(injectors);
 
-        Outputs = this.injectors
-            .Select(x => x.Key)
-            .Concat(this.collections.Select(x => enumerableType.MakeGenericType(x.Key)))
-            .ToArray();
-
-        Inputs = this.injectors
-            .SelectMany(x => x.Value.Delegate.GetParameterTypes())
-            .Concat(this.autoInjects.SelectMany(x => x.Value.Delegate.GetParameterTypes()))
-            .Distinct()
-            .Where(x => !Outputs.Contains(x))
-            .ToArray();
-
-        cacheExpressions = new()
-        {
-            { typeof(IResolver), this.ToConstant() },
-            { typeof(IInvoker), this.ToConstant() }
-        };
+        fields = new DependencyInjectorFields(
+            injectors,
+            autoInjects,
+            collections,
+            randomString,
+            resolver,
+            invoker
+        );
     }
 
-    public IEnumerable<Type> Inputs  { get; }
-    public IEnumerable<Type> Outputs { get; }
+    public DependencyInjector(
+        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
+        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects,
+        IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections,
+        IRandom<string> randomString
+    )
+    {
+        Check(injectors);
+        var item = new InjectorItem(InjectorItemType.Singleton, () => this);
 
-    public object Resolve(Type type)
+        fields = new DependencyInjectorFields(
+            injectors,
+            autoInjects,
+            collections,
+            randomString,
+            item,
+            item
+        );
+    }
+
+    public ReadOnlyMemory<TypeInformation> Inputs => fields.Inputs;
+    public ReadOnlyMemory<TypeInformation> Outputs => fields.Outputs;
+
+    public object Resolve(TypeInformation type)
     {
         var cache = GetCacheValue(type);
 
@@ -62,14 +58,19 @@ public class DependencyInjector : IDependencyInjector
         }
 
         CacheValue(type);
-        var result = GetCacheValue(type).ThrowIfNull();
+        var result = GetCacheValue(type);
+
+        if (result is null)
+        {
+            throw new TypeNotRegisterException(type.Type);
+        }
 
         return result;
     }
 
 #region AutoInject
 
-    private Expression GetAutoInjectExpression(Type type, Expression root)
+    private Expression GetAutoInjectExpression(TypeInformation type, Expression root)
     {
         var expressions = GetTypeMembersExpressions(type);
 
@@ -78,8 +79,8 @@ public class DependencyInjector : IDependencyInjector
             return root;
         }
 
-        var id = randomString.GetRandom();
-        var variable = root.Type.ToVariable($"newInstance{id}");
+        var id = fields.RandomString.GetRandom();
+        var variable = root.Type.ToVariable(CreateVariableName());
 
         var blockItems = new List<Expression> { variable.Assign(root) };
 
@@ -95,7 +96,9 @@ public class DependencyInjector : IDependencyInjector
         return Expression.Block(new[] { variable }, blockItems);
     }
 
-    private List<(MemberInfo Member, Expression Expression)> GetTypeMembersExpressions(Type type)
+    private List<(MemberInfo Member, Expression Expression)> GetTypeMembersExpressions(
+        TypeInformation type
+    )
     {
         var list = new List<(MemberInfo Member, Expression Expression)>();
 
@@ -107,10 +110,10 @@ public class DependencyInjector : IDependencyInjector
         return list;
     }
 
-    private Expression GetAutoInjectsExpression(Type type, MemberInfo member)
+    private Expression GetAutoInjectsExpression(TypeInformation type, MemberInfo member)
     {
         var autoInjectIdentifier = new AutoInjectIdentifier(type, member);
-        var injectorItem = autoInjects[autoInjectIdentifier];
+        var injectorItem = fields.AutoInjects[autoInjectIdentifier];
 
         switch (injectorItem.Type)
         {
@@ -135,18 +138,14 @@ public class DependencyInjector : IDependencyInjector
 
         if (parameters.Length == 1 && parameters[0].ParameterType == del.Method.ReturnType)
         {
-            return GetOrCacheExpression(del.Method.ReturnType);
+            TryGetOrCacheExpression(del.Method.ReturnType, out var result);
+
+            return result.ThrowIfNull();
         }
 
-        var expressions = ConstructorParametersToExpressions(
-            member.DeclaringType.ThrowIfNull(),
-            parameters
-        );
+        var expressions = DelegateParametersToExpressions(parameters);
 
-        var instance = del.Target.ThrowIfNull().ToConstant();
-
-        var constant = del.Method
-            .ToCall(instance, expressions)
+        var constant = del.ToCall(expressions)
             .Lambda()
             .Compile()
             .DynamicInvoke()
@@ -162,32 +161,30 @@ public class DependencyInjector : IDependencyInjector
 
         if (parameters.Length == 1 && parameters[0].ParameterType == del.Method.ReturnType)
         {
-            return GetOrCacheExpression(del.Method.ReturnType);
+            TryGetOrCacheExpression(del.Method.ReturnType, out var result);
+
+            return result.ThrowIfNull();
         }
 
-        var expressions = ConstructorParametersToExpressions(
-            member.DeclaringType.ThrowIfNull(),
-            parameters
-        );
-
-        var instance = del.Target.ThrowIfNull().ToConstant();
-        var call = del.Method.ToCall(instance, expressions);
+        var expressions = DelegateParametersToExpressions(parameters);
+        var call = del.ToCall(expressions);
 
         return call;
     }
 
-    private List<MemberInfo> GetAutoInjectMembers(Type type)
+    private List<MemberInfo> GetAutoInjectMembers(TypeInformation type)
     {
         var result = new List<MemberInfo>();
 
-        var members = type.GetMembers()
+        var members = type.Members.Span
+            .ToArray()
             .Where(x => x is PropertyInfo { CanWrite: true } or FieldInfo { IsInitOnly: false });
 
         foreach (var member in members)
         {
             var autoInjectIdentifier = new AutoInjectIdentifier(type, member);
 
-            if (!autoInjects.ContainsKey(autoInjectIdentifier))
+            if (!fields.AutoInjects.ContainsKey(autoInjectIdentifier))
             {
                 continue;
             }
@@ -202,70 +199,64 @@ public class DependencyInjector : IDependencyInjector
 
 #region Injector
 
-    private List<Expression> ConstructorParametersToExpressions(
-    Type                           type,
-        IEnumerable<ParameterInfo> parameters
-    )
+    private ExpressionScope DelegateParametersToExpressions(IEnumerable<ParameterInfo> parameters)
     {
-        var result = new List<Expression>();
+        var expressions = new List<Expression>();
+        var variables = new List<ParameterExpression>();
 
         foreach (var parameter in parameters)
         {
-            CacheReserveValue(type, parameter);
-            var expression = GetOrCacheExpression(type, parameter);
-
-            if (expression.Type.IsValueType && !parameter.ParameterType.IsValueType)
+            if (parameter.ParameterType.IsClosure())
             {
-                expression = expression.Convert(parameter.ParameterType);
+                continue;
             }
 
-            result.Add(expression);
+            if (TryGetOrCacheExpression(parameter.ParameterType, out var expression))
+            {
+                expression = expression.ThrowIfNull();
+
+                if (expression.Type.IsValueType && !parameter.ParameterType.IsValueType)
+                {
+                    expression = expression.Convert(parameter.ParameterType);
+                }
+
+                expressions.Add(expression);
+            }
+            else
+            {
+                var expressionVariable = parameter.ParameterType.ToVariable(CreateVariableName());
+                expressions.Add(expressionVariable);
+                variables.Add(expressionVariable);
+            }
         }
 
-        return result;
+        return new ExpressionScope(expressions.ToArray(), variables.ToArray());
     }
 
-    private Expression GetOrCacheExpression(Type type)
+    private bool TryGetOrCacheExpression(
+        Type type,
+        [MaybeNullWhen(false)] out Expression expression
+    )
     {
-        var expression = GetCacheExpression(type);
+        expression = GetCacheExpression(type);
 
         if (expression is null)
         {
             CacheValue(type);
-            expression = GetCacheExpression(type).ThrowIfNull();
+            expression = GetCacheExpression(type);
         }
-
-        return expression;
-    }
-
-    private Expression GetOrCacheExpression(Type type, ParameterInfo parameter)
-    {
-        var expression = GetCacheExpression(type, parameter);
 
         if (expression is null)
         {
-            CacheValue(parameter.ParameterType);
-            expression = GetCacheExpression(type, parameter).ThrowIfNull();
+            return false;
         }
 
-        return expression;
+        return true;
     }
 
-    private Expression? GetCacheExpression(Type parentType, ParameterInfo parameter)
+    private Expression? GetCacheExpression(TypeInformation type)
     {
-        var reserveIdentifier = new ReserveIdentifier(parentType, parameter);
-
-        if (cacheReservesExpressions.TryGetValue(reserveIdentifier, out var expression))
-        {
-            return expression;
-        }
-
-        return GetCacheExpression(parameter.ParameterType);
-    }
-
-    private Expression? GetCacheExpression(Type type)
-    {
-        if (cacheExpressions.TryGetValue(type, out var expression))
+        if (fields.CacheExpressions.TryGetValue(type, out var expression))
         {
             return expression;
         }
@@ -273,14 +264,14 @@ public class DependencyInjector : IDependencyInjector
         return null;
     }
 
-    private object? GetCacheValue(Type type)
+    private object? GetCacheValue(TypeInformation type)
     {
-        if (cacheSingletonValues.TryGetValue(type, out var singletonValue))
+        if (fields.CacheSingletonValues.TryGetValue(type, out var singletonValue))
         {
             return singletonValue;
         }
 
-        if (cacheTransientValues.TryGetValue(type, out var transientValue))
+        if (fields.CacheTransientValues.TryGetValue(type, out var transientValue))
         {
             var value = transientValue.Invoke();
 
@@ -290,62 +281,42 @@ public class DependencyInjector : IDependencyInjector
         return null;
     }
 
-    private ConstructorInfo? GetSingleConstructor(Type type)
+    private void CacheCollection(TypeInformation typeEnumerable)
     {
-        var constructors = type.GetConstructors();
-        
-        if (constructors.Length == 0)
+        var type = typeEnumerable.GenericTypeArguments.Span[0];
+
+        if (fields.Collections.TryGetValue(type, out var list))
         {
-            return null;
-        }
-
-        if (constructors.Length > 1)
-        {
-            throw new ToManyConstructorsException(type, 1, constructors.Length);
-        }
-
-        return constructors[0];
-    }
-
-    private void CacheCollection(Type typeEnumerable)
-    {
-        var type = typeEnumerable.GenericTypeArguments[0];
-
-        if (collections.TryGetValue(type, out var list))
-        {
-            CacheCollection(typeEnumerable, type, list);
+            CreateCollectionExpression(typeEnumerable, type, list);
 
             return;
         }
 
-        var expression = type.ToNewArrayInit();
-
-        var value = expression
-            .Convert(typeof(object))
-            .Lambda()
-            .Compile()
-            .ThrowIfIsNot<Func<object>>()
-            .Invoke();
-
-        cacheExpressions.Add(typeEnumerable, value.ToConstant());
-        cacheSingletonValues.Add(typeEnumerable, value);
+        throw new TypeNotRegisterException(typeEnumerable.Type);
     }
 
-    private IEnumerable<Expression> CreateExpressions(Type type, IEnumerable<InjectorItem> items)
+    private ExpressionScope CreateExpressions(Type type, IEnumerable<InjectorItem> items)
     {
+        var variables = new List<ParameterExpression>();
+        var expressions = new List<Expression>();
+
         foreach (var item in items)
         {
             switch (item.Type)
             {
                 case InjectorItemType.Singleton:
                 {
-                    yield return CreateSingletonValue(type, item);
+                    var scope = CreateSingletonExpression(type, item);
+                    variables.Add(scope.Variables.ToArray());
+                    expressions.Add(scope.Expressions.ToArray());
 
                     break;
                 }
                 case InjectorItemType.Transient:
                 {
-                    yield return CreateTransientValue(type, item);
+                    var scope = CreateTransientExpression(type, item);
+                    variables.Add(scope.Variables.ToArray());
+                    expressions.Add(scope.Expressions.ToArray());
 
                     break;
                 }
@@ -355,36 +326,53 @@ public class DependencyInjector : IDependencyInjector
                 }
             }
         }
+
+        return new ExpressionScope(expressions.ToArray(), variables.ToArray());
     }
 
-    private void CacheCollection(Type typeEnumerable, Type type, IEnumerable<InjectorItem> items)
+    private ExpressionScope CreateCollectionExpression(
+        TypeInformation typeEnumerable,
+        TypeInformation type,
+        IEnumerable<InjectorItem> items
+    )
     {
-        var listType = typeof(List<>).MakeGenericType(type);
+        var listType = typeof(List<>).MakeGenericType(type.Type);
         var listAddMethod = listType.GetMethod(nameof(List<object>.Add)).ThrowIfNull();
         var listAddRangeMethod = listType.GetMethod(nameof(List<object>.AddRange)).ThrowIfNull();
-        var id = randomString.GetRandom();
-        var variable = listType.ToVariable($"newInstance{id}");
-        var listExpressions = CreateExpressions(type, items).ToArray();
+        var listExpressions = CreateExpressions(type.Type, items);
+        var variable = listType.ToVariable(CreateVariableName());
         var blockItems = new List<Expression> { variable.Assign(listType.ToNew()) };
 
-        foreach (var item in listExpressions)
+        foreach (var item in listExpressions.Expressions.ToArray())
         {
-            if (typeEnumerable.IsAssignableFrom(item.Type))
+            if (typeEnumerable.Type.IsAssignableFrom(item.Type))
             {
-                blockItems.Add(listAddRangeMethod.ToCall(variable, item.Convert(typeEnumerable)));
+                blockItems.Add(
+                    listAddRangeMethod.ToCall(variable, item.Convert(typeEnumerable.Type))
+                );
             }
             else
             {
-                blockItems.Add(listAddMethod.ToCall(variable, item.Convert(type)));
+                blockItems.Add(listAddMethod.ToCall(variable, item.Convert(type.Type)));
             }
         }
 
         blockItems.Add(variable);
         var expression = Expression.Block(new[] { variable }, blockItems);
-        CacheTransient(typeEnumerable, expression);
+        var scope = new ExpressionScope(expression.AsArray(), listExpressions.Variables);
+        CacheTransient(typeEnumerable, scope);
+
+        return scope;
     }
 
-    private void CacheValue(Type type)
+    private string CreateVariableName()
+    {
+        var id = fields.RandomString.GetRandom();
+
+        return $"newInstance{id}";
+    }
+
+    private void CacheValue(TypeInformation type)
     {
         if (type.IsEnumerable())
         {
@@ -393,19 +381,21 @@ public class DependencyInjector : IDependencyInjector
             return;
         }
 
-        if (injectors.TryGetValue(type, out var injectorItem))
+        if (fields.Injectors.TryGetValue(type, out var injectorItem))
         {
             switch (injectorItem.Type)
             {
                 case InjectorItemType.Singleton:
                 {
-                    CacheSingleton(type, CreateSingletonValue(type));
+                    var expression = CreateSingletonExpression(type);
+                    CacheSingleton(type, expression);
 
                     return;
                 }
                 case InjectorItemType.Transient:
                 {
-                    CacheTransient(type, CreateTransientValue(type));
+                    var scope = CreateTransientExpression(type);
+                    CacheTransient(type, scope);
 
                     return;
                 }
@@ -415,23 +405,21 @@ public class DependencyInjector : IDependencyInjector
                 }
             }
         }
-
-        CacheTransient(type, CreateTransientValue(type));
     }
 
-    private Expression CreateTransientValue(Type type)
+    private ExpressionScope CreateTransientExpression(TypeInformation type)
     {
-        if (!injectors.ContainsKey(type))
+        if (!fields.Injectors.ContainsKey(type))
         {
             return CreateTransientDefaultValue(type);
         }
 
-        var injector = injectors[type];
+        var injector = fields.Injectors[type];
 
-        return CreateTransientValue(type, injector);
+        return CreateTransientExpression(type, injector);
     }
 
-    private Expression CreateTransientValue(Type type, InjectorItem injector)
+    private ExpressionScope CreateTransientExpression(TypeInformation type, InjectorItem injector)
     {
         var parameters = injector.Delegate.Method.GetParameters();
 
@@ -440,17 +428,16 @@ public class DependencyInjector : IDependencyInjector
             return CreateTransientDefaultValue(type);
         }
 
-        var expressions = ConstructorParametersToExpressions(type, parameters);
-        var instance = injector.Delegate.Target.ThrowIfNull().ToConstant();
-        var newExpression = injector.Delegate.Method.ToCall(instance, expressions);
+        var expressions = DelegateParametersToExpressions(parameters);
+        var newExpression = injector.Delegate.ToCall(expressions);
         var result = GetAutoInjectExpression(type, newExpression);
 
-        return result;
+        return new ExpressionScope(result.AsArray(), expressions.Variables);
     }
 
-    private Expression CreateTransientDefaultValue(Type type)
+    private ExpressionScope CreateTransientDefaultValue(TypeInformation type)
     {
-        var constructor = GetSingleConstructor(type);
+        var constructor = type.GetSingleConstructor();
 
         if (constructor is null)
         {
@@ -458,51 +445,63 @@ public class DependencyInjector : IDependencyInjector
         }
 
         var parameters = constructor.GetParameters();
-        var expressions = ConstructorParametersToExpressions(type, parameters);
+        var expressions = DelegateParametersToExpressions(parameters);
         var newExpression = constructor.ToNew(expressions);
         var result = GetAutoInjectExpression(type, newExpression);
 
-        return result;
+        return new ExpressionScope(result.AsArray(), Array.Empty<ParameterExpression>());
     }
 
-    private Expression CreateTransientValueTypeValue(Type type)
+    private ExpressionScope CreateTransientValueTypeValue(TypeInformation type)
     {
         if (!type.IsValueType)
         {
-            throw new NotHaveConstructorException(type);
+            throw new NotHaveConstructorException(type.Type);
         }
 
-        var obj = type.ToNew().ThrowIfNull();
+        var obj = type.Type.ToNew().ThrowIfNull();
         var result = GetAutoInjectExpression(type, obj);
 
-        return result;
+        return new ExpressionScope(result.AsArray(), Array.Empty<ParameterExpression>());
     }
 
-    private void CacheTransient(Type type, Expression expression)
+    private void CacheTransient(TypeInformation type, ExpressionScope scope)
     {
+        if (scope.Expressions.Length > 1)
+        {
+            return;
+        }
+
+        if (!scope.Variables.IsEmpty)
+        {
+            return;
+        }
+
+        var expression = scope.Expressions.Span[0];
+
         var transientValue = expression
             .Convert(typeof(object))
             .Lambda()
             .Compile()
             .ThrowIfIsNot<Func<object>>();
 
-        cacheExpressions.Add(type, expression);
-        cacheTransientValues.Add(type, transientValue);
+        fields.CacheExpressions.Add(type, expression);
+        fields.CacheTransientValues.Add(type, transientValue);
     }
 
-    private Expression CreateSingletonValue(Type type)
+    private ExpressionScope CreateSingletonExpression(TypeInformation type)
     {
-        if (!injectors.ContainsKey(type))
+        if (!fields.Injectors.ContainsKey(type))
         {
             return CreateSingletonDefaultValue(type);
         }
 
-        var injector = injectors[type];
+        var injector = fields.Injectors[type];
 
-        return CreateSingletonValue(type, injector);
+        return CreateSingletonExpression(type, injector);
     }
 
-    private Expression CreateSingletonValue(Type type, InjectorItem injector)
+    private ExpressionScope CreateSingletonExpression(TypeInformation type, InjectorItem injector)
     {
         var parameters = injector.Delegate.Method.GetParameters();
 
@@ -511,42 +510,48 @@ public class DependencyInjector : IDependencyInjector
             return CreateSingletonDefaultValue(type);
         }
 
-        var expressions = ConstructorParametersToExpressions(type, parameters);
-
-        var newExpression = injector.Delegate.Method
-            .ToCall(injector.Delegate.Target.ThrowIfNull().ToConstant(), expressions)
-            .Lambda()
-            .Compile();
-
+        var expressions = DelegateParametersToExpressions(parameters);
+        var newExpression = injector.Delegate.ToCall(expressions).Lambda().Compile();
         var obj = newExpression.DynamicInvoke().ThrowIfNull();
         var result = GetAutoInjectExpression(type, obj.ToConstant());
 
-        return result;
+        return new ExpressionScope(result.AsArray(), Array.Empty<ParameterExpression>());
     }
 
-    private Expression CreateSingletonValueTypeValue(Type type)
+    private ExpressionScope CreateSingletonValueTypeValue(TypeInformation type)
     {
         if (!type.IsValueType)
         {
-            throw new NotHaveConstructorException(type);
+            throw new NotHaveConstructorException(type.Type);
         }
 
-        var obj = Activator.CreateInstance(type).ThrowIfNull();
-        var result = GetAutoInjectExpression(type, obj.ToConstant());
+        var obj = Activator.CreateInstance(type.Type).ThrowIfNull();
+        var result = GetAutoInjectExpression(type.Type, obj.ToConstant());
 
-        return result;
+        return new ExpressionScope(result.AsArray(), Array.Empty<ParameterExpression>());
     }
 
-    private void CacheSingleton(Type type, Expression expression)
+    private void CacheSingleton(TypeInformation type, ExpressionScope scope)
     {
+        if (scope.Expressions.Length > 1)
+        {
+            return;
+        }
+
+        if (!scope.Variables.IsEmpty)
+        {
+            return;
+        }
+
+        var expression = scope.Expressions.Span[0];
         var value = expression.Lambda().Compile().DynamicInvoke().ThrowIfNull();
-        cacheExpressions.Add(type, value.ToConstant());
-        cacheSingletonValues.Add(type, value);
+        fields.CacheExpressions.Add(type, value.ToConstant());
+        fields.CacheSingletonValues.Add(type, value);
     }
 
-    private Expression CreateSingletonDefaultValue(Type type)
+    private ExpressionScope CreateSingletonDefaultValue(TypeInformation type)
     {
-        var constructor = GetSingleConstructor(type);
+        var constructor = type.GetSingleConstructor();
 
         if (constructor is null)
         {
@@ -554,153 +559,59 @@ public class DependencyInjector : IDependencyInjector
         }
 
         var parameters = constructor.GetParameters();
-        var expressions = ConstructorParametersToExpressions(type, parameters);
+        var expressions = DelegateParametersToExpressions(parameters);
         var newExpression = constructor.ToNew(expressions).Lambda().Compile();
         var obj = newExpression.DynamicInvoke().ThrowIfNull();
-        var result = GetAutoInjectExpression(type, obj.ToConstant());
+        var result = GetAutoInjectExpression(type.Type, obj.ToConstant());
 
-        return result;
+        return new ExpressionScope(result.AsArray(), Array.Empty<ParameterExpression>());
     }
 
 #endregion
 
-#region Reserve
+#region Checks
 
-    private void CacheReserveValue(Type type, ParameterInfo parameter)
+    private void Check(IReadOnlyDictionary<TypeInformation, InjectorItem> injectors)
     {
-        var reserveIdentifier = new ReserveIdentifier(type, parameter);
+        CheckInjectors(injectors);
+    }
 
-        if (!reserves.TryGetValue(reserveIdentifier, out var injectorItem))
-        {
-            return;
-        }
+    private void CheckInjectors(IReadOnlyDictionary<TypeInformation, InjectorItem> injectors)
+    {
+        var listParameterTypes = new List<TypeInformation>();
 
-        switch (injectorItem.Type)
+        foreach (var injector in injectors)
         {
-            case InjectorItemType.Singleton:
+            if (
+                injector.Key.Type != injector.Value.Delegate.Method.ReturnType
+                && injector.Value.Delegate.Method.ReturnType.IsAssignableFrom(injector.Key.Type)
+            )
             {
-                CacheSingletonReserveValue(type, parameter, injectorItem.Delegate);
-
-                break;
+                throw new NotCovertException(
+                    injector.Key.Type,
+                    injector.Value.Delegate.Method.ReturnType
+                );
             }
-            case InjectorItemType.Transient:
+
+            var parameters = injector.Value.Delegate.Method.GetParameters().ToArray();
+
+            foreach (var parameter in parameters)
             {
-                CacheTransientReserveValue(type, parameter, injectorItem.Delegate);
-
-                break;
+                listParameterTypes.Add(parameter.ParameterType);
             }
-            default:
+
+            if (listParameterTypes.Contains(injector.Key.Type))
             {
-                throw new UnreachableException();
+                throw new RecursionTypeInvokeException(injector.Key.Type, injector.Value.Delegate);
             }
+
+            listParameterTypes.Clear();
         }
-    }
-
-    private void CacheTransientValueTypeReserveValue(Type type, ParameterInfo parameter)
-    {
-        if (!parameter.ParameterType.IsValueType)
-        {
-            throw new NotHaveConstructorException(type);
-        }
-
-        var reserveIdentifier = new ReserveIdentifier(type, parameter);
-        var obj = parameter.ParameterType.ToNew().ThrowIfNull();
-        cacheReservesExpressions.Add(reserveIdentifier, obj);
-    }
-
-    private void CacheTransientDefaultReserveValue(Type type, ParameterInfo parameter)
-    {
-        var constructor = GetSingleConstructor(parameter.ParameterType);
-
-        if (constructor is null)
-        {
-            CacheTransientValueTypeReserveValue(type, parameter);
-
-            return;
-        }
-
-        var reserveIdentifier = new ReserveIdentifier(type, parameter);
-        var parameters = constructor.GetParameters();
-        var expressions = ConstructorParametersToExpressions(parameter.ParameterType, parameters);
-        var newExpression = constructor.ToNew(expressions);
-        cacheReservesExpressions.Add(reserveIdentifier, newExpression);
-    }
-
-    private void CacheTransientReserveValue(Type type, ParameterInfo parameter, Delegate del)
-    {
-        var parameters = del.Method.GetParameters();
-
-        if (parameters.Length == 1 && parameters[0].ParameterType == parameter.ParameterType)
-        {
-            CacheTransientDefaultReserveValue(type, parameter);
-
-            return;
-        }
-
-        var reserveIdentifier = new ReserveIdentifier(type, parameter);
-        var expressions = ConstructorParametersToExpressions(parameter.ParameterType, parameters);
-        var instance = del.Target.ThrowIfNull().ToConstant();
-        var newExpression = del.Method.ToCall(instance, expressions);
-        cacheReservesExpressions.Add(reserveIdentifier, newExpression);
-    }
-
-    private void CacheSingletonValueTypeReserveValue(Type type, ParameterInfo parameter)
-    {
-        if (!parameter.ParameterType.IsValueType)
-        {
-            throw new NotHaveConstructorException(type);
-        }
-
-        var reserveIdentifier = new ReserveIdentifier(type, parameter);
-        var obj = Activator.CreateInstance(parameter.ParameterType).ThrowIfNull();
-        cacheReservesExpressions.Add(reserveIdentifier, obj.ToConstant(parameter.ParameterType));
-    }
-
-    private void CacheSingletonDefaultReserveValue(Type type, ParameterInfo parameter)
-    {
-        var constructor = GetSingleConstructor(parameter.ParameterType);
-
-        if (constructor is null)
-        {
-            CacheSingletonValueTypeReserveValue(type, parameter);
-
-            return;
-        }
-
-        var reserveIdentifier = new ReserveIdentifier(type, parameter);
-        var parameters = constructor.GetParameters();
-        var expressions = ConstructorParametersToExpressions(parameter.ParameterType, parameters);
-        var newExpression = constructor.ToNew(expressions).Lambda().Compile();
-        var obj = newExpression.DynamicInvoke().ThrowIfNull();
-        cacheReservesExpressions.Add(reserveIdentifier, obj.ToConstant());
-    }
-
-    private void CacheSingletonReserveValue(Type type, ParameterInfo parameter, Delegate del)
-    {
-        var parameters = del.Method.GetParameters();
-
-        if (parameters.Length == 1 && parameters[0].ParameterType == parameter.ParameterType)
-        {
-            CacheSingletonDefaultReserveValue(type, parameter);
-
-            return;
-        }
-
-        var reserveIdentifier = new ReserveIdentifier(type, parameter);
-        var expressions = ConstructorParametersToExpressions(parameter.ParameterType, parameters);
-
-        var newExpression = del.Method
-            .ToCall(del.Target.ThrowIfNull().ToConstant(), expressions)
-            .Lambda()
-            .Compile();
-
-        var obj = newExpression.DynamicInvoke().ThrowIfNull();
-        cacheReservesExpressions.Add(reserveIdentifier, obj.ToConstant());
     }
 
 #endregion
 
-    public object? Invoke(Delegate del, DictionarySpan<Type, object> arguments)
+    public object? Invoke(Delegate del, DictionarySpan<TypeInformation, object> arguments)
     {
         var parameterTypes = del.GetParameterTypes();
         var args = new object[parameterTypes.Length];
@@ -718,5 +629,87 @@ public class DependencyInjector : IDependencyInjector
         }
 
         return del.DynamicInvoke(args);
+    }
+
+    public DependencyStatus GetStatus(TypeInformation type)
+    {
+        if (type.IsEnumerable())
+        {
+            return GetEnumerableStatus(type);
+        }
+
+        if (!fields.Injectors.TryGetValue(type, out var item))
+        {
+            throw new TypeNotRegisterException(type.Type);
+        }
+
+        return GetSingleStatus(type, item.Delegate);
+    }
+
+    private DependencyStatus GetSingleStatus(TypeInformation type, Delegate del)
+    {
+        var parameters = del.Method.GetParameters();
+        var neededParameters = new List<ParameterInfo>();
+        var parameterValues = new Dictionary<ParameterInfo, Expression>();
+
+        foreach (var parameter in parameters)
+        {
+            if (parameter.ParameterType.IsClosure())
+            {
+                continue;
+            }
+
+            if (Outputs.Span.Contains(parameter.ParameterType))
+            {
+                var expression = GetCacheExpression(parameter.ParameterType);
+
+                if (expression is null)
+                {
+                    CacheValue(parameter.ParameterType);
+                    expression = GetCacheExpression(parameter.ParameterType).ThrowIfNull();
+                }
+
+                parameterValues.Add(parameter, expression);
+            }
+
+            neededParameters.Add(parameter);
+        }
+
+        return new DependencyStatus(type, neededParameters.ToArray(), del, parameterValues);
+    }
+
+    private DependencyStatus GetEnumerableStatus(TypeInformation typeEnumerable)
+    {
+        var itemType = typeEnumerable.GenericTypeArguments.Span[0];
+
+        if (!fields.Collections.TryGetValue(itemType, out var items))
+        {
+            throw new TypeNotRegisterException(typeEnumerable.Type);
+        }
+
+        var scope = CreateCollectionExpression(typeEnumerable, itemType, items);
+
+        if (scope.Expressions.Length > 1)
+        {
+            throw new UnreachableException();
+        }
+
+        var expression = scope.Expressions.Span[0];
+
+        if (scope.Variables.IsEmpty)
+        {
+            var del = expression.Lambda().Compile();
+
+            return GetSingleStatus(typeEnumerable, del);
+        }
+        else
+        {
+            var del = Expression
+                .Block(scope.Variables.ToArray(), scope.Expressions.ToArray())
+                .Lambda()
+                .Compile();
+
+            return GetSingleStatus(typeEnumerable, del);
+        }
     }
 }

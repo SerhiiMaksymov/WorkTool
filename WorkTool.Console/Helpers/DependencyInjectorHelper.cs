@@ -4,13 +4,14 @@ public static class DependencyInjectorHelper
 {
     public static IDependencyInjector CreateDependencyInjector()
     {
-        var dependencyInjectorBuilder = new ReadOnlyDependencyInjectorRegister();
-        dependencyInjectorBuilder.RegisterConfigurationFromAssemblies();
-        dependencyInjectorBuilder.RegisterTransient<CommandLineContextBuilder>();
-        dependencyInjectorBuilder.RegisterTransient<IApplication, DesktopAvaloniaUiApplication>();
-        dependencyInjectorBuilder.RegisterTransient<AvaloniaUiApplicationCommandLine>();
+        var register = new ReadOnlyDependencyInjectorRegister();
+        register.RegisterTransient<IApplicationCommandLine, CombineApplicationCommandLine>();
+        register.RegisterConfigurationFromAssemblies();
+        register.RegisterTransient<CommandLineContextBuilder>();
+        register.RegisterTransient<IApplication, DesktopAvaloniaUiApplication>();
+        register.RegisterTransient<AvaloniaUiApplicationCommandLine>();
 
-        dependencyInjectorBuilder.RegisterTransient(() =>
+        register.RegisterTransient(() =>
         {
             var window = new Window();
             window.AttachDevTools();
@@ -18,7 +19,7 @@ public static class DependencyInjectorHelper
             return window;
         });
 
-        dependencyInjectorBuilder.RegisterTransient(() =>
+        register.RegisterTransient(() =>
         {
             var window = new WindowPopup();
             window.AttachDevTools();
@@ -26,7 +27,7 @@ public static class DependencyInjectorHelper
             return window;
         });
 
-        dependencyInjectorBuilder.RegisterTransient<IManagedNotificationManager>(() =>
+        register.RegisterTransient<IManagedNotificationManager>(() =>
         {
             var currentApplication = Application.Current.ThrowIfNull();
             var applicationLifetime = currentApplication.ApplicationLifetime.ThrowIfNull();
@@ -37,57 +38,41 @@ public static class DependencyInjectorHelper
             return new WindowNotificationManager(mainWindow);
         });
 
-        dependencyInjectorBuilder.RegisterTransient<
+        register.RegisterTransient<
             IStreamParser<ICommandLineToken, string>,
             CommandLineArgumentParser
         >();
 
-        dependencyInjectorBuilder.RegisterTransient<PropertyInfoTemplatedControlContext>(
+        register.RegisterTransient<PropertyInfoTemplatedControlContext>(
             (IResolver resolver, UiContext uiContext) =>
                 PropertyInfoItemsControlContextBuilder
                     .CreateDefaultBuilder(resolver, uiContext)
                     .Build()
         );
 
-        dependencyInjectorBuilder.RegisterTransient<
-            IApplicationCommandLine,
-            CombineApplicationCommandLine
-        >();
-
-        dependencyInjectorBuilder.RegisterTransient<IEnumerable<IApplicationCommandLine>>(
+        register.RegisterTransient<IEnumerable<IApplicationCommandLine>>(
             (AvaloniaUiApplicationCommandLine avaloniaUiApplicationCommandLine) =>
                 new IApplicationCommandLine[] { avaloniaUiApplicationCommandLine }
         );
 
-        dependencyInjectorBuilder.RegisterTransient(
+        register.RegisterTransient(
             () => new BlobServiceClient(AzureStorageBlobsConnections.Development)
         );
 
-        dependencyInjectorBuilder.RegisterTransient<IRandom<int>>(
-            () => new RandomInt32(new Interval<int>(-99, 99))
-        );
+        register.RegisterTransient<IRandom<int>>(() => new RandomInt32(new Interval<int>(-99, 99)));
 
-        dependencyInjectorBuilder.RegisterTransient<IRandomArrayItem<Guid>>(
-            () => new RandomArrayItem<Guid>(false)
-        );
+        register.RegisterTransient<IRandomArrayItem<Guid>>(() => new RandomArrayItem<Guid>(false));
 
-        dependencyInjectorBuilder.RegisterTransient<IRandomArrayItem<Guid?>>(
-            () => new RandomArrayItem<Guid?>(true)
-        );
+        register.RegisterTransient<IRandomArrayItem<Guid?>>(() => new RandomArrayItem<Guid?>(true));
 
-        dependencyInjectorBuilder.RegisterTransient<IRandomArrayItem<string>>(
+        register.RegisterTransient<IRandomArrayItem<string>>(
             () => new RandomArrayItem<string>(false)
         );
 
-        dependencyInjectorBuilder.RegisterTransient<IRandomArrayItem<char>>(
-            () => new RandomArrayItem<char>(false)
-        );
+        register.RegisterTransient<IRandomArrayItem<char>>(() => new RandomArrayItem<char>(false));
 
-        dependencyInjectorBuilder.RegisterTransient<
-            IRandom<int, Interval<int>>,
-            RandomInt32InInterval
-        >();
+        register.RegisterTransient<IRandom<int, Interval<int>>, RandomInt32InInterval>();
 
-        return dependencyInjectorBuilder.Build();
+        return register.Build();
     }
 }

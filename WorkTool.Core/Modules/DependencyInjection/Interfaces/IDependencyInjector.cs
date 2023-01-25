@@ -1,7 +1,7 @@
 ﻿namespace WorkTool.Core.Modules.DependencyInjection.Interfaces;
 
-public interface IDependencyInjector : IResolver, IInvoker
+public interface IDependencyInjector : IResolver, IInvoker, IDependencyStatusGetter
 {
-    IEnumerable<Type> Inputs { get; }
-    IEnumerable<Type> Outputs { get; }
+    ReadOnlyMemory<TypeInformation> Inputs { get; }
+    ReadOnlyMemory<TypeInformation> Outputs { get; }
 }

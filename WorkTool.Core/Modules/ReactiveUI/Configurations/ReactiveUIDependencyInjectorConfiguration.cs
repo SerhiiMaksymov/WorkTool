@@ -2,11 +2,11 @@
 
 namespace WorkTool.Core.Modules.ReactiveUI.Configurations;
 
-public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
+public readonly struct ReactiveUIDependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorRegister register)
     {
-        register.RegisterSingleton<IScheduler>(RxApp.MainThreadScheduler);
+        register.RegisterSingleton(RxApp.MainThreadScheduler);
         register.RegisterTransient<
             INavigationService<object>,
             RoutedViewHostNavigationService<object>

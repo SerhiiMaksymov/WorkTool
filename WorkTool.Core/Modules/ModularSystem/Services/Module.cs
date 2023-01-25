@@ -1,25 +1,31 @@
-using WorkTool.Core.Modules.ModularSystem.Interfaces;
-
 namespace WorkTool.Core.Modules.ModularSystem.Services;
 
 public class Module : IModule
 {
-    public IDependencyInjector DependencyInjector { get; }
+    private readonly IDependencyInjector dependencyInjector;
 
-    public Module(IDependencyInjector dependencyInjector)
+    public Module(Guid id, IDependencyInjector dependencyInjector)
     {
-        DependencyInjector = dependencyInjector;
+        this.dependencyInjector = dependencyInjector;
+        Id = id;
     }
 
-    public IModule Join(IModule module)
+    public Guid Id { get; }
+    public ReadOnlyMemory<TypeInformation> Inputs => dependencyInjector.Inputs;
+    public ReadOnlyMemory<TypeInformation> Outputs => dependencyInjector.Outputs;
+
+    public object GetObject(TypeInformation type)
     {
-        var dependencyInjector = new JoinDependencyInjector(
-            module.DependencyInjector,
-            DependencyInjector
-        );
+        if (!Outputs.Span.Contains(type))
+        {
+            throw new TypeNotRegisterException(type.Type);
+        }
 
-        var result = new Module(dependencyInjector);
+        return dependencyInjector.Resolve(type);
+    }
 
-        return result;
+    public DependencyStatus GetStatus(TypeInformation type)
+    {
+        return dependencyInjector.GetStatus(type);
     }
 }

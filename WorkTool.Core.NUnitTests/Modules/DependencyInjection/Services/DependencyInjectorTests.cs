@@ -3,15 +3,81 @@
 public class DependencyInjectorTests
 {
     private static int structPropertyValue;
-    private static int reserveStructPropertyValue;
 
-    private ReadOnlyReadOnlyDependencyInjector? dependencyInjector;
+    private DependencyInjector? dependencyInjector;
 
     [SetUp]
     public void SetUp()
     {
         structPropertyValue = 15;
-        reserveStructPropertyValue = 50;
+    }
+
+    [Test]
+    public void Inputs_RegisterDelegateWithParameterAndOutput_InputsEmpty()
+    {
+        var objectInjectorItem = new InjectorItem(
+            InjectorItemType.Singleton,
+            (int _) => new object()
+        );
+
+        var int32InjectorItem = new InjectorItem(
+            InjectorItemType.Singleton,
+            () => structPropertyValue
+        );
+
+        dependencyInjector = CreateDependencyInjector(
+            new Dictionary<TypeInformation, InjectorItem>
+            {
+                { typeof(object), objectInjectorItem },
+                { typeof(int), int32InjectorItem }
+            }
+        );
+
+        dependencyInjector.Inputs.ToArray().Should().BeEmpty();
+    }
+
+    [Test]
+    public void Inputs_RegisterAutoInjectDelegateWithParameter_InputWithParameterType()
+    {
+        var member = typeof(ClassWithPropertySetter)
+            .GetMember(nameof(ClassWithPropertySetter.Property))
+            .Single();
+
+        var autoInjectMember = new AutoInjectMember(member);
+
+        var autoInjectIdentifier = new AutoInjectIdentifier(
+            typeof(ClassWithPropertySetter),
+            autoInjectMember
+        );
+
+        var injectorItem = new InjectorItem(
+            InjectorItemType.Singleton,
+            (int _) => new ClassWithPropertySetter()
+        );
+
+        dependencyInjector = CreateDependencyInjector(
+            new Dictionary<AutoInjectIdentifier, InjectorItem>
+            {
+                { autoInjectIdentifier, injectorItem }
+            }
+        );
+
+        dependencyInjector.Inputs.ToArray().Should().HaveCount(1).And.Contain(typeof(int));
+    }
+
+    [Test]
+    public void Inputs_RegisterDelegateWithParameter_InputWithParameterType()
+    {
+        var injectorItem = new InjectorItem(InjectorItemType.Singleton, (int _) => new object());
+
+        var injectors = new Dictionary<TypeInformation, InjectorItem>
+        {
+            { typeof(object), injectorItem }
+        };
+
+        dependencyInjector = CreateDependencyInjector(injectors);
+
+        dependencyInjector.Inputs.ToArray().Should().HaveCount(1).And.Contain(typeof(int));
     }
 
     [Test]
@@ -21,6 +87,16 @@ public class DependencyInjectorTests
         var member = type.GetMember(nameof(ClassWithPropertySetter.Property))[0];
 
         dependencyInjector = CreateDependencyInjector(
+            new Dictionary<TypeInformation, InjectorItem>
+            {
+                {
+                    typeof(ClassWithPropertySetter),
+                    new InjectorItem(
+                        InjectorItemType.Singleton,
+                        () => new ClassWithPropertySetter()
+                    )
+                }
+            },
             new Dictionary<AutoInjectIdentifier, InjectorItem>
             {
                 {
@@ -31,85 +107,44 @@ public class DependencyInjectorTests
         );
 
         var value = dependencyInjector.Resolve(typeof(ClassWithPropertySetter));
-
         value.ThrowIfIsNot<ClassWithPropertySetter>().Property.Should().Be(structPropertyValue);
-    }
-
-    [TestCase(InjectorItemType.Transient, InjectorItemType.Transient)]
-    [TestCase(InjectorItemType.Singleton, InjectorItemType.Singleton)]
-    [TestCase(InjectorItemType.Singleton, InjectorItemType.Transient)]
-    [TestCase(InjectorItemType.Transient, InjectorItemType.Singleton)]
-    public void Resolve_ReserveParameter_ParameterSet(
-        InjectorItemType injectorType,
-        InjectorItemType reserveType
-    )
-    {
-        var type = typeof(StructWith1Constructor);
-        var parameter = type.GetConstructors()[0].GetParameters()[0];
-
-        dependencyInjector = CreateDependencyInjector(
-            new Dictionary<Type, InjectorItem>
-            {
-                { typeof(int), new InjectorItem(injectorType, () => structPropertyValue) }
-            },
-            new Dictionary<ReserveIdentifier, InjectorItem>
-            {
-                {
-                    new ReserveIdentifier(type, parameter),
-                    new InjectorItem(reserveType, () => reserveStructPropertyValue)
-                }
-            }
-        );
-
-        var value = dependencyInjector.Resolve(typeof(StructWith1Constructor));
-
-        value
-            .ThrowIfIsNot<StructWith1Constructor>()
-            .Property.Should()
-            .Be(reserveStructPropertyValue);
     }
 
     [Test]
     public void Resolve_UnCorrectInjectorItemType_Exception()
     {
         dependencyInjector = CreateDependencyInjector(
-            new Dictionary<Type, InjectorItem>
+            new Dictionary<TypeInformation, InjectorItem>
             {
                 { typeof(object), new InjectorItem((InjectorItemType)255, () => new object()) }
             }
         );
 
         var func = () => dependencyInjector.Resolve(typeof(object));
-
         func.Should().Throw<UnreachableException>();
-    }
-
-    [Test]
-    public void Resolve_StructWithoutConstructor_StructInstance()
-    {
-        dependencyInjector = CreateDependencyInjector();
-
-        var instance = dependencyInjector.Resolve(typeof(int));
-
-        var int32 = instance.ThrowIfIsNot<int>();
-        int32.Should().Be(0);
     }
 
     [Test]
     public void Resolve_StructWith1Constructor_StructInstance()
     {
         dependencyInjector = CreateDependencyInjector(
-            new Dictionary<Type, InjectorItem>
+            new Dictionary<TypeInformation, InjectorItem>
             {
                 {
                     typeof(int),
                     new InjectorItem(InjectorItemType.Singleton, () => structPropertyValue)
+                },
+                {
+                    typeof(StructWith1Constructor),
+                    new InjectorItem(
+                        InjectorItemType.Singleton,
+                        (int value) => new StructWith1Constructor(value)
+                    )
                 }
             }
         );
 
         var instance = dependencyInjector.Resolve(typeof(StructWith1Constructor));
-
         var value = instance.ThrowIfIsNot<StructWith1Constructor>();
         value.Property.Should().Be(structPropertyValue);
     }
@@ -118,7 +153,7 @@ public class DependencyInjectorTests
     public void Resolve_StructWith1ConstructorAndParameter_StructInstance()
     {
         dependencyInjector = CreateDependencyInjector(
-            new Dictionary<Type, InjectorItem>
+            new Dictionary<TypeInformation, InjectorItem>
             {
                 {
                     typeof(StructStructWith1ConstructorAndParameter),
@@ -131,7 +166,6 @@ public class DependencyInjectorTests
         );
 
         var instance = dependencyInjector.Resolve(typeof(StructStructWith1ConstructorAndParameter));
-
         var value = instance.ThrowIfIsNot<StructStructWith1ConstructorAndParameter>();
         value.Property.Should().Be(structPropertyValue);
     }
@@ -140,7 +174,7 @@ public class DependencyInjectorTests
     public void Resolve_SingletonLifeCircle_SingleObject()
     {
         dependencyInjector = CreateDependencyInjector(
-            new Dictionary<Type, InjectorItem>
+            new Dictionary<TypeInformation, InjectorItem>
             {
                 { typeof(object), new InjectorItem(InjectorItemType.Singleton, () => new object()) }
             }
@@ -148,7 +182,6 @@ public class DependencyInjectorTests
 
         var instance1 = dependencyInjector.Resolve(typeof(object));
         var instance2 = dependencyInjector.Resolve(typeof(object));
-
         instance1.Should().Be(instance2);
     }
 
@@ -156,7 +189,7 @@ public class DependencyInjectorTests
     public void Resolve_TransientLifeCircle_NewObject()
     {
         dependencyInjector = CreateDependencyInjector(
-            new Dictionary<Type, InjectorItem>
+            new Dictionary<TypeInformation, InjectorItem>
             {
                 {
                     typeof(object),
@@ -167,7 +200,6 @@ public class DependencyInjectorTests
 
         var instance1 = dependencyInjector.Resolve(typeof(object));
         var instance2 = dependencyInjector.Resolve(typeof(object));
-
         instance1.Should().NotBe(instance2);
     }
 
@@ -175,7 +207,7 @@ public class DependencyInjectorTests
     public void Resolve_UseFunc_Instance()
     {
         dependencyInjector = CreateDependencyInjector(
-            new Dictionary<Type, InjectorItem>
+            new Dictionary<TypeInformation, InjectorItem>
             {
                 {
                     typeof(StructStructWith1ConstructorAndParameter),
@@ -192,106 +224,140 @@ public class DependencyInjectorTests
         );
 
         var instance = dependencyInjector.Resolve(typeof(StructStructWith1ConstructorAndParameter));
-
         var value = instance.ThrowIfIsNot<StructStructWith1ConstructorAndParameter>();
         value.Property.Should().Be(structPropertyValue);
     }
 
     [Test]
-    public void Resolve_ClassWithoutConstructors_Exception()
+    public void Resolve_RegisterDelegateWithRecursion_Exception()
     {
-        dependencyInjector = CreateDependencyInjector();
-
-        var func = () => dependencyInjector.Resolve(typeof(ClassWithoutConstructors));
+        var func = () =>
+            CreateDependencyInjector(
+                new Dictionary<TypeInformation, InjectorItem>
+                {
+                    {
+                        typeof(ClassWithoutConstructors),
+                        new InjectorItem(
+                            InjectorItemType.Transient,
+                            (ClassWithoutConstructors cl) => cl
+                        )
+                    }
+                }
+            );
 
         func.Should()
-            .Throw<NotHaveConstructorException>()
+            .Throw<RecursionTypeInvokeException>()
             .And.Type.Should()
             .Be(typeof(ClassWithoutConstructors));
     }
 
-    [Test]
-    public void Resolve_Class2Constructors_Exception()
-    {
-        dependencyInjector = CreateDependencyInjector();
-
-        var func = () => dependencyInjector.Resolve(typeof(ClassWith2Constructors));
-
-        func.Should()
-            .Throw<ToManyConstructorsException>()
-            .And.Type.Should()
-            .Be(typeof(ClassWith2Constructors));
-    }
-
-    private ReadOnlyReadOnlyDependencyInjector CreateDependencyInjector()
+    private DependencyInjector CreateDependencyInjector()
     {
         return CreateDependencyInjector(
-            ReadOnlyDictionary<Type, InjectorItem>.Empty,
-            ReadOnlyDictionary<ReserveIdentifier, InjectorItem>.Empty,
+            ReadOnlyDictionary<TypeInformation, InjectorItem>.Empty,
             ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            ReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>>.Empty,
             RandomStringGuid.Digits
         );
     }
 
-    private ReadOnlyReadOnlyDependencyInjector CreateDependencyInjector(
-        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects
-    )
-    {
-        return CreateDependencyInjector(
-            ReadOnlyDictionary<Type, InjectorItem>.Empty,
-            ReadOnlyDictionary<ReserveIdentifier, InjectorItem>.Empty,
-            autoInjects,
-            RandomStringGuid.Digits
-        );
-    }
-
-    private ReadOnlyReadOnlyDependencyInjector CreateDependencyInjector(
-        IReadOnlyDictionary<Type, InjectorItem> injectors
+    private DependencyInjector CreateDependencyInjector(
+        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
+        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjectors
     )
     {
         return CreateDependencyInjector(
             injectors,
-            ReadOnlyDictionary<ReserveIdentifier, InjectorItem>.Empty,
-            ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            autoInjectors,
+            ReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>>.Empty,
             RandomStringGuid.Digits
         );
     }
 
-    private ReadOnlyReadOnlyDependencyInjector CreateDependencyInjector(
-        IReadOnlyDictionary<Type, InjectorItem> injectors,
-        IReadOnlyDictionary<ReserveIdentifier, InjectorItem> reserves
+    private DependencyInjector CreateDependencyInjector(
+        IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections
     )
     {
         return CreateDependencyInjector(
-            injectors,
-            reserves,
+            ReadOnlyDictionary<TypeInformation, InjectorItem>.Empty,
             ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            collections,
             RandomStringGuid.Digits
         );
     }
 
-    private ReadOnlyReadOnlyDependencyInjector CreateDependencyInjector(
-        IReadOnlyDictionary<Type, InjectorItem> injectors,
-        IReadOnlyDictionary<ReserveIdentifier, InjectorItem> reserves,
-        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects
-    )
-    {
-        return CreateDependencyInjector(injectors, reserves, autoInjects, RandomStringGuid.Digits);
-    }
-
-    private ReadOnlyReadOnlyDependencyInjector CreateDependencyInjector(
-        IReadOnlyDictionary<Type, InjectorItem> injectors,
-        IReadOnlyDictionary<ReserveIdentifier, InjectorItem> reserves,
+    private DependencyInjector CreateDependencyInjector(
         IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects,
+        IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections
+    )
+    {
+        return CreateDependencyInjector(
+            ReadOnlyDictionary<TypeInformation, InjectorItem>.Empty,
+            autoInjects,
+            collections,
+            RandomStringGuid.Digits
+        );
+    }
+
+    private DependencyInjector CreateDependencyInjector(
+        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects
+    )
+    {
+        return CreateDependencyInjector(
+            ReadOnlyDictionary<TypeInformation, InjectorItem>.Empty,
+            autoInjects,
+            ReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>>.Empty,
+            RandomStringGuid.Digits
+        );
+    }
+
+    private DependencyInjector CreateDependencyInjector(
+        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
+        IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections
+    )
+    {
+        return CreateDependencyInjector(
+            injectors,
+            ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            collections,
+            RandomStringGuid.Digits
+        );
+    }
+
+    private DependencyInjector CreateDependencyInjector(
+        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors
+    )
+    {
+        return CreateDependencyInjector(
+            injectors,
+            ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            ReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>>.Empty,
+            RandomStringGuid.Digits
+        );
+    }
+
+    private DependencyInjector CreateDependencyInjector(
+        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
+        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects,
+        IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections
+    )
+    {
+        return CreateDependencyInjector(
+            injectors,
+            autoInjects,
+            collections,
+            RandomStringGuid.Digits
+        );
+    }
+
+    private DependencyInjector CreateDependencyInjector(
+        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
+        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects,
+        IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections,
         IRandom<string> randomString
     )
     {
-        return new ReadOnlyReadOnlyDependencyInjector(
-            injectors,
-            reserves,
-            autoInjects,
-            randomString
-        );
+        return new DependencyInjector(injectors, autoInjects, collections, randomString);
     }
 
     private class ClassWithPropertySetter

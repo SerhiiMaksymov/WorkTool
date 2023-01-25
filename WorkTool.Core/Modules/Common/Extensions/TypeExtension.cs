@@ -2,6 +2,16 @@
 
 public static class TypeExtension
 {
+    public static bool IsClosure(this Type type)
+    {
+        if (type.ToString() == "System.Runtime.CompilerServices.Closure")
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public static object? GetDefaultValue(this Type type)
     {
         if (type.IsValueType)

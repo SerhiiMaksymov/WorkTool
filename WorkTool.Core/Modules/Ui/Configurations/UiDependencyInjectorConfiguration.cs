@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.Ui.Configurations;
 
-public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
+public readonly struct UiDependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorRegister register)
     {

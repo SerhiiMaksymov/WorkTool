@@ -1,13 +1,19 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Configurations;
 
-public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
+public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorRegister register)
     {
+        register.RegisterTransient<AvaloniaUiApp>();
         register.RegisterTransient(() => UriBase.AppStyleUri);
         register.RegisterTransientAutoInject((AvaloniaUiApp app) => app.Resolver);
-        register.RegisterTransient<IStyleLoader, StyleLoader>();
+        register.RegisterTransient<DialogControlMessageBoxView>();
         register.RegisterTransient<IResourceLoader, ResourceLoader>();
+        register.RegisterTransient<MessageControl>();
+        register.RegisterTransient<MainView>();
+        register.RegisterTransient<ViewModelBase>();
+        register.RegisterTransient<UiContextBuilder>();
+        register.RegisterTransient<AppViewLocatorBuilder>();
         register.RegisterTransientItem<IStyle>((Uri uri) => new FluentTheme(uri));
         register.RegisterTransient(() => new Window());
         ConfigureViewModels(register);

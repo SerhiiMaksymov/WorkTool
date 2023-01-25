@@ -2,8 +2,8 @@
 
 public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISetParameter
 {
-    private readonly IInvoker                 invoker;
-    private readonly Dictionary<Type, object> parameters;
+    private readonly IInvoker invoker;
+    private readonly Dictionary<TypeInformation, object> parameters;
 
     public TextBoxView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {

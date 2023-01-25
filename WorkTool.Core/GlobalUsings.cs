@@ -69,6 +69,9 @@ global using ReactiveUI;
 
 global using FormatWith;
 
+global using WorkTool.Core.Modules.ReactiveUI.Configurations;
+global using WorkTool.Core.Modules.Ui.Configurations;
+global using WorkTool.Core.Modules.ModularSystem.Interfaces;
 global using WorkTool.Core.Modules.FileSystem.Models;
 global using WorkTool.Core.Modules.AvaloniaUi.Exceptions;
 global using WorkTool.Core.Modules.FileSystem.ViewModels;
@@ -140,11 +143,12 @@ global using WorkTool.Core.Modules.DependencyInjection.Exceptions;
 global using WorkTool.Core.Modules.Common.Services;
 global using WorkTool.Core.Modules.FileSystem.Interfaces;
 global using WorkTool.Core.Modules.FileSystem.Services;
+global using WorkTool.Core.Modules.Common.Configurations;
+global using WorkTool.Core.Modules.CommandLine.Configurations;
 
 global using LibGit2Sharp;
 
 global using ModularSystemModule = WorkTool.Core.Modules.ModularSystem.Services.Module;
-global using SystemModule = System.Reflection.Module;
 global using AvaloniaUriBase = WorkTool.Core.Modules.AvaloniaUi.Helpers.UriBase;
 global using MaterialDesignUriBase = WorkTool.Core.Modules.MaterialDesign.Helpers.UriBase;
 global using AvaloniaNotification = Avalonia.Controls.Notifications.Notification;

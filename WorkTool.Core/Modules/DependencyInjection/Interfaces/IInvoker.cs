@@ -2,5 +2,5 @@
 
 public interface IInvoker
 {
-    object? Invoke(Delegate del, DictionarySpan<Type, object> arguments);
+    object? Invoke(Delegate del, DictionarySpan<TypeInformation, object> arguments);
 }

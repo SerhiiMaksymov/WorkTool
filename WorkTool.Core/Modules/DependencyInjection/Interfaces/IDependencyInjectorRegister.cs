@@ -3,7 +3,6 @@
 public interface IDependencyInjectorRegister
     : IRegisterTransient,
         IRegisterSingleton,
-        IRegisterRegisterRegisterReserve,
         IRegisterAutoInject,
         IRegisterConfiguration,
         IRegisterCollection { }

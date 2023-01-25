@@ -3,19 +3,15 @@ namespace WorkTool.Core.Modules.DependencyInjection.Services;
 public class MutDependencyInjector : IMutDependencyInjector
 {
     private readonly Dictionary<AutoInjectIdentifier, InjectorItem> autoInjects;
-    private readonly Dictionary<Type, InjectorItem>                 injectors;
-    private readonly Dictionary<ReserveIdentifier, InjectorItem>    reserves;
-    private readonly Dictionary<Type, object>                       singletonInjectors;
-    private readonly Dictionary<ReserveIdentifier, object>          singletonReserves;
-    private readonly Dictionary<AutoInjectIdentifier, object>       singletonAutoInjects;
+    private readonly Dictionary<TypeInformation, InjectorItem> injectors;
+    private readonly Dictionary<TypeInformation, object> singletonInjectors;
+    private readonly Dictionary<AutoInjectIdentifier, object> singletonAutoInjects;
 
     public MutDependencyInjector()
     {
         var injectorItem = new InjectorItem(InjectorItemType.Singleton, () => this);
         autoInjects = new();
-        reserves = new();
         singletonInjectors = new() { { typeof(IResolver), this }, { typeof(IInvoker), this } };
-        singletonReserves = new();
         singletonAutoInjects = new();
 
         injectors = new()
@@ -25,16 +21,22 @@ public class MutDependencyInjector : IMutDependencyInjector
         };
     }
 
-    public IEnumerable<Type> Inputs =>
+    public ReadOnlyMemory<TypeInformation> Inputs =>
         injectors
             .SelectMany(x => x.Value.Delegate.GetParameterTypes())
-            .Concat(autoInjects.SelectMany(x => x.Value.Delegate.GetParameterTypes()))
+            .Select(x => (TypeInformation)x)
+            .Concat(
+                autoInjects
+                    .SelectMany(x => x.Value.Delegate.GetParameterTypes())
+                    .Select(x => (TypeInformation)x)
+            )
             .Distinct()
-            .Where(x => !Outputs.Contains(x))
+            .Where(x => !Outputs.ToArray().Contains(x))
             .ToArray();
-    public IEnumerable<Type> Outputs => injectors.Select(x => x.Key).ToArray();
+    public ReadOnlyMemory<TypeInformation> Outputs =>
+        injectors.Select(x => (TypeInformation)x.Key).ToArray();
 
-    public object Resolve(Type type)
+    public object Resolve(TypeInformation type)
     {
         if (injectors.ContainsKey(type))
         {
@@ -184,30 +186,13 @@ public class MutDependencyInjector : IMutDependencyInjector
         }
     }
 
-    private ConstructorInfo? GetSingleConstructor(Type type)
+    private object CreateObject(TypeInformation type)
     {
-        var constructors = type.GetConstructors();
-        
-        if (constructors.Length == 0)
-        {
-            return null;
-        }
-
-        if (constructors.Length > 1)
-        {
-            throw new ToManyConstructorsException(type, 1, constructors.Length);
-        }
-
-        return constructors[0];
-    }
-
-    private object CreateObject(Type type)
-    {
-        var constructor = GetSingleConstructor(type);
+        var constructor = type.GetSingleConstructor();
 
         if (constructor is null && type.IsValueType)
         {
-            var obj = Activator.CreateInstance(type).ThrowIfNull();
+            var obj = Activator.CreateInstance(type.Type).ThrowIfNull();
             AutoInject(obj);
 
             return obj;
@@ -218,51 +203,16 @@ public class MutDependencyInjector : IMutDependencyInjector
 
         foreach (var parameter in parameters)
         {
-            var identifier = new ReserveIdentifier(type, parameter);
-
-            if (!reserves.TryGetValue(identifier, out var value))
-            {
-                parameterValues.Add(Resolve(parameter.ParameterType));
-
-                continue;
-            }
-
-            switch (value.Type)
-            {
-                case InjectorItemType.Singleton:
-                {
-                    if (singletonReserves.TryGetValue(identifier, out var reserve))
-                    {
-                        parameterValues.Add(reserve);
-                    }
-                    else
-                    {
-                        var obj = Create(value.Delegate);
-                        singletonReserves[identifier] = obj;
-                        parameterValues.Add(obj);
-                    }
-
-                    break;
-                }
-                case InjectorItemType.Transient:
-                {
-                    var obj = Create(value.Delegate);
-                    parameterValues.Add(obj);
-
-                    break;
-                }
-                default:
-                    throw new UnreachableException();
-            }
+            parameterValues.Add(Resolve(parameter.ParameterType));
         }
 
-        var result = Activator.CreateInstance(type, parameterValues.ToArray()).ThrowIfNull();
+        var result = Activator.CreateInstance(type.Type, parameterValues.ToArray()).ThrowIfNull();
         AutoInject(result);
 
         return result;
     }
 
-    public object? Invoke(Delegate del, DictionarySpan<Type, object> arguments)
+    public object? Invoke(Delegate del, DictionarySpan<TypeInformation, object> arguments)
     {
         var parametersValues = new List<object>();
         var parameters = del.Method.GetParameters();
@@ -302,26 +252,6 @@ public class MutDependencyInjector : IMutDependencyInjector
         }
     }
 
-    public void RegisterReserveSingleton(ReserveIdentifier identifier, Delegate del)
-    {
-        reserves[identifier] = new InjectorItem(InjectorItemType.Singleton, del);
-
-        if (singletonReserves.ContainsKey(identifier))
-        {
-            singletonReserves.Remove(identifier);
-        }
-    }
-
-    public void RegisterReserveTransient(ReserveIdentifier identifier, Delegate del)
-    {
-        reserves[identifier] = new InjectorItem(InjectorItemType.Transient, del);
-
-        if (singletonReserves.ContainsKey(identifier))
-        {
-            singletonReserves.Remove(identifier);
-        }
-    }
-
     public void RegisterTransientAutoInject(AutoInjectIdentifier identifier, Delegate del)
     {
         autoInjects[identifier] = new InjectorItem(InjectorItemType.Transient, del);
@@ -358,6 +288,11 @@ public class MutDependencyInjector : IMutDependencyInjector
     }
 
     public void Clear(Type type)
+    {
+        throw new NotImplementedException();
+    }
+
+    public DependencyStatus GetStatus(TypeInformation type)
     {
         throw new NotImplementedException();
     }

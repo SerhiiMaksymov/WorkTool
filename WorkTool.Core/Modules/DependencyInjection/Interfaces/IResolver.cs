@@ -2,5 +2,5 @@
 
 public interface IResolver
 {
-    object Resolve(Type type);
+    object Resolve(TypeInformation type);
 }

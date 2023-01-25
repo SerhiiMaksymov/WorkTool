@@ -1,8 +1,10 @@
 namespace WorkTool.Core.Modules.ModularSystem.Interfaces;
 
-public interface IModule
+public interface IModule : IDependencyStatusGetter
 {
-    IDependencyInjector DependencyInjector { get; }
+    Guid Id { get; }
+    ReadOnlyMemory<TypeInformation> Inputs { get; }
+    ReadOnlyMemory<TypeInformation> Outputs { get; }
 
-    IModule Join(IModule module);
+    object GetObject(TypeInformation type);
 }

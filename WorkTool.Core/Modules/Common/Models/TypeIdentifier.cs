@@ -2,11 +2,11 @@
 
 public readonly record struct TypeIdentifier
 {
-    private readonly object identifier;
+    private readonly object Identifier;
 
     public TypeIdentifier(IReflect type)
     {
-        identifier = type.UnderlyingSystemType;
+        Identifier = type.UnderlyingSystemType;
     }
 
     public static implicit operator TypeIdentifier(Type type)

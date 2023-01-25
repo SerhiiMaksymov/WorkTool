@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.Graph.Services;
 
-public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue?>> where TKey : notnull
+public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue>> where TKey : notnull
 {
     private TreeNodeBuilder<TKey, TValue?>? root;
 
@@ -180,10 +180,10 @@ public class TreeBuilder<TKey, TValue> : IBuilder<Tree<TKey, TValue?>> where TKe
         }
     }
 
-    public Tree<TKey, TValue?> Build()
+    public Tree<TKey, TValue> Build()
     {
         var newRoot = root.ThrowIfNull().Build();
 
-        return new Tree<TKey, TValue?>(newRoot);
+        return new Tree<TKey, TValue>(newRoot);
     }
 }

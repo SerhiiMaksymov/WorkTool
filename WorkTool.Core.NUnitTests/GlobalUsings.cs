@@ -23,5 +23,6 @@ global using WorkTool.Core.Modules.SmsClub.Services;
 global using WorkTool.Core.Modules.Common.Extensions;
 global using WorkTool.Core.Modules.Common.Interfaces;
 global using WorkTool.Core.Modules.Http.Extensions;
+global using WorkTool.Core.Modules.Common.Models;
 
 global using HttpConsts = WorkTool.Core.Modules.Http.Helpers.Consts;

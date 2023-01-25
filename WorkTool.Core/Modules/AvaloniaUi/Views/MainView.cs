@@ -6,9 +6,9 @@ public class MainView
         ITabControlView,
         IKeyBindingView
 {
-    private readonly IInvoker                 invoker;
-    private readonly UiContext                uiContext;
-    private readonly Dictionary<Type, object> argumentValues;
+    private readonly IInvoker invoker;
+    private readonly UiContext uiContext;
+    private readonly Dictionary<TypeInformation, object> argumentValues;
 
     public MainView(IInvoker invoker, UiContext uiContext, ViewModelBase viewModel)
     {

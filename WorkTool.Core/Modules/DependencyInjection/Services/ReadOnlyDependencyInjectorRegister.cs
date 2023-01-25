@@ -7,9 +7,8 @@ public class ReadOnlyDependencyInjectorRegister
     private static readonly IRandom<string> DefaultRandomString;
 
     private readonly Dictionary<AutoInjectIdentifier, InjectorItem> autoInjects;
-    private readonly Dictionary<Type, InjectorItem>                 injectors;
-    private readonly Dictionary<ReserveIdentifier, InjectorItem>    reserves;
-    private readonly Dictionary<Type, List<InjectorItem>>           collections;
+    private readonly Dictionary<TypeInformation, InjectorItem> injectors;
+    private readonly Dictionary<TypeInformation, List<InjectorItem>> collections;
 
     private IRandom<string> randomString;
 
@@ -22,7 +21,6 @@ public class ReadOnlyDependencyInjectorRegister
     {
         collections = new();
         injectors = new();
-        reserves = new();
         autoInjects = new();
         randomString = DefaultRandomString;
     }
@@ -41,13 +39,7 @@ public class ReadOnlyDependencyInjectorRegister
     {
         var collectionItems = CreateCollections();
 
-        return new DependencyInjector(
-            injectors,
-            reserves,
-            autoInjects,
-            collectionItems,
-            randomString
-        );
+        return new DependencyInjector(injectors, autoInjects, collectionItems, randomString);
     }
 
     public void RegisterTransient(Type type, Delegate del)
@@ -74,16 +66,6 @@ public class ReadOnlyDependencyInjectorRegister
 
         Clear(type.GenericTypeArguments[0]);
         RegisterSingletonItem(type.GenericTypeArguments[0], del);
-    }
-
-    public void RegisterReserveSingleton(ReserveIdentifier identifier, Delegate @delegate)
-    {
-        reserves[identifier] = new InjectorItem(InjectorItemType.Singleton, @delegate);
-    }
-
-    public void RegisterReserveTransient(ReserveIdentifier identifier, Delegate @delegate)
-    {
-        reserves[identifier] = new InjectorItem(InjectorItemType.Transient, @delegate);
     }
 
     public void RegisterTransientAutoInject(AutoInjectIdentifier identifier, Delegate @delegate)
@@ -130,9 +112,9 @@ public class ReadOnlyDependencyInjectorRegister
         }
     }
 
-    private Dictionary<Type, IEnumerable<InjectorItem>> CreateCollections()
+    private Dictionary<TypeInformation, IEnumerable<InjectorItem>> CreateCollections()
     {
-        var result = new Dictionary<Type, IEnumerable<InjectorItem>>();
+        var result = new Dictionary<TypeInformation, IEnumerable<InjectorItem>>();
 
         foreach (var item in collections)
         {

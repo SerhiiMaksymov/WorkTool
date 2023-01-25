@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.Common.Extensions;
 
-/*public static class TypeInformationExtension
+public static class TypeInformationExtension
 {
     public static bool IsEnumerable(this TypeInformation type)
     {
@@ -13,12 +13,27 @@
         {
             return false;
         }
-        
-        if (type.GenericTypeDefinition.Value != typeof(IEnumerable<>))
+
+        if (type.Type.GetGenericTypeDefinition() != typeof(IEnumerable<>))
         {
             return false;
         }
 
         return true;
     }
-}*/
+
+    public static ConstructorInfo? GetSingleConstructor(this TypeInformation type)
+    {
+        if (type.Constructors.Length == 0)
+        {
+            return null;
+        }
+
+        if (type.Constructors.Length > 1)
+        {
+            throw new ToManyConstructorsException(type.Type, 1, type.Constructors.Length);
+        }
+
+        return type.Constructors.Span[0];
+    }
+}

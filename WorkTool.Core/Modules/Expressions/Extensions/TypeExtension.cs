@@ -12,6 +12,11 @@ public static class TypeExtension
         return Expression.Variable(type, name);
     }
 
+    public static ParameterExpression ToParameter(this Type type, string name)
+    {
+        return Expression.Parameter(type, name);
+    }
+
     public static LabelTarget ToLabel(this Type type)
     {
         return Expression.Label(type);

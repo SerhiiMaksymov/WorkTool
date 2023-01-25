@@ -6,8 +6,8 @@ public class CommandsView
         IContentView,
         ISetParameter
 {
-    private readonly Dictionary<Type, object> argumentValues;
-    private readonly IInvoker                 invoker;
+    private readonly Dictionary<TypeInformation, object> argumentValues;
+    private readonly IInvoker invoker;
 
     public CommandsView(IInvoker invoker, UiContext avaloniaUiContext, ViewModelBase viewModel)
     {

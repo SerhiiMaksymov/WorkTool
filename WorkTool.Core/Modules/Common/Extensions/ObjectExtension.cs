@@ -2,6 +2,11 @@
 
 public static class ObjectExtension
 {
+    public static T[] AsArray<T>(this T obj)
+    {
+        return new[] { obj };
+    }
+
     public static void ThrowDisposedException<T>(this T obj) where T : notnull
     {
         throw new ObjectDisposedException<T>(obj);
@@ -26,6 +31,19 @@ public static class ObjectExtension
         this T? obj,
         [CallerArgumentExpression(nameof(obj))] string paramName = ""
     )
+    {
+        if (obj is null)
+        {
+            throw new ArgumentNullException(paramName);
+        }
+
+        return obj;
+    }
+
+    public static T ThrowIfNullStruct<T>(
+        this T? obj,
+        [CallerArgumentExpression(nameof(obj))] string paramName = ""
+    ) where T : struct
     {
         return obj ?? throw new ArgumentNullException(paramName);
     }

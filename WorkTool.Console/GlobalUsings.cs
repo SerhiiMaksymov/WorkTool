@@ -21,3 +21,10 @@ global using WorkTool.Core.Modules.StreamParser.Interfaces;
 global using WorkTool.Core.Modules.Ui.Services;
 global using WorkTool.Core.Modules.Common.Extensions;
 global using WorkTool.Console.Helpers;
+global using WorkTool.Console.Models;
+global using WorkTool.Core.Modules.AvaloniaUi.Modules;
+global using WorkTool.Core.Modules.CommandLine.Modules;
+global using WorkTool.Core.Modules.Common.Modules;
+global using WorkTool.Core.Modules.MaterialDesign.Modules;
+
+global using ModularSystemModule = WorkTool.Core.Modules.ModularSystem.Services.Module;

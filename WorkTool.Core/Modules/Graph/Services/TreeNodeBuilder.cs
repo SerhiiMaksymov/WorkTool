@@ -158,6 +158,15 @@ public class TreeNodeBuilder<TKey, TValue> : IBuilder<TreeNode<TKey, TValue>> wh
         return this;
     }
 
+    public TreeNodeBuilder<TKey, TValue> Add(TKey key, TValue value)
+    {
+        var node = new TreeNodeBuilder<TKey, TValue?>();
+        node.Key = key;
+        node.Value = value;
+
+        return Add(node);
+    }
+
     public TreeNodeBuilder<TKey, TValue> SetNode(
         TValue defaultValue,
         TreeNodeBuilder<TKey, TValue?> value,

@@ -6,10 +6,16 @@ public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConf
     {
         register.RegisterTransient(() => SmsSenderEndpointsOptions.Default);
         register.RegisterTransient(() => SmsSenderOptions.Default);
+        register.RegisterTransient<SmsClubUiConfiguration>();
         register.RegisterTransient<ISmsClubSender<object>, SmsClubSender<object>>();
 
-        register.RegisterReserveTransient<SmsClubSender<object>, HttpClient>(
-            (IConfiguration configuration) =>
+        register.RegisterTransient<SmsClubSender<object>>(
+            (
+                IConfiguration configuration,
+                SmsSenderEndpointsOptions endpointsOptions,
+                SmsSenderOptions options,
+                IDelay delay
+            ) =>
             {
                 var host =
                     configuration[SmsClubSender.ConfigHostPath]?.ToUri()
@@ -22,7 +28,7 @@ public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConf
 
                 var httpClient = new HttpClient().SetBaseAddress(host).SetAuthorization(apiKey);
 
-                return httpClient;
+                return new SmsClubSender<object>(httpClient, endpointsOptions, options, delay);
             }
         );
     }

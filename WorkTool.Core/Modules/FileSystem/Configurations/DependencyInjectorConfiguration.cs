@@ -6,5 +6,6 @@ public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConf
     {
         register.RegisterTransient<IFileSystemRootGetter, FileSystemRootGetter>();
         register.RegisterTransient<IDirectoryService, DirectoryService>();
+        register.RegisterTransient<FileSystemConfiguration>();
     }
 }
