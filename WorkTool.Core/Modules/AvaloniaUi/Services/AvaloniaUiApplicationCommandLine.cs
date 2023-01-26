@@ -2,14 +2,16 @@
 
 public class AvaloniaUiApplicationCommandLine : IApplicationCommandLine
 {
-    public const string CommandName = "AvaloniaUi";
+    public const     string                CommandName = "AvaloniaUi";
+    
+    private readonly CommandLineContext    commandLineContext;
+    private readonly AvaloniaUiApplication app;
+    
     public static readonly CommandLineContextItem Default =
         new(
             CommandLineArgumentMetaCollections.Empty,
             _ => throw new Exception("Default CommandLineContextItem.")
         );
-    private readonly CommandLineContext commandLineContext;
-    private readonly AvaloniaUiApplication app;
 
     public AvaloniaUiApplicationCommandLine(AvaloniaUiApplication app)
     {

@@ -11,11 +11,14 @@ namespace WorkTool.Console;
 
 class Program
 {
-    private static IModule module;
+    private static IModule? module;
+    
     public static async Task Main(string[] args)
     {
         Init();
-        var applicationCommandLine = module.GetObject<IApplicationCommandLine>();
+        module.Inputs.ToArray().Select(x => x).JoinString(Environment.NewLine);
+        var y = module.GetObject<AvaloniaUiApplicationCommandLine>();
+        var applicationCommandLine = module.ThrowIfNull().GetObject<IApplicationCommandLine>();
         var arguments              = new List<string> { "Root" };
         arguments.AddRange(args);
         var argsArray = arguments.ToArray();
@@ -34,6 +37,7 @@ class Program
                 .Add(new CommandLineModule())
                 .Add(new UiModule())
                 .Add(new ReactiveUIModule())
+                .Add(new AvaloniaUiDesktopModule())
         );
 
         module = new ModuleTree(builder.Build());

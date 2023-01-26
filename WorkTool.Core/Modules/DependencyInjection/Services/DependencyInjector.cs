@@ -471,14 +471,14 @@ public class DependencyInjector : IDependencyInjector
         {
             return;
         }
+        
+        var expression = scope.Expressions.Span[0];
 
         if (!scope.Variables.IsEmpty)
         {
             return;
         }
-
-        var expression = scope.Expressions.Span[0];
-
+        
         var transientValue = expression
             .Convert(typeof(object))
             .Lambda()

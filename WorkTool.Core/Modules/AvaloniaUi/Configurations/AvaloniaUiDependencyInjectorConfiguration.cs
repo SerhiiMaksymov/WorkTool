@@ -8,6 +8,7 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
         register.RegisterTransient(() => UriBase.AppStyleUri);
         register.RegisterTransientAutoInject((AvaloniaUiApp app) => app.Resolver);
         register.RegisterTransient<DialogControlMessageBoxView>();
+        register.RegisterTransient<AvaloniaUiApplicationCommandLine>();
         register.RegisterTransient<IResourceLoader, ResourceLoader>();
         register.RegisterTransient<MessageControl>();
         register.RegisterTransient<MainView>();

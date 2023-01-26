@@ -1,6 +1,6 @@
 namespace WorkTool.Core.Modules.AvaloniaUi.Configurations;
 
-public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
+public readonly struct AvaloniaUiDesktopDependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorRegister register)
     {
