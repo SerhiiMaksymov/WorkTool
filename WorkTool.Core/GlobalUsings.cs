@@ -1,4 +1,5 @@
-﻿global using System.Collections;
+﻿global using System.Collections.ObjectModel;
+global using System.Collections;
 global using System.Data;
 global using System.Data.Common;
 global using System.Linq.Expressions;
@@ -69,6 +70,13 @@ global using ReactiveUI;
 
 global using FormatWith;
 
+global using WorkTool.Core.Modules.Configuration.Configurations;
+global using WorkTool.Core.Modules.FileSystem.Configurations;
+global using WorkTool.Core.Modules.SmsClub.Configurations;
+global using WorkTool.Core.Modules.ReactiveUI.Services;
+global using WorkTool.Core.Modules.Graph.Extensions;
+global using WorkTool.Core.Modules.MaterialDesign.Configurations;
+global using WorkTool.Core.Modules.AvaloniaUi.Configurations;
 global using WorkTool.Core.Modules.ReactiveUI.Configurations;
 global using WorkTool.Core.Modules.Ui.Configurations;
 global using WorkTool.Core.Modules.ModularSystem.Interfaces;

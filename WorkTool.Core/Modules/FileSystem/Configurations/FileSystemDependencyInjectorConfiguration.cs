@@ -1,11 +1,11 @@
 ﻿namespace WorkTool.Core.Modules.FileSystem.Configurations;
 
-public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
+public readonly struct FileSystemDependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorRegister register)
     {
         register.RegisterTransient<IFileSystemRootGetter, FileSystemRootGetter>();
         register.RegisterTransient<IDirectoryService, DirectoryService>();
-        register.RegisterTransient<FileSystemConfiguration>();
+        register.RegisterTransient<FileSystemUiConfiguration>();
     }
 }

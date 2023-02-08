@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.FileSystem.Configurations;
 
-public readonly struct FileSystemConfiguration : IUiConfiguration
+public readonly struct FileSystemUiConfiguration : IUiConfiguration
 {
     public void Configure(UiContextBuilder builder)
     {

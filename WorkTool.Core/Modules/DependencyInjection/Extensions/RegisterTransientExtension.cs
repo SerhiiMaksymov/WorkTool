@@ -2,15 +2,29 @@ namespace WorkTool.Core.Modules.DependencyInjection.Extensions;
 
 public static class RegisterTransientExtension
 {
+    public static void RegisterTransientDel<T>(
+        this IRegisterTransient registerTransient,
+        Delegate del
+    )
+    {
+        registerTransient.RegisterTransient(
+            typeof(T),
+            del.ToCall(del.Method.GetParameters().Select(x => x.ParameterType.ToVariableAutoName()))
+        );
+    }
+
     public static void RegisterTransient<T>(
         this IRegisterTransient registerTransient,
-        Delegate @delegate
+        Expression @delegate
     )
     {
         registerTransient.RegisterTransient(typeof(T), @delegate);
     }
 
-    public static void RegisterTransient<T>(this IRegisterTransient registerTransient, Func<T> func)
+    public static void RegisterTransient<T>(
+        this IRegisterTransient registerTransient,
+        Expression<Func<T>> func
+    )
     {
         registerTransient.RegisterTransient(typeof(T), func);
     }
@@ -21,18 +35,20 @@ public static class RegisterTransientExtension
         registerTransient.RegisterTransient<T, T>();
     }
 
-    public static void RegisterTransient<T, TImp>(this IRegisterTransient registerTransient)
-        where TImp : notnull, T
+    public static void RegisterTransient(
+        this IRegisterTransient registerTransient,
+        Type id,
+        Type impType
+    )
     {
-        var impType = typeof(TImp);
         var constructor = impType.GetSingleConstructor();
 
         if (constructor is null)
         {
             if (impType.IsValueType)
             {
-                var func = impType.ToNew().Lambda().Compile();
-                registerTransient.RegisterTransient<T>(func);
+                var lambdaNew = impType.ToNew();
+                registerTransient.RegisterTransient(id, lambdaNew);
 
                 return;
             }
@@ -44,18 +60,26 @@ public static class RegisterTransientExtension
 
         if (parameters.Length == 0)
         {
-            var func = impType.ToNew().Lambda().Compile();
-            registerTransient.RegisterTransient<T>(func);
+            var lambdaNew = impType.ToNew();
+            registerTransient.RegisterTransient(id, lambdaNew);
 
             return;
         }
 
-        var expressions = parameters
-            .Select(x => x.ParameterType.ToParameter($"var{Guid.NewGuid():N}"))
-            .ToArray();
+        var expressions = parameters.Select(x => x.ParameterType.ToParameterAutoName()).ToArray();
 
         var expressionNew = constructor.ToNew(expressions);
-        var del = expressionNew.Lambda(expressions).Compile();
-        registerTransient.RegisterTransient<T>(del);
+        registerTransient.RegisterTransient(id, expressionNew);
+    }
+
+    public static void RegisterTransient<T, TImp>(this IRegisterTransient registerTransient)
+        where TImp : notnull, T
+    {
+        registerTransient.RegisterTransient(typeof(T), typeof(TImp));
+    }
+
+    public static void RegisterTransient(this IRegisterTransient registerTransient, Type id)
+    {
+        registerTransient.RegisterTransient(id, id);
     }
 }

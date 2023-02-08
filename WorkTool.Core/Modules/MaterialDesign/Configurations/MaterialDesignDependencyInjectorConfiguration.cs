@@ -5,7 +5,7 @@ public readonly struct MaterialDesignDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorRegister register)
     {
-        register.RegisterTransientItem<IStyle>((Uri uri) => new MaterialTheme(uri));
+        register.RegisterTransient<MaterialTheme>((Uri uri) => new MaterialTheme(uri));
         //register.RegisterTransientItem<IStyle>((Uri uri) => new MaterialIconsTheme(uri));
     }
 }

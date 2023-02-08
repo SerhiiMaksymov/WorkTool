@@ -10,7 +10,6 @@ global using FluentAssertions;
 global using Moq;
 global using Moq.Contrib.HttpClient;
 
-global using WorkTool.Core.Modules.Common.Helpers;
 global using WorkTool.Core.Modules.Common.Services;
 global using WorkTool.Core.Modules.DependencyInjection.Exceptions;
 global using WorkTool.Core.Modules.DependencyInjection.Models;

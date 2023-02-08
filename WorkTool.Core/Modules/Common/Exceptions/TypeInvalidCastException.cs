@@ -9,15 +9,15 @@ public class TypeInvalidCastException : InvalidCastException
         ExpectedTypes = new[] { expectedType };
     }
 
-    public TypeInvalidCastException(Type[] expectedTypes, Type currentType)
+    public TypeInvalidCastException(Type currentType, params Type[] expectedTypes)
         : base(CreateMessage(expectedTypes, currentType))
     {
         CurrentType = currentType;
         ExpectedTypes = expectedTypes.ThrowIfNullOrEmpty().ToArray();
     }
 
-    public TypeInvalidCastException(IEnumerable<Type> expectedTypes, Type currentType)
-        : this(expectedTypes.ToArray(), currentType) { }
+    public TypeInvalidCastException(Type currentType, IEnumerable<Type> expectedTypes)
+        : this(currentType, expectedTypes.ToArray()) { }
 
     public Type CurrentType { get; }
     public IEnumerable<Type> ExpectedTypes { get; }

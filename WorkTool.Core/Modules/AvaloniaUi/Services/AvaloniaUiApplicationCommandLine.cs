@@ -2,11 +2,11 @@
 
 public class AvaloniaUiApplicationCommandLine : IApplicationCommandLine
 {
-    public const     string                CommandName = "AvaloniaUi";
-    
-    private readonly CommandLineContext    commandLineContext;
+    public const string CommandName = "AvaloniaUi";
+
+    private readonly CommandLineContext commandLineContext;
     private readonly AvaloniaUiApplication app;
-    
+
     public static readonly CommandLineContextItem Default =
         new(
             CommandLineArgumentMetaCollections.Empty,

@@ -1,6 +1,4 @@
-﻿using WorkTool.Core.Modules.AvaloniaUi.Configurations;
-
-namespace WorkTool.Core.Modules.AvaloniaUi.Modules;
+﻿namespace WorkTool.Core.Modules.AvaloniaUi.Modules;
 
 public class AvaloniaUiModule : ModularSystemModule
 {

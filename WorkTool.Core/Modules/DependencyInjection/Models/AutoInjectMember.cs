@@ -6,37 +6,56 @@ public readonly record struct AutoInjectMember
 
     public AutoInjectMember(MemberInfo member)
     {
+        name = member.Name;
+
         switch (member)
         {
-            case PropertyInfo property:
+            case FieldInfo field:
             {
-                if (!property.CanWrite)
-                {
-                    throw new ArgumentException();
-                }
+                Type = field.FieldType;
 
                 break;
             }
-            case FieldInfo field:
+            case PropertyInfo property:
             {
-                if (field.IsInitOnly)
-                {
-                    throw new ArgumentException();
-                }
+                Type = property.PropertyType;
+
+                break;
+            }
+            case MethodInfo method:
+            {
+                Type = method.ReturnType;
+
+                break;
+            }
+            case ConstructorInfo constructor:
+            {
+                Type = constructor.DeclaringType.ThrowIfNull();
+
+                break;
+            }
+            case EventInfo evn:
+            {
+                Type = evn.EventHandlerType.ThrowIfNull();
+
+                break;
+            }
+            case TypeInfo type:
+            {
+                Type = type;
 
                 break;
             }
             default:
             {
-                throw new TypeInvalidCastException(
-                    new[] { typeof(PropertyInfo), typeof(FieldInfo) },
-                    member.GetType()
-                );
+                var type = member.GetType();
+
+                throw new UnreachableException(type.ToString());
             }
         }
-
-        name = member.Name;
     }
+
+    public TypeInformation Type { get; }
 
     public static implicit operator AutoInjectMember(MemberInfo member)
     {

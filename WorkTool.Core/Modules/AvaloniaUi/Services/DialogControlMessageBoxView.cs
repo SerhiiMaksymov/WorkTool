@@ -46,12 +46,12 @@ public class DialogControlMessageBoxView : IMessageBoxView
             default:
             {
                 throw new TypeInvalidCastException(
+                    applicationLifetime.GetType(),
                     new[]
                     {
                         typeof(IClassicDesktopStyleApplicationLifetime),
                         typeof(ISingleViewApplicationLifetime)
-                    },
-                    applicationLifetime.GetType()
+                    }
                 );
             }
         }

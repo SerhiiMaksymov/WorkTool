@@ -22,9 +22,19 @@ public static class ObjectExtension
         return result;
     }
 
+    public static T ThrowIfIsNotCast<T>(this object obj)
+    {
+        return (T)obj;
+    }
+
     public static T? As<T>(this object value) where T : class
     {
         return value as T;
+    }
+
+    public static T To<T>(this object value)
+    {
+        return (T)value;
     }
 
     public static T ThrowIfNull<T>(

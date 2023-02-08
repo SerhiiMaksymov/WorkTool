@@ -2,5 +2,5 @@
 
 public interface IRegisterTransient
 {
-    void RegisterTransient(Type type, Delegate del);
+    void RegisterTransient(Type type, Expression expression);
 }

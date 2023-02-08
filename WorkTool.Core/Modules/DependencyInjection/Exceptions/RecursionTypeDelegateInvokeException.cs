@@ -1,8 +1,8 @@
 ﻿namespace WorkTool.Core.Modules.DependencyInjection.Exceptions;
 
-public class RecursionTypeInvokeException : Exception
+public class RecursionTypeDelegateInvokeException : Exception
 {
-    public RecursionTypeInvokeException(Type type, Delegate del)
+    public RecursionTypeDelegateInvokeException(Type type, Delegate del)
         : base($"{type} contains in parameters {del}.")
     {
         Type = type;

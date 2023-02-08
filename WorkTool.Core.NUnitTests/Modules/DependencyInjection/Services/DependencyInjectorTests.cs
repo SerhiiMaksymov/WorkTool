@@ -45,7 +45,7 @@ public class DependencyInjectorTests
 
         var autoInjectMember = new AutoInjectMember(member);
 
-        var autoInjectIdentifier = new AutoInjectIdentifier(
+        var autoInjectIdentifier = new AutoInjectMemberIdentifier(
             typeof(ClassWithPropertySetter),
             autoInjectMember
         );
@@ -56,7 +56,7 @@ public class DependencyInjectorTests
         );
 
         dependencyInjector = CreateDependencyInjector(
-            new Dictionary<AutoInjectIdentifier, InjectorItem>
+            new Dictionary<AutoInjectMemberIdentifier, InjectorItem>
             {
                 { autoInjectIdentifier, injectorItem }
             }
@@ -97,10 +97,10 @@ public class DependencyInjectorTests
                     )
                 }
             },
-            new Dictionary<AutoInjectIdentifier, InjectorItem>
+            new Dictionary<AutoInjectMemberIdentifier, InjectorItem>
             {
                 {
-                    new AutoInjectIdentifier(type, member),
+                    new AutoInjectMemberIdentifier(type, member),
                     new InjectorItem(InjectorItemType.Singleton, () => structPropertyValue)
                 }
             }
@@ -246,7 +246,7 @@ public class DependencyInjectorTests
             );
 
         func.Should()
-            .Throw<RecursionTypeInvokeException>()
+            .Throw<RecursionTypeDelegateInvokeException>()
             .And.Type.Should()
             .Be(typeof(ClassWithoutConstructors));
     }
@@ -255,7 +255,7 @@ public class DependencyInjectorTests
     {
         return CreateDependencyInjector(
             ReadOnlyDictionary<TypeInformation, InjectorItem>.Empty,
-            ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            ReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem>.Empty,
             ReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>>.Empty,
             RandomStringGuid.Digits
         );
@@ -263,7 +263,7 @@ public class DependencyInjectorTests
 
     private DependencyInjector CreateDependencyInjector(
         IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
-        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjectors
+        IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjectors
     )
     {
         return CreateDependencyInjector(
@@ -280,14 +280,14 @@ public class DependencyInjectorTests
     {
         return CreateDependencyInjector(
             ReadOnlyDictionary<TypeInformation, InjectorItem>.Empty,
-            ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            ReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem>.Empty,
             collections,
             RandomStringGuid.Digits
         );
     }
 
     private DependencyInjector CreateDependencyInjector(
-        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects,
+        IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjects,
         IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections
     )
     {
@@ -300,7 +300,7 @@ public class DependencyInjectorTests
     }
 
     private DependencyInjector CreateDependencyInjector(
-        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects
+        IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjects
     )
     {
         return CreateDependencyInjector(
@@ -318,7 +318,7 @@ public class DependencyInjectorTests
     {
         return CreateDependencyInjector(
             injectors,
-            ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            ReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem>.Empty,
             collections,
             RandomStringGuid.Digits
         );
@@ -330,7 +330,7 @@ public class DependencyInjectorTests
     {
         return CreateDependencyInjector(
             injectors,
-            ReadOnlyDictionary<AutoInjectIdentifier, InjectorItem>.Empty,
+            ReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem>.Empty,
             ReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>>.Empty,
             RandomStringGuid.Digits
         );
@@ -338,7 +338,7 @@ public class DependencyInjectorTests
 
     private DependencyInjector CreateDependencyInjector(
         IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
-        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects,
+        IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjects,
         IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections
     )
     {
@@ -352,7 +352,7 @@ public class DependencyInjectorTests
 
     private DependencyInjector CreateDependencyInjector(
         IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
-        IReadOnlyDictionary<AutoInjectIdentifier, InjectorItem> autoInjects,
+        IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjects,
         IReadOnlyDictionary<TypeInformation, IEnumerable<InjectorItem>> collections,
         IRandom<string> randomString
     )

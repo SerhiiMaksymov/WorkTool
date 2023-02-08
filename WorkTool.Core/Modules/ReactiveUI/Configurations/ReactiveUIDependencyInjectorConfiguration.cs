@@ -1,6 +1,4 @@
-﻿using WorkTool.Core.Modules.ReactiveUI.Services;
-
-namespace WorkTool.Core.Modules.ReactiveUI.Configurations;
+﻿namespace WorkTool.Core.Modules.ReactiveUI.Configurations;
 
 public readonly struct ReactiveUIDependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {

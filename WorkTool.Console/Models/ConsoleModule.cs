@@ -1,4 +1,8 @@
-﻿namespace WorkTool.Console.Models;
+﻿using Avalonia.Controls;
+
+using WorkTool.Core.Modules.AvaloniaUi.Views;
+
+namespace WorkTool.Console.Models;
 
 public class ConsoleModule : ModularSystemModule
 {
@@ -11,8 +15,14 @@ public class ConsoleModule : ModularSystemModule
     static ConsoleModule()
     {
         var register = new ReadOnlyDependencyInjectorRegister();
+        register.RegisterTransient<IControl, MainView>();
 
-        register.RegisterTransientItem<IApplicationCommandLine>(
+        register.RegisterTransient<IEnumerable<IApplicationCommandLine>>(
+            (AvaloniaUiApplicationCommandLine avaloniaUiApplicationCommandLine) =>
+                new IApplicationCommandLine[] { avaloniaUiApplicationCommandLine }
+        );
+
+        register.RegisterTransient<AvaloniaUiApplicationCommandLine>(
             (AvaloniaUiApplication avaloniaUiApplication) =>
                 new AvaloniaUiApplicationCommandLine(avaloniaUiApplication)
         );

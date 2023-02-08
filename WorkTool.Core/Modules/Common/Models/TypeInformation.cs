@@ -44,6 +44,11 @@ public class TypeInformation : IEquatable<TypeInformation>
         return Identifier.GetHashCode();
     }
 
+    public override string ToString()
+    {
+        return Type.ToString();
+    }
+
     public static implicit operator TypeInformation(Type type)
     {
         return new(type);

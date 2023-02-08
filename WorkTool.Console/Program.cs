@@ -1,25 +1,14 @@
-﻿using WorkTool.Core;
-using WorkTool.Core.Modules.Graph.Models;
-using WorkTool.Core.Modules.Graph.Services;
-using WorkTool.Core.Modules.ModularSystem.Interfaces;
-using WorkTool.Core.Modules.ModularSystem.Services;
-using WorkTool.Core.Modules.ModularSystem.Extensions;
-using WorkTool.Core.Modules.ReactiveUI.Modules;
-using WorkTool.Core.Modules.Ui.Modules;
-
-namespace WorkTool.Console;
+﻿namespace WorkTool.Console;
 
 class Program
 {
     private static IModule? module;
-    
+
     public static async Task Main(string[] args)
     {
         Init();
-        module.Inputs.ToArray().Select(x => x).JoinString(Environment.NewLine);
-        var y = module.GetObject<AvaloniaUiApplicationCommandLine>();
         var applicationCommandLine = module.ThrowIfNull().GetObject<IApplicationCommandLine>();
-        var arguments              = new List<string> { "Root" };
+        var arguments = new List<string> { "Root" };
         arguments.AddRange(args);
         var argsArray = arguments.ToArray();
         await applicationCommandLine.RunAsync(argsArray);
@@ -31,13 +20,16 @@ class Program
             new TreeNodeBuilder<Guid, IModule>()
                 .SetKey(ConsoleModule.IdValue)
                 .SetValue(new ConsoleModule())
-                .Add(new AvaloniaUiModule())
                 .Add(new MaterialDesignModule())
                 .Add(new CommonModule())
                 .Add(new CommandLineModule())
                 .Add(new UiModule())
                 .Add(new ReactiveUIModule())
                 .Add(new AvaloniaUiDesktopModule())
+                .Add(new SmsClubModule())
+                .Add(new FileSystemModule())
+                .Add(new AvaloniaUiModule())
+                .Add(new ConfigurationModule())
         );
 
         module = new ModuleTree(builder.Build());

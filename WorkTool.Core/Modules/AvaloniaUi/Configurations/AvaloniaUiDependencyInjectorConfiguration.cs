@@ -6,7 +6,6 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
     {
         register.RegisterTransient<AvaloniaUiApp>();
         register.RegisterTransient(() => UriBase.AppStyleUri);
-        register.RegisterTransientAutoInject((AvaloniaUiApp app) => app.Resolver);
         register.RegisterTransient<DialogControlMessageBoxView>();
         register.RegisterTransient<AvaloniaUiApplicationCommandLine>();
         register.RegisterTransient<IResourceLoader, ResourceLoader>();
@@ -15,12 +14,22 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
         register.RegisterTransient<ViewModelBase>();
         register.RegisterTransient<UiContextBuilder>();
         register.RegisterTransient<AppViewLocatorBuilder>();
-        register.RegisterTransientItem<IStyle>((Uri uri) => new FluentTheme(uri));
+        register.RegisterTransient<FluentTheme>((Uri uri) => new FluentTheme(uri));
         register.RegisterTransient(() => new Window());
+        register.RegisterTransient<IMessageBoxView, DialogControlMessageBoxView>();
         ConfigureViewModels(register);
 
-        register.RegisterTransientItem<IStyle>(
-            (Uri uri) => new StyleInclude(uri) { Source = UriBase.ControlsStylesUri }
+        register.RegisterTransientAutoInject(
+            (AvaloniaUiApp avaloniaUiApp) => avaloniaUiApp.Resolver
+        );
+
+        register.RegisterTransient<IEnumerable<IStyle>>(
+            (FluentTheme fluentTheme, Uri uri) =>
+                new IStyle[]
+                {
+                    fluentTheme,
+                    new StyleInclude(uri) { Source = UriBase.ControlsStylesUri }
+                }
         );
 
         register.RegisterTransient<IViewLocator>(
@@ -40,11 +49,9 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
                 new RoutedViewHost().SetDefaultContent(mainView).SetViewLocator(viewLocator)
         );
 
-        register.RegisterTransient<IMessageBoxView, DialogControlMessageBoxView>();
-
         register.RegisterTransientAutoInject(
             (Window window) => window.Content,
-            (Control control) => control
+            (IControl control) => control
         );
 
         register.RegisterTransient<IEnumerable<IResourceProvider>>(
@@ -52,7 +59,7 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
         );
     }
 
-    private void ConfigureViewModels(IDependencyInjectorRegister dependencyInjectorRegister)
+    private void ConfigureViewModels(IDependencyInjectorRegister register)
     {
         var styledElementType = typeof(StyledElement);
         var member = styledElementType.GetMember(nameof(StyledElement.DataContext))[0];
@@ -87,11 +94,14 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
                     continue;
                 }
 
-                var autoInjectIdentifier = new AutoInjectIdentifier(type, autoInjectMember);
+                var autoInjectIdentifier = new AutoInjectMemberIdentifier(type, autoInjectMember);
+                var variable = viewModelType.ToVariableAutoName();
+                register.RegisterTransient(type);
+                register.RegisterTransient(viewModelType);
 
-                dependencyInjectorRegister.RegisterTransientAutoInject(
+                register.RegisterTransientAutoInjectMember(
                     autoInjectIdentifier,
-                    (IResolver resolver) => resolver.Resolve(viewModelType)
+                    variable.ToLambda(variable)
                 );
             }
         }

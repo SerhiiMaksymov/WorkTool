@@ -26,6 +26,8 @@ public class Module : IModule
 
     public DependencyStatus GetStatus(TypeInformation type)
     {
-        return dependencyInjector.GetStatus(type);
+        var status = dependencyInjector.GetStatus(type);
+
+        return status;
     }
 }

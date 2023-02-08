@@ -41,12 +41,12 @@ public class PopupDialogControlMessageBoxView : IMessageBoxView
             default:
             {
                 throw new TypeInvalidCastException(
+                    applicationLifetime.GetType(),
                     new[]
                     {
                         typeof(IClassicDesktopStyleApplicationLifetime),
                         typeof(ISingleViewApplicationLifetime)
-                    },
-                    applicationLifetime.GetType()
+                    }
                 );
             }
         }

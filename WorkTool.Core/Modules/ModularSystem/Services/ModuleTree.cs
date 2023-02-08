@@ -1,11 +1,10 @@
-﻿using WorkTool.Core.Modules.Graph.Extensions;
+﻿namespace WorkTool.Core.Modules.ModularSystem.Services;
 
-namespace WorkTool.Core.Modules.ModularSystem.Services;
-
-public class ModuleTree : IModule, IResolver
+public class ModuleTree : IModule, IResolver, IInvoker
 {
     private readonly Tree<Guid, IModule> tree;
     private readonly Dictionary<TypeInformation, Func<object>> cache;
+    private readonly Expression thisExpression;
 
     public ModuleTree(Tree<Guid, IModule> tree)
     {
@@ -23,11 +22,13 @@ public class ModuleTree : IModule, IResolver
 
         var outputsArray = outputs
             .Distinct()
-            .Concat(new TypeInformation[] { typeof(IResolver) })
+            .Concat(new TypeInformation[] { typeof(IResolver), typeof(IInvoker) })
+            .OrderBy(x => x.ToString())
             .ToArray();
-        
+
         Outputs = outputsArray;
         Inputs = inputs.Distinct().Where(x => !outputsArray.Contains(x)).ToArray();
+        thisExpression = this.ToConstant();
     }
 
     public Guid Id { get; }
@@ -37,6 +38,16 @@ public class ModuleTree : IModule, IResolver
 
     public DependencyStatus GetStatus(TypeInformation type)
     {
+        if (typeof(IResolver) == type)
+        {
+            return new DependencyStatus(type, thisExpression);
+        }
+
+        if (typeof(IInvoker) == type)
+        {
+            return new DependencyStatus(type, thisExpression);
+        }
+
         if (!Outputs.Span.Contains(type))
         {
             throw new TypeNotRegisterException(type.Type);
@@ -44,7 +55,9 @@ public class ModuleTree : IModule, IResolver
 
         if (tree.Root.Value.Outputs.Span.Contains(type))
         {
-            return tree.Root.Value.GetStatus(type);
+            var rootStatus = tree.Root.Value.GetStatus(type);
+
+            return rootStatus;
         }
 
         var status = GetDependencyStatus(tree.Root, type).ThrowIfNullStruct();
@@ -55,6 +68,11 @@ public class ModuleTree : IModule, IResolver
     public object GetObject(TypeInformation type)
     {
         if (typeof(IResolver) == type)
+        {
+            return this;
+        }
+
+        if (typeof(IInvoker) == type)
         {
             return this;
         }
@@ -72,9 +90,17 @@ public class ModuleTree : IModule, IResolver
         }
 
         var status = GetStatus(type);
-        var expression = CreateExpression(status);
-        func = expression.Lambda().Compile().ThrowIfIsNot<Func<object>>();
+        var expression = UpdateExpression(status.Expression);
+
+        if (expression.Type.IsValueType)
+        {
+            expression = expression.ToConvert(typeof(object));
+        }
+
+        var lambda = expression.ToLambda();
+        func = lambda.Compile().ThrowIfIsNot<Func<object>>();
         var result = func.Invoke();
+        cache.Add(type, func);
 
         return result;
     }
@@ -84,22 +110,113 @@ public class ModuleTree : IModule, IResolver
         return GetObject(type);
     }
 
-    private Expression CreateExpression(DependencyStatus status)
+    private Expression UpdateExpression(Expression expression)
     {
-        var parameters = new Dictionary<ParameterInfo, Expression>();
-
-        foreach (var neededParameter in status.NeededParameters.Span)
+        switch (expression)
         {
-            var statusParameter = GetStatus(neededParameter.ParameterType);
-            var expression = CreateExpression(statusParameter);
-            parameters.Add(neededParameter, expression);
+            case InvocationExpression invocationExpression:
+            {
+                var arguments = new List<Expression>();
+
+                foreach (var argument in invocationExpression.Arguments)
+                {
+                    arguments.Add(UpdateExpression(argument));
+                }
+
+                var result = invocationExpression.Update(
+                    invocationExpression.Expression,
+                    arguments
+                );
+
+                return result;
+            }
+            case ParameterExpression parameterExpression:
+            {
+                var result = CreateParameter(parameterExpression);
+
+                return result;
+            }
+            case NewExpression newExpression:
+            {
+                var arguments = new List<Expression>();
+
+                foreach (var argument in newExpression.Arguments)
+                {
+                    var argumentExpression = UpdateExpression(argument);
+
+                    if (argumentExpression.Type.IsValueType)
+                    {
+                        argumentExpression = argumentExpression.ToConvert(argument.Type);
+                    }
+
+                    arguments.Add(argumentExpression);
+                }
+
+                return newExpression.Update(arguments);
+            }
+            case BlockExpression blockExpression:
+            {
+                var expressions = new List<Expression>();
+                var blockExpressionItems = blockExpression.Expressions.Take(
+                    blockExpression.Expressions.Count - 1
+                );
+                var blockResult = blockExpression.Expressions
+                    .Last()
+                    .ThrowIfIsNot<ParameterExpression>();
+
+                foreach (var blockExpressionItem in blockExpressionItems)
+                {
+                    expressions.Add(UpdateExpression(blockExpressionItem));
+                }
+
+                expressions.Add(blockResult);
+                var result = blockExpression.Update(blockResult.AsArray(), expressions);
+
+                return result;
+            }
+            case ConstantExpression constantExpression:
+            {
+                return constantExpression;
+            }
+            case BinaryExpression binaryExpression:
+            {
+                var conversion = binaryExpression.Conversion is null
+                    ? null
+                    : UpdateExpression(binaryExpression).ThrowIfIsNot<LambdaExpression>();
+                var right = UpdateExpression(binaryExpression.Right);
+                var result = binaryExpression.Update(binaryExpression.Left, conversion, right);
+
+                return result;
+            }
+            case MethodCallExpression methodCallExpression:
+            {
+                var obj = methodCallExpression.Object is null
+                    ? null
+                    : UpdateExpression(methodCallExpression.Object);
+                var arguments = new List<Expression>();
+
+                foreach (var argument in methodCallExpression.Arguments)
+                {
+                    arguments.Add(UpdateExpression(argument));
+                }
+
+                return methodCallExpression.Update(obj, arguments);
+            }
+            default:
+            {
+                var type = expression.GetType();
+
+                throw new UnreachableException(type.ToString());
+            }
         }
+    }
 
-        var expressionCache = status.CreateExpression(parameters);
-        var func = expressionCache.Lambda().Compile().ThrowIfIsNot<Func<object>>();
-        cache.Add(status.Type, func);
+    private Expression CreateParameter(ParameterExpression parameterExpression)
+    {
+        var status = GetStatus(parameterExpression.Type);
+        var expression = UpdateExpression(status.Expression);
 
-        return status.CreateExpression(parameters);
+        return expression;
     }
 
     private DependencyStatus? GetDependencyStatus(
@@ -107,11 +224,23 @@ public class ModuleTree : IModule, IResolver
         TypeInformation type
     )
     {
+        if (typeof(IResolver) == type)
+        {
+            return new DependencyStatus(type, thisExpression);
+        }
+
+        if (typeof(IInvoker) == type)
+        {
+            return new DependencyStatus(type, thisExpression);
+        }
+
         foreach (var treeNode in node.Nodes)
         {
             if (treeNode.Value.Outputs.Span.Contains(type))
             {
-                return treeNode.Value.GetStatus(type);
+                var status = treeNode.Value.GetStatus(type);
+
+                return status;
             }
         }
 
@@ -145,5 +274,25 @@ public class ModuleTree : IModule, IResolver
         }
 
         AddTypes(inputs, outputs, node.Parent);
+    }
+
+    public object? Invoke(Delegate del, DictionarySpan<TypeInformation, object> arguments)
+    {
+        var parameterTypes = del.GetParameterTypes();
+        var args = new object[parameterTypes.Length];
+
+        for (var index = 0; index < args.Length; index++)
+        {
+            if (arguments.TryGetValue(parameterTypes[index], out var value))
+            {
+                args[index] = value;
+            }
+            else
+            {
+                args[index] = Resolve(parameterTypes[index]);
+            }
+        }
+
+        return del.DynamicInvoke(args);
     }
 }

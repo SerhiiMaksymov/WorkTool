@@ -14,9 +14,4 @@ public static class ConstructorInfoExtension
     {
         return Expression.New(constructor, expressions);
     }
-
-    public static NewExpression ToNew(this ConstructorInfo constructor, ExpressionScope scope)
-    {
-        return constructor.ToNew(scope.Expressions.ToArray());
-    }
 }

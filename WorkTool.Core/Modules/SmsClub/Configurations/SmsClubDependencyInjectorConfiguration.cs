@@ -1,6 +1,6 @@
 namespace WorkTool.Core.Modules.SmsClub.Configurations;
 
-public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
+public readonly struct SmsClubDependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorRegister register)
     {
@@ -9,13 +9,8 @@ public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConf
         register.RegisterTransient<SmsClubUiConfiguration>();
         register.RegisterTransient<ISmsClubSender<object>, SmsClubSender<object>>();
 
-        register.RegisterTransient<SmsClubSender<object>>(
-            (
-                IConfiguration configuration,
-                SmsSenderEndpointsOptions endpointsOptions,
-                SmsSenderOptions options,
-                IDelay delay
-            ) =>
+        register.RegisterTransientReservedCtorParameterDel<SmsClubSender<object>, HttpClient>(
+            (IConfiguration configuration) =>
             {
                 var host =
                     configuration[SmsClubSender.ConfigHostPath]?.ToUri()
@@ -28,7 +23,7 @@ public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConf
 
                 var httpClient = new HttpClient().SetBaseAddress(host).SetAuthorization(apiKey);
 
-                return new SmsClubSender<object>(httpClient, endpointsOptions, options, delay);
+                return httpClient;
             }
         );
     }

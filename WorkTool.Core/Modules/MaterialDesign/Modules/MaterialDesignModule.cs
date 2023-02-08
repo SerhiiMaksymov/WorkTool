@@ -1,6 +1,4 @@
-﻿using WorkTool.Core.Modules.MaterialDesign.Configurations;
-
-namespace WorkTool.Core.Modules.MaterialDesign.Modules;
+﻿namespace WorkTool.Core.Modules.MaterialDesign.Modules;
 
 public class MaterialDesignModule : ModularSystemModule
 {

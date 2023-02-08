@@ -2,33 +2,52 @@
 
 public static class RegisterTransientAutoInjectExtension
 {
-    public static void RegisterTransientAutoInject<T, TParameter>(
-        this IRegisterTransientAutoInject autoInject,
-        Expression<Func<T, TParameter>> expression,
-        Func<TParameter> del
+    public static void RegisterTransientAutoInject(
+        this IRegisterTransientAutoInjectMember register,
+        Expression path
     )
     {
-        autoInject.RegisterTransientAutoInject(expression, (Delegate)del);
+        switch (path)
+        {
+            case LambdaExpression lambdaExpression:
+            {
+                var type = lambdaExpression.Parameters.Single().Type;
+                var memberExpression = lambdaExpression.Body.ThrowIfIsNot<MemberExpression>();
+                var identifier = new AutoInjectMemberIdentifier(type, memberExpression.Member);
+                var variable = memberExpression.Type.ToVariableAutoName();
+                var lambda = variable.ToLambda(variable);
+                register.RegisterTransientAutoInjectMember(identifier, lambda);
+
+                break;
+            }
+            default:
+            {
+                throw new UnreachableException();
+            }
+        }
     }
 
-    public static void RegisterTransientAutoInject<T, TParameter>(
-        this IRegisterTransientAutoInject autoInject,
-        Expression<Func<T, TParameter>> expression,
-        Delegate del
+    public static void RegisterTransientAutoInject(
+        this IRegisterTransientAutoInjectMember register,
+        Expression path,
+        Expression value
     )
     {
-        var member = expression.Body.ThrowIfIsNot<MemberExpression>().Member;
-        autoInject.RegisterTransientAutoInject(
-            new AutoInjectIdentifier(typeof(T), (AutoInjectMember)member),
-            del
-        );
-    }
+        switch (path)
+        {
+            case LambdaExpression lambdaExpression:
+            {
+                var type = lambdaExpression.Parameters.Single().Type;
+                var memberExpression = lambdaExpression.Body.ThrowIfIsNot<MemberExpression>();
+                var identifier = new AutoInjectMemberIdentifier(type, memberExpression.Member);
+                register.RegisterTransientAutoInjectMember(identifier, value);
 
-    public static void RegisterTransientAutoInject<T, TParameter>(
-        this IRegisterTransientAutoInject autoInject,
-        Expression<Func<T, TParameter>> expression
-    )
-    {
-        autoInject.RegisterTransientAutoInject(expression, (TParameter t) => t);
+                break;
+            }
+            default:
+            {
+                throw new UnreachableException();
+            }
+        }
     }
 }

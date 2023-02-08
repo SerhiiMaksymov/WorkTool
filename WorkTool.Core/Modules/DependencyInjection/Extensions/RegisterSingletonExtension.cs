@@ -4,10 +4,10 @@ public static class RegisterSingletonExtension
 {
     public static void RegisterSingleton<T>(
         this IRegisterSingleton registerSingleton,
-        Delegate @delegate
+        Expression expression
     )
     {
-        registerSingleton.RegisterSingleton(typeof(T), @delegate);
+        registerSingleton.RegisterSingleton(typeof(T), expression);
     }
 
     public static void RegisterSingleton<T>(this IRegisterSingleton registerSingleton)

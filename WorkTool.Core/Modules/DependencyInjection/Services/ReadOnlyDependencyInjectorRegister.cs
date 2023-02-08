@@ -4,25 +4,18 @@ public class ReadOnlyDependencyInjectorRegister
     : IBuilder<DependencyInjector>,
         IDependencyInjectorRegister
 {
-    private static readonly IRandom<string> DefaultRandomString;
-
-    private readonly Dictionary<AutoInjectIdentifier, InjectorItem> autoInjects;
+    private readonly Dictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjectMembers;
+    private readonly Dictionary<
+        ReservedCtorParameterIdentifier,
+        InjectorItem
+    > reservedCtorParameters;
     private readonly Dictionary<TypeInformation, InjectorItem> injectors;
-    private readonly Dictionary<TypeInformation, List<InjectorItem>> collections;
-
-    private IRandom<string> randomString;
-
-    static ReadOnlyDependencyInjectorRegister()
-    {
-        DefaultRandomString = RandomStringGuid.Digits;
-    }
 
     public ReadOnlyDependencyInjectorRegister()
     {
-        collections = new();
+        reservedCtorParameters = new();
         injectors = new();
-        autoInjects = new();
-        randomString = DefaultRandomString;
+        autoInjectMembers = new();
     }
 
     public void RegisterConfiguration(IDependencyInjectorConfiguration configuration)
@@ -30,107 +23,70 @@ public class ReadOnlyDependencyInjectorRegister
         configuration.Configure(this);
     }
 
-    public void SetRandomString(IRandom<string> newRandomString)
-    {
-        randomString = newRandomString;
-    }
-
     public DependencyInjector Build()
     {
-        var collectionItems = CreateCollections();
+        var dependencyInjector = new DependencyInjector(
+            injectors,
+            autoInjectMembers,
+            reservedCtorParameters
+        );
 
-        return new DependencyInjector(injectors, autoInjects, collectionItems, randomString);
+        return dependencyInjector;
     }
 
-    public void RegisterTransient(Type type, Delegate del)
+    public void RegisterTransient(Type type, Expression expression)
     {
-        if (!type.IsEnumerable())
-        {
-            RegisterTransientCore(type, del);
-
-            return;
-        }
-
-        Clear(type.GenericTypeArguments[0]);
-        RegisterTransientItem(type.GenericTypeArguments[0], del);
+        RegisterTransientCore(type, expression);
     }
 
-    public void RegisterSingleton(Type type, Delegate del)
+    public void RegisterSingleton(Type type, Expression expression)
     {
-        if (!type.IsEnumerable())
-        {
-            RegisterSingletonCore(type, del);
-
-            return;
-        }
-
-        Clear(type.GenericTypeArguments[0]);
-        RegisterSingletonItem(type.GenericTypeArguments[0], del);
+        RegisterSingletonCore(type, expression);
     }
 
-    public void RegisterTransientAutoInject(AutoInjectIdentifier identifier, Delegate @delegate)
+    public void RegisterTransientAutoInjectMember(
+        AutoInjectMemberIdentifier memberIdentifier,
+        Expression expression
+    )
     {
-        autoInjects[identifier] = new InjectorItem(InjectorItemType.Transient, @delegate);
+        var injectorItem = new InjectorItem(InjectorItemType.Transient, expression);
+        autoInjectMembers[memberIdentifier] = injectorItem;
     }
 
-    public void RegisterSingletonAutoInject(AutoInjectIdentifier identifier, Delegate @delegate)
+    public void RegisterSingletonAutoInjectMember(
+        AutoInjectMemberIdentifier memberIdentifier,
+        Expression expression
+    )
     {
-        autoInjects[identifier] = new InjectorItem(InjectorItemType.Singleton, @delegate);
+        var injectorItem = new InjectorItem(InjectorItemType.Singleton, expression);
+        autoInjectMembers[memberIdentifier] = injectorItem;
     }
 
-    public void RegisterSingletonItem(Type type, Delegate del)
+    private void RegisterTransientCore(Type type, Expression expression)
     {
-        if (collections.TryGetValue(type, out var list))
-        {
-            list.Add(new InjectorItem(InjectorItemType.Singleton, del));
-
-            return;
-        }
-
-        list = new List<InjectorItem> { new(InjectorItemType.Singleton, del) };
-        collections.Add(type, list);
+        injectors[type] = new InjectorItem(InjectorItemType.Transient, expression);
     }
 
-    public void RegisterTransientItem(Type type, Delegate del)
+    public void RegisterSingletonCore(Type type, Expression expression)
     {
-        if (collections.TryGetValue(type, out var list))
-        {
-            list.Add(new InjectorItem(InjectorItemType.Transient, del));
-
-            return;
-        }
-
-        list = new List<InjectorItem> { new(InjectorItemType.Transient, del) };
-        collections.Add(type, list);
+        injectors[type] = new InjectorItem(InjectorItemType.Singleton, expression);
     }
 
-    public void Clear(Type type)
+    public void RegisterSingletonReservedCtorParameter(
+        ReservedCtorParameterIdentifier identifier,
+        Expression expression
+    )
     {
-        if (collections.TryGetValue(type, out var list))
-        {
-            list.Clear();
-        }
+        var injectorItem = new InjectorItem(InjectorItemType.Singleton, expression);
+        reservedCtorParameters[identifier] = injectorItem;
     }
 
-    private Dictionary<TypeInformation, IEnumerable<InjectorItem>> CreateCollections()
+    public void RegisterTransientReservedCtorParameter(
+        ReservedCtorParameterIdentifier identifier,
+        Expression expression
+    )
     {
-        var result = new Dictionary<TypeInformation, IEnumerable<InjectorItem>>();
-
-        foreach (var item in collections)
-        {
-            result.Add(item.Key, item.Value);
-        }
-
-        return result;
-    }
-
-    private void RegisterTransientCore(Type type, Delegate del)
-    {
-        injectors[type] = new InjectorItem(InjectorItemType.Transient, del);
-    }
-
-    public void RegisterSingletonCore(Type type, Delegate @delegate)
-    {
-        injectors[type] = new InjectorItem(InjectorItemType.Singleton, @delegate);
+        var injectorItem = new InjectorItem(InjectorItemType.Transient, expression);
+        reservedCtorParameters[identifier] = injectorItem;
     }
 }

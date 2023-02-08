@@ -1,12 +1,14 @@
 ﻿namespace WorkTool.Core.Modules.Configuration.Configurations;
 
-public readonly struct DependencyInjectorConfiguration : IDependencyInjectorConfiguration
+public readonly struct ConfigurationDependencyInjectorConfiguration
+    : IDependencyInjectorConfiguration
 {
     public void Configure(IDependencyInjectorRegister register)
     {
         register.RegisterTransient<IConfiguration, ConfigurationRoot>();
         register.RegisterTransientAutoInject((JsonConfigurationSource x) => x.FileProvider);
         register.RegisterTransient<JsonConfigurationSource, JsonConfigurationSource>();
+        register.RegisterTransient<JsonConfigurationProvider>();
 
         register.RegisterTransient<IList<IConfigurationProvider>>(
             (JsonConfigurationProvider jsonProvider) =>
