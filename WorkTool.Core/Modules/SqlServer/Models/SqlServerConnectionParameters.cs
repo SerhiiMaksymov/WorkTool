@@ -1,6 +1,6 @@
 ﻿namespace WorkTool.Core.Modules.SqlServer.Models;
 
-public record SqlServerConnectionParameters : IConnectionParameters
+public record SqlServerConnectionParameters : ConnectionParametersBase
 {
     public const string DefaultKeyTrustedConnection = "Trusted_Connection";
     public const string DefaultKeyConnectionTimeout = "Connection Timeout";
@@ -14,9 +14,7 @@ public record SqlServerConnectionParameters : IConnectionParameters
     public const string DefaultKeyIntegratedSecurity = "Integrated Security";
     public const string DefaultKeyMultipleActiveResultSets = "MultipleActiveResultSets";
     public const string DefaultValueInitialCatalog = "";
-    public const string DefaultValueDataSource = "";
     public const string DefaultValueServer = "";
-    public const string DefaultValueDatabase = "";
     public const string DefaultValueUserId = "";
     public const string DefaultValuePassword = "";
     public const int DefaultValueConnectionTimeout = 15;
@@ -25,6 +23,7 @@ public record SqlServerConnectionParameters : IConnectionParameters
     public const bool DefaultValueTrustedConnection = false;
     public const bool DefaultValuePersistSecurityInfo = true;
     public const bool DefaultValueTrustServerCertificate = true;
+
     public const SqlServerIntegratedSecurity DefaultValueIntegratedSecurity =
         SqlServerIntegratedSecurity.False;
 
@@ -40,7 +39,6 @@ public record SqlServerConnectionParameters : IConnectionParameters
     public static readonly BooleanConnectionParameterInfo TrustedConnectionParameterInfo;
     public static readonly Int32ConnectionParameterInfo TimeoutParameterInfo;
 
-    public static readonly ConnectionParameterInfo[] ConnectionParameters;
     private readonly Dictionary<ConnectionParameterInfo, ConnectionParameterValue> parameters =
         new();
 
@@ -276,20 +274,21 @@ public record SqlServerConnectionParameters : IConnectionParameters
             DefaultValueConnectionTimeout
         );
 
-        ConnectionParameters = new ConnectionParameterInfo[]
-        {
-            InitialCatalogParameterInfo,
-            ServerParameterInfo,
-            UserIdParameterInfo,
-            PasswordParameterInfo,
-            EncryptParameterInfo,
-            PersistSecurityInfoInfo,
-            TrustServerCertificateInfo,
-            IntegratedSecurityParameterInfo,
-            MultipleActiveResultSetsParameterInfo,
-            TrustedConnectionParameterInfo,
-            TimeoutParameterInfo
-        };
+        ConnectionParameterValues[typeof(SqlServerConnectionParameters)] =
+            new ConnectionParameterInfo[]
+            {
+                InitialCatalogParameterInfo,
+                ServerParameterInfo,
+                UserIdParameterInfo,
+                PasswordParameterInfo,
+                EncryptParameterInfo,
+                PersistSecurityInfoInfo,
+                TrustServerCertificateInfo,
+                IntegratedSecurityParameterInfo,
+                MultipleActiveResultSetsParameterInfo,
+                TrustedConnectionParameterInfo,
+                TimeoutParameterInfo
+            };
     }
 
     public SqlServerConnectionParameters()
@@ -307,54 +306,8 @@ public record SqlServerConnectionParameters : IConnectionParameters
         ConnectionTimeout = DefaultValueConnectionTimeout;
     }
 
-    public IEnumerable<ConnectionParameter> Parameters =>
+    public override IEnumerable<ConnectionParameter> Parameters =>
         parameters.Select(x => new ConnectionParameter(x.Key, x.Value));
 
-    public IEnumerable<ConnectionParameter> SafeParameters => Parameters;
-
-    public void Set(string key, string value)
-    {
-        var connectionParameterInfo = ConnectionParameters.SingleOrDefault(
-            x => x.Aliases.Contains(key)
-        );
-
-        if (connectionParameterInfo is null)
-        {
-            throw new Exception($"Unknow key {key}.");
-        }
-
-        parameters[connectionParameterInfo] = ParseValue(connectionParameterInfo, value);
-    }
-
-    private ConnectionParameterValue ParseValue(
-        ConnectionParameterInfo connectionParameterInfo,
-        string value
-    )
-    {
-        switch (connectionParameterInfo)
-        {
-            case StringConnectionParameterInfo _:
-            {
-                return new StringConnectionParameterValue(value);
-            }
-            case BooleanConnectionParameterInfo _:
-            {
-                return new BooleanConnectionParameterValue(bool.Parse(value));
-            }
-            case SqlServerIntegratedSecurityConnectionParameterInfo _:
-            {
-                return new SqlServerIntegratedSecurityConnectionParameterValue(
-                    Enum.Parse<SqlServerIntegratedSecurity>(value)
-                );
-            }
-            case Int32ConnectionParameterInfo _:
-            {
-                return new Int32ConnectionParameterValue(int.Parse(value));
-            }
-            default:
-            {
-                throw new Exception($"{connectionParameterInfo.GetType()}");
-            }
-        }
-    }
+    public override IEnumerable<ConnectionParameter> SafeParameters => Parameters;
 }

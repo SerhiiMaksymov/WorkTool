@@ -4,7 +4,7 @@ public class MaterialDesignModule : ModularSystemModule
 {
     private static readonly DependencyInjector MainDependencyInjector;
 
-    private const string IdString = "d42f537a-1271-45b6-8658-0bd4792e6e5c";
+    private const string IdString = "f4025752-c717-4f6b-be10-2cf5e64f561a";
 
     public static readonly Guid IdValue = Guid.Parse(IdString);
 

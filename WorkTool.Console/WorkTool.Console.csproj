@@ -15,10 +15,18 @@
       <None Update="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Asserts\Sounds\alert.wav">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-preview4" />
+      <PackageReference Include="NAudio.WinMM" Version="2.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Asserts\Sounds" />
     </ItemGroup>
 
 </Project>

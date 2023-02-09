@@ -32,10 +32,12 @@ public class AvaloniaUiApp : AvaloniaApplication
 
                 break;
             }
-            default:
+            /*default:
             {
-                throw new UnreachableException();
-            }
+                var type = ApplicationLifetime.ThrowIfNull().GetType();
+
+                throw new UnreachableException(type.ToString());
+            }*/
         }
 
         base.OnFrameworkInitializationCompleted();

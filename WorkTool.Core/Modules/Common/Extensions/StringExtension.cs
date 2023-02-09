@@ -12,6 +12,11 @@ public static class StringExtension
         return new(str);
     }
 
+    public static T ToEnum<T>(this string str) where T : struct
+    {
+        return Enum.Parse<T>(str);
+    }
+
     public static string ThrowIfNullOrWhiteSpace(
         this string? str,
         [CallerArgumentExpression(nameof(str))] string paramName = ""

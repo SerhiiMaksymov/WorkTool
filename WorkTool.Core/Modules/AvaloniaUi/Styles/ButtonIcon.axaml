@@ -1,78 +1,154 @@
-﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
-        xmlns:helpers="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Helpers">
-    <Style Selector="controls|ButtonIcon">
-        <Setter Property="Background" Value="#33000000" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Foreground" Value="Black" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="8,5,8,6" />
-        <Setter Property="CornerRadius" Value="3,3,3,3" />
-        <Setter Property="Width" Value="NaN" />
-        <Setter Property="Template" >
-            <ControlTemplate>
-                <Border Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}">
-                    <Grid ColumnDefinitions="*, Auto">
-                        <Path  Data="{TemplateBinding Data}" />
-                        <ContentPresenter Name="PART_ContentPresenter"
-                                          Grid.Column="1"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          RecognizesAccessKey="True"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Grid>
-                </Border>
-            </ControlTemplate>
-        </Setter>
-    </Style>
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
+                    xmlns:helpers="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Helpers">
+  <Design.PreviewWith>
+    <Border Padding="20">
+      <StackPanel Spacing="20">
+        <controls:ButtonIcon Content="Click Me!" />
+        <controls:ButtonIcon Classes="accent" Content="Click Me!" />
+      </StackPanel>
+    </Border>
+  </Design.PreviewWith>
+
+  <ControlTheme x:Key="{x:Type controls:ButtonIcon}" TargetType="controls:ButtonIcon">
+    <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource ButtonBorderThemeThickness}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+    <Setter Property="Padding" Value="{DynamicResource ButtonPadding}" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="RenderTransform" Value="none" />
     
-    <Style Selector="controls|ButtonIcon:pointerover">
-        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
-    </Style>
+    <Setter Property="Transitions">
+      <Transitions>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
+      </Transitions>
+    </Setter>
+
+    <Setter Property="Template">
+        <ControlTemplate>
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}">
+                <Grid ColumnDefinitions="*, Auto">
+                    <Path  Data="{TemplateBinding Data}" />
+                    
+                    <ContentPresenter Grid.Column="1"
+                                      x:Name="ControlNames.ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      RecognizesAccessKey="True"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Grid>
+            </Border>
+        </ControlTemplate>
+    </Setter>
     
-    <Style Selector="controls|ButtonIcon:pressed">
-        <Setter Property="Background" Value="{DynamicResource ThemeControlHighBrush}" />
-    </Style>
-    
-    <Style Selector="controls|ButtonIcon:disabled">
-        <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
-    </Style>
-    
-    <Style Selector="controls|ButtonIcon.close">
+    <Style Selector="^.close">
         <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.Close}"/>
     </Style>
     
-    <Style Selector="controls|ButtonIcon.download">
+    <Style Selector="^.download">
         <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.Download}"/>
     </Style>
     
-    <Style Selector="controls|ButtonIcon.refresh">
+    <Style Selector="^.refresh">
         <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.Refresh}"/>
     </Style>
     
-    <Style Selector="controls|ButtonIcon.send">
+    <Style Selector="^.send">
         <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.Send}"/>
     </Style>
     
-    <Style Selector="controls|ButtonIcon.play">
+    <Style Selector="^.play">
         <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.Play}"/>
     </Style>
     
-    <Style Selector="controls|ButtonIcon.stop">
+    <Style Selector="^.stop">
         <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.Stop}"/>
     </Style>
     
-    <Style Selector="controls|ButtonIcon.skipNext">
+    <Style Selector="^.skipNext">
         <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.SkipNext}"/>
     </Style>
-</Styles>
+    
+    <Style Selector="^.plus">
+        <Setter Property="Data" Value="{x:Static helpers:GeometryConstants.Plus}"/>
+    </Style>
 
+    <Style Selector="^:pointerover /template/ Border">
+      <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
+    </Style>
+    <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
+    </Style>
+
+    <Style Selector="^:pressed">
+      <Setter Property="RenderTransform" Value="scale(0.98)" />
+    </Style>
+
+    <Style Selector="^:pressed  /template/ Border">
+      <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
+    </Style>
+    
+    <Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
+    </Style>
+
+    <Style Selector="^:disabled /template/ Border">
+      <Setter Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
+    </Style>
+    
+    <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
+    </Style>
+
+    <Style Selector="^.accent">
+      <Style Selector="^ /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
+      </Style>
+        
+        <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
+        </Style>
+
+      <Style Selector="^:pointerover /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPointerOver}" />
+      </Style>
+        
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
+        </Style>
+
+      <Style Selector="^:pressed  /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource AccentButtonBackgroundPressed}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPressed}" />
+      </Style>
+        
+        <Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundPressed}" />
+        </Style>
+
+      <Style Selector="^:disabled /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource AccentButtonBackgroundDisabled}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushDisabled}" />
+      </Style>
+        
+        <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundDisabled}" />
+        </Style>
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>
 

@@ -17,9 +17,10 @@ public class DiskUsageViewModel : ViewModelBase
         IScheduler scheduler,
         IHumanizing<Exception, object> humanizing,
         IMessageBoxView messageBoxView,
+        IInvoker invoker,
         IDirectoryService directoryService,
         ITaskCompletionSourceEnumerator taskCompletionSourceEnumerator
-    ) : base(scheduler, humanizing, messageBoxView)
+    ) : base(scheduler, humanizing, messageBoxView, invoker)
     {
         this.directoryService = directoryService;
         cancellationTokenSource = new();

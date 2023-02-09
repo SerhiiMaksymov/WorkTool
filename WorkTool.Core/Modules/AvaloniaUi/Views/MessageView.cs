@@ -18,20 +18,24 @@ public class MessageView : ReactiveMessageControl<ViewModelBase>, ISetParameter
     {
         var currentViewModel = ViewModel.ThrowIfNull();
 
-        return currentViewModel.CreateCommand(async () =>
-        {
-            var result = invoker.Invoke(@delegate, argumentValues);
+        return currentViewModel.CreateCommand(
+            (Action)(
+                async () =>
+                {
+                    var result = invoker.Invoke(@delegate, argumentValues);
 
-            if (result is null)
-            {
-                return;
-            }
+                    if (result is null)
+                    {
+                        return;
+                    }
 
-            if (result is Task task)
-            {
-                await task;
-            }
-        });
+                    if (result is Task task)
+                    {
+                        await task;
+                    }
+                }
+            )
+        );
     }
 
     public void SetParameter(Type type, object value)

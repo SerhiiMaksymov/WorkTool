@@ -2,6 +2,7 @@
 
 public static class DataConstants
 {
+    public const string Plus = "M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z";
     public const string Play = "M8,5.14V19.14L19,12.14L8,5.14Z";
     public const string Stop = "M18,18H6V6H18V18Z";
     public const string Send = "M2,21L23,12L2,3V10L17,12L2,14V21Z";

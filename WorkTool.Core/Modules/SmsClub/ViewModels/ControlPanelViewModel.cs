@@ -15,8 +15,9 @@ public class ControlPanelViewModel : ViewModelBase
         IScheduler scheduler,
         IHumanizing<Exception, object> humanizing,
         IMessageBoxView messageBoxView,
+        IInvoker invoker,
         ISmsClubSender<object> smsClubSender
-    ) : base(scheduler, humanizing, messageBoxView)
+    ) : base(scheduler, humanizing, messageBoxView, invoker)
     {
         this.smsClubSender = smsClubSender;
         Originators = new AvaloniaList<string>();

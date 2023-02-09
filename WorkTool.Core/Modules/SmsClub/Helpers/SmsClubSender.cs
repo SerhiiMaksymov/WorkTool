@@ -5,9 +5,9 @@ public static class SmsClubSender
     public const string DefaultHostString = "https://im.smsclub.mobi/";
     public const string EnvironmentApiKeyName = "SMS_CLUB_API_KEY";
     public const string ConfigPath = "SmsClub";
-    public const string ConfigHostPath = "SmsClub::Host";
-    public const string ConfigOptionsPath = "SmsClub::Options";
-    public const string ConfigEndpointsPath = "SmsClub::Endpoints";
+    public const string ConfigHostPath = $"{ConfigPath}::Host";
+    public const string ConfigOptionsPath = $"{ConfigPath}::Options";
+    public const string ConfigEndpointsPath = $"{ConfigPath}::Endpoints";
 
     public const string DefaultSmsSendEndpointString =
         DefaultHostString + SmsSenderEndpointsOptions.DefaultSmsSendEndpoint;

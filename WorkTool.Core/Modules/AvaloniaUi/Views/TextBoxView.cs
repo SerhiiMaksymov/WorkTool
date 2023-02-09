@@ -104,16 +104,20 @@ public class TextBoxView : ReactiveTextBox<ViewModelBase>, IContextMenuView, ISe
     {
         var currentViewModel = ViewModel.ThrowIfNull();
 
-        var command = currentViewModel.CreateCommand(async () =>
-        {
-            var @delegate = node.Value.Task.ThrowIfNull();
-            var result = invoker.Invoke(@delegate, parameters);
+        var command = currentViewModel.CreateCommand(
+            (Action)(
+                async () =>
+                {
+                    var @delegate = node.Value.Task.ThrowIfNull();
+                    var result = invoker.Invoke(@delegate, parameters);
 
-            if (result is Task task)
-            {
-                await task;
-            }
-        });
+                    if (result is Task task)
+                    {
+                        await task;
+                    }
+                }
+            )
+        );
 
         return menuItem.SetCommand(command);
     }

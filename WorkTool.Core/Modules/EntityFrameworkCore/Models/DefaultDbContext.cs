@@ -14,12 +14,10 @@ public abstract class DefaultDbContext<
 {
     public TDbConnectionOptions Connection { get; }
 
-    public DefaultDbContext(TDbConnectionOptions dbSqLiteDbConnectionContextOptionsContextOptions)
-        : base(dbSqLiteDbConnectionContextOptionsContextOptions.CreateContextOptions())
+    public DefaultDbContext(TDbConnectionOptions connection)
+        : base(connection.CreateContextOptions())
     {
-        Connection = dbSqLiteDbConnectionContextOptionsContextOptions.ThrowIfNull(
-            nameof(dbSqLiteDbConnectionContextOptionsContextOptions)
-        );
+        Connection = connection.ThrowIfNull();
     }
 
     public override int SaveChanges()

@@ -5,8 +5,7 @@ public readonly struct UiDependencyInjectorConfiguration : IDependencyInjectorCo
     public void Configure(IDependencyInjectorRegister register)
     {
         register.RegisterTransient<UiContext>(
-            (UiContextBuilder uiContextBuilder) =>
-                uiContextBuilder.AddFromAssembly(typeof(WorkToolCoreMarcType).Assembly).Build()
+            (UiContextBuilder uiContextBuilder) => uiContextBuilder.AddFromAssemblies().Build()
         );
     }
 }

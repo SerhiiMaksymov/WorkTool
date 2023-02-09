@@ -1,4 +1,10 @@
-﻿namespace WorkTool.Console;
+﻿using Avalonia;
+
+using WorkTool.Console.Modules;
+using WorkTool.Core.Modules.AutoMapper.Modules;
+using WorkTool.Core.Modules.Sqlite.Modules;
+
+namespace WorkTool.Console;
 
 class Program
 {
@@ -12,6 +18,13 @@ class Program
         arguments.AddRange(args);
         var argsArray = arguments.ToArray();
         await applicationCommandLine.RunAsync(argsArray);
+    }
+
+    public static AppBuilder BuildAvaloniaApp()
+    {
+        Init();
+
+        return module.ThrowIfNull().GetObject<AppBuilder>();
     }
 
     private static void Init()
@@ -30,6 +43,8 @@ class Program
                 .Add(new FileSystemModule())
                 .Add(new AvaloniaUiModule())
                 .Add(new ConfigurationModule())
+                .Add(new AutoMapperModule())
+                .Add(new SqliteModule())
         );
 
         module = new ModuleTree(builder.Build());

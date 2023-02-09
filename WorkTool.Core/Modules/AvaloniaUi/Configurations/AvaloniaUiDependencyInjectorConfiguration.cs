@@ -1,4 +1,6 @@
-﻿namespace WorkTool.Core.Modules.AvaloniaUi.Configurations;
+﻿using WorkTool.Core.Modules.Configuration.Extensions;
+
+namespace WorkTool.Core.Modules.AvaloniaUi.Configurations;
 
 public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyInjectorConfiguration
 {
@@ -12,12 +14,29 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
         register.RegisterTransient<MessageControl>();
         register.RegisterTransient<MainView>();
         register.RegisterTransient<ViewModelBase>();
+        register.RegisterTransient<MessageView>();
         register.RegisterTransient<UiContextBuilder>();
         register.RegisterTransient<AppViewLocatorBuilder>();
-        register.RegisterTransient<FluentTheme>((Uri uri) => new FluentTheme(uri));
         register.RegisterTransient(() => new Window());
         register.RegisterTransient<IMessageBoxView, DialogControlMessageBoxView>();
         ConfigureViewModels(register);
+
+        register.RegisterTransient<FluentTheme>(
+            (IConfiguration configuration, Uri uri) =>
+                new FluentTheme(uri)
+                {
+                    Mode = configuration.GetValue(
+                        AvaloniaUiConfigurationPaths.ConfigModePath,
+                        value => value.ToEnum<FluentThemeMode>(),
+                        FluentThemeMode.Dark
+                    ),
+                    DensityStyle = configuration.GetValue(
+                        AvaloniaUiConfigurationPaths.ConfigDensityStylePath,
+                        value => value.ToEnum<DensityStyle>(),
+                        DensityStyle.Normal
+                    )
+                }
+        );
 
         register.RegisterTransientAutoInject(
             (AvaloniaUiApp avaloniaUiApp) => avaloniaUiApp.Resolver
@@ -28,6 +47,7 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
                 new IStyle[]
                 {
                     fluentTheme,
+                    new StyleInclude(uri) { Source = UriBase.DataGridThemeFluentUri },
                     new StyleInclude(uri) { Source = UriBase.ControlsStylesUri }
                 }
         );
@@ -51,7 +71,7 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
 
         register.RegisterTransientAutoInject(
             (Window window) => window.Content,
-            (IControl control) => control
+            (Control control) => control
         );
 
         register.RegisterTransient<IEnumerable<IResourceProvider>>(

@@ -2,8 +2,8 @@
 
 public static class ControlExtension
 {
-    public static T FindControlThrowIfNotFound<T>(this IControl control, string name)
-        where T : class, IControl
+    public static T FindControlThrowIfNotFound<T>(this Control control, string name)
+        where T : Control
     {
         var child = control.FindControl<T>(name);
 

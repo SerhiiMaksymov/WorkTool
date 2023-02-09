@@ -15,18 +15,18 @@ public static class RegisterTransientExtension
 
     public static void RegisterTransient<T>(
         this IRegisterTransient registerTransient,
-        Expression @delegate
+        Expression expression
     )
     {
-        registerTransient.RegisterTransient(typeof(T), @delegate);
+        registerTransient.RegisterTransient(typeof(T), expression);
     }
 
     public static void RegisterTransient<T>(
         this IRegisterTransient registerTransient,
-        Expression<Func<T>> func
+        Expression<Func<T>> expression
     )
     {
-        registerTransient.RegisterTransient(typeof(T), func);
+        registerTransient.RegisterTransient(typeof(T), expression);
     }
 
     public static void RegisterTransient<T>(this IRegisterTransient registerTransient)

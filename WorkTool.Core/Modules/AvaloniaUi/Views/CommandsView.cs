@@ -27,20 +27,24 @@ public class CommandsView
     public void AddCommand(CommandContext commandContext)
     {
         var currentViewModel = ViewModel.ThrowIfNull();
-        var command = currentViewModel.CreateCommand(async () =>
-        {
-            var result = invoker.Invoke(commandContext.Task, argumentValues);
+        var command = currentViewModel.CreateCommand(
+            (Action)(
+                async () =>
+                {
+                    var result = invoker.Invoke(commandContext.Task, argumentValues);
 
-            if (result is null)
-            {
-                return;
-            }
+                    if (result is null)
+                    {
+                        return;
+                    }
 
-            if (result is Task task)
-            {
-                await task;
-            }
-        });
+                    if (result is Task task)
+                    {
+                        await task;
+                    }
+                }
+            )
+        );
 
         var content = commandContext.Content.Invoke();
 

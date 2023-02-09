@@ -12,6 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="12.0.1" />
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview4" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview4" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview4" />
@@ -21,10 +22,12 @@
         <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.3" />
         <PackageReference Include="FormatWith" Version="3.0.1" />
         <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
-        <PackageReference Include="Material.Avalonia" Version="3.0.0-avalonia11-preview2.137-nightly" />
-        <PackageReference Include="Material.Icons.Avalonia" Version="1.2.1" />
+        <PackageReference Include="Material.Avalonia" Version="3.0.0-avalonia11-preview3" />
+        <PackageReference Include="Material.Icons.Avalonia" Version="2.0.0-preview1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+        <PackageReference Include="OpenTK" Version="4.7.5" />
     </ItemGroup>
 
     <ItemGroup>

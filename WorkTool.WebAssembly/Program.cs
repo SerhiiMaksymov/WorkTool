@@ -1,5 +1,7 @@
 ﻿[assembly: SupportedOSPlatform("browser")]
 
+namespace WorkTool.WebAssembly;
+
 internal partial class Program
 {
     private static void Main(string[] args)
@@ -20,8 +22,8 @@ internal partial class Program
         }
 
         /*
-        var setup                  = dependencyInjectorBuilder.Build();
-        var applicationCommandLine = setup.Resolve<IApplication>();
-        applicationCommandLine.Run(args);*/
+    var setup                  = dependencyInjectorBuilder.Build();
+    var applicationCommandLine = setup.Resolve<IApplication>();
+    applicationCommandLine.Run(args);*/
     }
 }

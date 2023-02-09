@@ -89,16 +89,20 @@ public class MainView
     private MenuItem AddCommand(MenuItem menuItem, TreeNode<string, MenuItemContext> node)
     {
         var currentViewModel = ViewModel.ThrowIfNull();
-        var command = currentViewModel.CreateCommand(async () =>
-        {
-            var @delegate = node.Value.Task.ThrowIfNull();
-            var result = invoker.Invoke(@delegate, argumentValues);
+        var command = currentViewModel.CreateCommand(
+            (Action)(
+                async () =>
+                {
+                    var @delegate = node.Value.Task.ThrowIfNull();
+                    var result = invoker.Invoke(@delegate, argumentValues);
 
-            if (result is Task task)
-            {
-                await task;
-            }
-        });
+                    if (result is Task task)
+                    {
+                        await task;
+                    }
+                }
+            )
+        );
 
         return menuItem.SetCommand(command);
     }

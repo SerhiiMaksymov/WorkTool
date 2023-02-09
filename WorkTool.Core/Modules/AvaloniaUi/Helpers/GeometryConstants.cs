@@ -2,6 +2,7 @@
 
 public static class GeometryConstants
 {
+    public static Geometry Plus => Geometry.Parse(DataConstants.Plus);
     public static Geometry Play => Geometry.Parse(DataConstants.Play);
     public static Geometry Stop => Geometry.Parse(DataConstants.Stop);
     public static Geometry SkipNext => Geometry.Parse(DataConstants.SkipNext);

@@ -6,14 +6,19 @@ public static class ConnectionParametersExtension
         this TConnectionParameters connectionItems
     ) where TConnectionParameters : IConnectionParameters
     {
-        return connectionItems.Parameters.GetNoDefaultParameters();
+        var result = connectionItems.Parameters.GetNoDefaultParameters();
+
+        return result;
     }
 
     public static string GetConnectionString<TConnectionParameters>(
         this TConnectionParameters connectionItems
     ) where TConnectionParameters : IConnectionParameters
     {
-        return connectionItems.GetNoDefaultParameters().GetConnectionString();
+        var noDefaultParameters = connectionItems.GetNoDefaultParameters();
+        var result = noDefaultParameters.GetConnectionString();
+
+        return result;
     }
 
     public static string GetSafeConnectionString<TConnectionParameters>(

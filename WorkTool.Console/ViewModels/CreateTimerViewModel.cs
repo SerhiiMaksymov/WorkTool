@@ -1,22 +1,25 @@
-﻿using System.Reactive.Concurrency;
+using System.Reactive.Concurrency;
 
 using ReactiveUI;
 
 using WorkTool.Core.Modules.Common.Interfaces;
+using WorkTool.Core.Modules.DependencyInjection.Interfaces;
 using WorkTool.Core.Modules.Ui.Interfaces;
 
-namespace WorkTool.Console.Models;
+namespace WorkTool.Console.ViewModels;
 
-public class TimerItemViewModel : ViewModelBase
+public class CreateTimerViewModel : ViewModelBase
 {
     private string name = string.Empty;
     private TimeSpan time;
+    private byte seconds;
 
-    public TimerItemViewModel(
+    public CreateTimerViewModel(
         IScheduler scheduler,
         IHumanizing<Exception, object> humanizing,
-        IMessageBoxView messageBoxView
-    ) : base(scheduler, humanizing, messageBoxView) { }
+        IMessageBoxView messageBoxView,
+        IInvoker invoker
+    ) : base(scheduler, humanizing, messageBoxView, invoker) { }
 
     public string Name
     {
@@ -28,5 +31,11 @@ public class TimerItemViewModel : ViewModelBase
     {
         get => time;
         set => this.RaiseAndSetIfChanged(ref time, value);
+    }
+
+    public byte Seconds
+    {
+        get => seconds;
+        set => this.RaiseAndSetIfChanged(ref seconds, value);
     }
 }
