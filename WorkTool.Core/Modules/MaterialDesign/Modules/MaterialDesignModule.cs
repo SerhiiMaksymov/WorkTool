@@ -10,7 +10,7 @@ public class MaterialDesignModule : ModularSystemModule
 
     static MaterialDesignModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<MaterialDesignDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

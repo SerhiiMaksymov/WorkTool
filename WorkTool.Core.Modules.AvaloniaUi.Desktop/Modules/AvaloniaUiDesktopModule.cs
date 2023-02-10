@@ -10,7 +10,7 @@ public class AvaloniaUiDesktopModule : ModularSystemModule
 
     static AvaloniaUiDesktopModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<AvaloniaUiDesktopDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

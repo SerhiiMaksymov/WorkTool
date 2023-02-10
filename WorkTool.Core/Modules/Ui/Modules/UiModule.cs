@@ -10,7 +10,7 @@ public class UiModule : ModularSystemModule
 
     static UiModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<UiDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

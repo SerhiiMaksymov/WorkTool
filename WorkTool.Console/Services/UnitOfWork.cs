@@ -9,14 +9,10 @@ public class UnitOfWork : IUnitOfWork
     private readonly DbContext dbContext;
     private readonly Lazy<ITimerRepository> timerRepository;
 
-    public UnitOfWork(DbContext dbContext)
+    public UnitOfWork(DbContext dbContext, Lazy<ITimerRepository> timerRepository)
     {
         this.dbContext = dbContext;
-        
-        timerRepository = new Lazy<ITimerRepository>(
-            () => new SqliteTimerRepository(this.dbContext),
-            true
-        );
+        this.timerRepository = timerRepository;
     }
 
     public ITimerRepository TimerRepository => timerRepository.Value;

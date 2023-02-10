@@ -8,7 +8,7 @@ internal partial class Program
     {
         try
         {
-            var dependencyInjectorBuilder = new ReadOnlyDependencyInjectorRegister();
+            var dependencyInjectorBuilder = new DependencyInjectorRegister();
             dependencyInjectorBuilder.RegisterConfigurationFromAssemblies();
             var setup = dependencyInjectorBuilder.Build();
             var browser = new BrowserAvaloniaUiApplication(setup.Resolve<AppBuilder>(), "out");

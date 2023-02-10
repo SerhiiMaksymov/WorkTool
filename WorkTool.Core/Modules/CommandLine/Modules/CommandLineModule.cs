@@ -10,7 +10,7 @@ public class CommandLineModule : ModularSystemModule
 
     static CommandLineModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<CommandLineDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

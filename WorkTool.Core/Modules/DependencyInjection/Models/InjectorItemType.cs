@@ -3,5 +3,6 @@
 public enum InjectorItemType : byte
 {
     Singleton,
-    Transient
+    Transient,
+    Scope
 }

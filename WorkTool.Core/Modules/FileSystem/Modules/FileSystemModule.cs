@@ -10,7 +10,7 @@ public class FileSystemModule : ModularSystemModule
 
     static FileSystemModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<FileSystemDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

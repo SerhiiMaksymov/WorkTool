@@ -10,7 +10,7 @@ public class CommonModule : ModularSystemModule
 
     static CommonModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<CommonDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

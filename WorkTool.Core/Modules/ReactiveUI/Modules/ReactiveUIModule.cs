@@ -10,7 +10,7 @@ public class ReactiveUIModule : ModularSystemModule
 
     static ReactiveUIModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<ReactiveUIDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

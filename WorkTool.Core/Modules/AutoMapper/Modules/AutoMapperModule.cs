@@ -12,7 +12,7 @@ public class AutoMapperModule : ModularSystemModule
 
     static AutoMapperModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<AutoMapperDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

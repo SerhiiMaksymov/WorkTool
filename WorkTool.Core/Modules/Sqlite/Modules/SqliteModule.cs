@@ -12,7 +12,7 @@ public class SqliteModule : ModularSystemModule
 
     static SqliteModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<SqliteDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

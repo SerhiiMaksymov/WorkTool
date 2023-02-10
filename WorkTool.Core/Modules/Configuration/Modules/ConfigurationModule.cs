@@ -10,7 +10,7 @@ public class ConfigurationModule : ModularSystemModule
 
     static ConfigurationModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<ConfigurationDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

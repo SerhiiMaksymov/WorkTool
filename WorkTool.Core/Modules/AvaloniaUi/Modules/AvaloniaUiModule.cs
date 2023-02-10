@@ -10,7 +10,7 @@ public class AvaloniaUiModule : ModularSystemModule
 
     static AvaloniaUiModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<AvaloniaUiDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

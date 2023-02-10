@@ -5,6 +5,7 @@ public readonly struct DependencyInjectorFields
     public readonly Dictionary<AutoInjectMemberIdentifier, InjectorItem> AutoInjectMembers;
     public readonly Dictionary<TypeInformation, InjectorItem> Injectors;
     public readonly Dictionary<TypeInformation, Expression> CacheSingleton;
+    public readonly Dictionary<TypeInformation, LazyDependencyInjectorOptions> LazyOptions;
     public readonly ReadOnlyMemory<TypeInformation> Inputs;
     public readonly ReadOnlyMemory<TypeInformation> Outputs;
 
@@ -16,13 +17,15 @@ public readonly struct DependencyInjectorFields
     public DependencyInjectorFields(
         IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
         IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjects,
-        IReadOnlyDictionary<ReservedCtorParameterIdentifier, InjectorItem> reservedCtorParameters
+        IReadOnlyDictionary<ReservedCtorParameterIdentifier, InjectorItem> reservedCtorParameters,
+        IReadOnlyDictionary<TypeInformation, LazyDependencyInjectorOptions> lazyOptions
     )
     {
         CacheSingleton = new();
         ReservedCtorParameters = new(reservedCtorParameters);
         Injectors = new(injectors);
         AutoInjectMembers = new(autoInjects);
+        LazyOptions = new(lazyOptions);
         var array = Injectors.Select(x => x.Key).ToArray();
 
         Outputs = array;

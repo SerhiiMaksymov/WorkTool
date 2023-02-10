@@ -1,18 +1,19 @@
 ﻿namespace WorkTool.Core.Modules.DependencyInjection.Services;
 
-public class ReadOnlyDependencyInjectorRegister
-    : IBuilder<DependencyInjector>,
-        IDependencyInjectorRegister
+public class DependencyInjectorRegister : IBuilder<DependencyInjector>, IDependencyInjectorRegister
 {
     private readonly Dictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjectMembers;
+    private readonly Dictionary<TypeInformation, InjectorItem> injectors;
+    private readonly Dictionary<TypeInformation, LazyDependencyInjectorOptions> lazyOptions;
+
     private readonly Dictionary<
         ReservedCtorParameterIdentifier,
         InjectorItem
     > reservedCtorParameters;
-    private readonly Dictionary<TypeInformation, InjectorItem> injectors;
 
-    public ReadOnlyDependencyInjectorRegister()
+    public DependencyInjectorRegister()
     {
+        lazyOptions = new();
         reservedCtorParameters = new();
         injectors = new();
         autoInjectMembers = new();
@@ -28,7 +29,8 @@ public class ReadOnlyDependencyInjectorRegister
         var dependencyInjector = new DependencyInjector(
             injectors,
             autoInjectMembers,
-            reservedCtorParameters
+            reservedCtorParameters,
+            lazyOptions
         );
 
         return dependencyInjector;
@@ -88,5 +90,15 @@ public class ReadOnlyDependencyInjectorRegister
     {
         var injectorItem = new InjectorItem(InjectorItemType.Transient, expression);
         reservedCtorParameters[identifier] = injectorItem;
+    }
+
+    public void RegisterScope(Type type, Expression expression)
+    {
+        injectors[type] = new InjectorItem(InjectorItemType.Scope, expression);
+    }
+
+    public void SetLazyOptions(TypeInformation type, LazyDependencyInjectorOptions options)
+    {
+        lazyOptions[type] = options;
     }
 }

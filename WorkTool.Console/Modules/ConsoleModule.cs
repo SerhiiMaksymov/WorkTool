@@ -13,6 +13,7 @@ using WorkTool.Console.Services;
 using WorkTool.Core.Modules.AvaloniaUi.Controls;
 using WorkTool.Core.Modules.AvaloniaUi.Helpers;
 using WorkTool.Core.Modules.AvaloniaUi.Views;
+using WorkTool.Core.Modules.DependencyInjection.Interfaces;
 using WorkTool.Core.Modules.MaterialDesign.Services;
 
 namespace WorkTool.Console.Modules;
@@ -27,11 +28,12 @@ public class ConsoleModule : ModularSystemModule
 
     static ConsoleModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterTransient<MainView>();
         register.RegisterTransient<ConsoleUiConfiguration>();
         register.RegisterTransient<IUnitOfWork, UnitOfWork>();
         register.RegisterTransient<DbContext, ConsoleSqliteDbContext>();
+        register.RegisterTransient<ITimerRepository, SqliteTimerRepository>();
 
         register.RegisterTransient<IControl>(
             (MainView content) => new DialogControl().SetContent(content)

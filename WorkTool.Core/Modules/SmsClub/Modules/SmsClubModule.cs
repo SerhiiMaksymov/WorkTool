@@ -10,7 +10,7 @@ public class SmsClubModule : ModularSystemModule
 
     static SmsClubModule()
     {
-        var register = new ReadOnlyDependencyInjectorRegister();
+        var register = new DependencyInjectorRegister();
         register.RegisterConfiguration<SmsClubDependencyInjectorConfiguration>();
         MainDependencyInjector = register.Build();
     }

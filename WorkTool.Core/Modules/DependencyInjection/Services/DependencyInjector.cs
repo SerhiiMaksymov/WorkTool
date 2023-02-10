@@ -7,11 +7,18 @@ public class DependencyInjector : IDependencyInjector
     public DependencyInjector(
         IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
         IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjects,
-        IReadOnlyDictionary<ReservedCtorParameterIdentifier, InjectorItem> reservedCtorParameters
+        IReadOnlyDictionary<ReservedCtorParameterIdentifier, InjectorItem> reservedCtorParameters,
+        IReadOnlyDictionary<TypeInformation, LazyDependencyInjectorOptions> lazyOptions
     )
     {
         Check(injectors);
-        fields = new DependencyInjectorFields(injectors, autoInjects, reservedCtorParameters);
+
+        fields = new DependencyInjectorFields(
+            injectors,
+            autoInjects,
+            reservedCtorParameters,
+            lazyOptions
+        );
     }
 
     public ReadOnlyMemory<TypeInformation> Inputs => fields.Inputs;
