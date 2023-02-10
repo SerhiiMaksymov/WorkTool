@@ -48,12 +48,12 @@ public class ModuleTree : IModule, IResolver, IInvoker
             return new DependencyStatus(type, thisExpression);
         }
 
-        if (!Outputs.Span.Contains(type))
+        if (!IsTypeContains(type))
         {
             throw new TypeNotRegisterException(type.Type);
         }
 
-        if (tree.Root.Value.Outputs.Span.Contains(type))
+        if (IsTypeContains(tree.Root.Value.Outputs, type))
         {
             var rootStatus = tree.Root.Value.GetStatus(type);
 
@@ -77,7 +77,7 @@ public class ModuleTree : IModule, IResolver, IInvoker
             return this;
         }
 
-        if (!Outputs.Span.Contains(type))
+        if (!IsTypeContains(type))
         {
             throw new TypeNotRegisterException(type.Type);
         }
@@ -108,6 +108,41 @@ public class ModuleTree : IModule, IResolver, IInvoker
     public object Resolve(TypeInformation type)
     {
         return GetObject(type);
+    }
+
+    private bool IsTypeContains(ReadOnlyMemory<TypeInformation> outputs, TypeInformation type)
+    {
+        if (!outputs.Span.Contains(type))
+        {
+            if (!type.Type.IsGenericType)
+            {
+                return false;
+            }
+            
+            if (type.Type.GetGenericTypeDefinition() != typeof(Lazy<>))
+            {
+                return false;
+            }
+
+            var argument = type.Type.GenericTypeArguments.Single();
+
+            if (!outputs.Span.Contains(argument))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool IsTypeContains(TypeInformation type)
+    {
+        return IsTypeContains(Outputs, type);
+    }
+    
+    private bool IsTypeContains(TreeNode<Guid, IModule> node, TypeInformation type)
+    {
+        return IsTypeContains(node.Value.Outputs, type);
     }
 
     private Expression UpdateExpression(Expression expression)
@@ -202,6 +237,29 @@ public class ModuleTree : IModule, IResolver, IInvoker
 
                 return methodCallExpression.Update(obj, arguments);
             }
+            case LambdaExpression lambdaExpression:
+            {
+                var body = UpdateExpression(lambdaExpression.Body);
+                var expressions = new List<Expression>();
+
+                foreach (var parameter in lambdaExpression.Parameters)
+                {
+                    expressions.Add(UpdateExpression(parameter));
+                }
+
+                if (expressions.Any())
+                {
+                    var result = body.ToLambda().ToInvoke(expressions).ToLambda();
+
+                    return result;
+                }
+                else
+                {
+                    var result = body.ToLambda();
+
+                    return result;
+                }
+            }
             default:
             {
                 var type = expression.GetType();
@@ -236,7 +294,7 @@ public class ModuleTree : IModule, IResolver, IInvoker
 
         foreach (var treeNode in node.Nodes)
         {
-            if (treeNode.Value.Outputs.Span.Contains(type))
+            if (IsTypeContains(treeNode, type))
             {
                 var status = treeNode.Value.GetStatus(type);
 

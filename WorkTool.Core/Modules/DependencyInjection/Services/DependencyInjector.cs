@@ -5,10 +5,10 @@ public class DependencyInjector : IDependencyInjector
     private readonly DependencyInjectorFields fields;
 
     public DependencyInjector(
-        IReadOnlyDictionary<TypeInformation, InjectorItem> injectors,
-        IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem> autoInjects,
-        IReadOnlyDictionary<ReservedCtorParameterIdentifier, InjectorItem> reservedCtorParameters,
-        IReadOnlyDictionary<TypeInformation, LazyDependencyInjectorOptions> lazyOptions
+    IReadOnlyDictionary<TypeInformation, InjectorItem>                  injectors,
+    IReadOnlyDictionary<AutoInjectMemberIdentifier, InjectorItem>       autoInjects,
+    IReadOnlyDictionary<ReservedCtorParameterIdentifier, InjectorItem>  reservedCtorParameters,
+    IReadOnlyDictionary<TypeInformation, LazyDependencyInjectorOptions> lazyOptions
     )
     {
         Check(injectors);
@@ -21,7 +21,7 @@ public class DependencyInjector : IDependencyInjector
         );
     }
 
-    public ReadOnlyMemory<TypeInformation> Inputs => fields.Inputs;
+    public ReadOnlyMemory<TypeInformation> Inputs  => fields.Inputs;
     public ReadOnlyMemory<TypeInformation> Outputs => fields.Outputs;
 
     public object Resolve(TypeInformation type)
@@ -32,16 +32,16 @@ public class DependencyInjector : IDependencyInjector
         }
 
         BuildExpression(type, injectorItem, out var expression);
-        var func = BuildFunc(expression);
+        var func  = BuildFunc(expression);
         var value = func.Invoke();
 
         return value;
     }
 
     private bool BuildExpression(
-        TypeInformation type,
-        InjectorItem injectorItem,
-        out Expression result
+    TypeInformation type,
+    InjectorItem    injectorItem,
+    out Expression  result
     )
     {
         switch (injectorItem.Type)
@@ -248,9 +248,9 @@ public class DependencyInjector : IDependencyInjector
 
     private bool AutoInjectMembers(Expression root, out Expression result)
     {
-        var isFull = true;
-        var variables = new List<ParameterExpression>();
-        var members = root.Type.GetMembers();
+        var isFull            = true;
+        var variables         = new List<ParameterExpression>();
+        var members           = root.Type.GetMembers();
         var memberExpressions = new List<(MemberInfo Member, Expression Expression)>();
 
         foreach (var member in members)
@@ -264,9 +264,9 @@ public class DependencyInjector : IDependencyInjector
 
             if (
                 injectorItem.Expression is LambdaExpression lambdaExpression
-                && lambdaExpression.Parameters.IsSingle()
-                && lambdaExpression.Body is ParameterExpression parameterExpression
-                && lambdaExpression.Parameters[0].Type == parameterExpression.Type
+             && lambdaExpression.Parameters.IsSingle()
+             && lambdaExpression.Body is ParameterExpression parameterExpression
+             && lambdaExpression.Parameters[0].Type == parameterExpression.Type
             )
             {
                 if (fields.Injectors.ContainsKey(parameterExpression.Type))
@@ -299,7 +299,7 @@ public class DependencyInjector : IDependencyInjector
             return isFull;
         }
 
-        var blockItems = new List<Expression>();
+        var blockItems   = new List<Expression>();
         var rootVariable = root.Type.ToVariableAutoName();
         blockItems.Add(rootVariable.ToAssign(root));
 
@@ -426,8 +426,8 @@ public class DependencyInjector : IDependencyInjector
 
         foreach (var injector in injectors)
         {
-            var keyType = injector.Key.Type;
-            var injectorType = injector.Value.Expression.Type;
+            var keyType          = injector.Key.Type;
+            var injectorType     = injector.Value.Expression.Type;
             var isAssignableFrom = injector.Value.Expression.Type.IsAssignableFrom(keyType);
 
             if (keyType != injectorType && isAssignableFrom)
@@ -457,7 +457,7 @@ public class DependencyInjector : IDependencyInjector
     public object? Invoke(Delegate del, DictionarySpan<TypeInformation, object> arguments)
     {
         var parameterTypes = del.GetParameterTypes();
-        var args = new object[parameterTypes.Length];
+        var args           = new object[parameterTypes.Length];
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -476,6 +476,11 @@ public class DependencyInjector : IDependencyInjector
 
     public DependencyStatus GetStatus(TypeInformation type)
     {
+        if (IsLazy(type))
+        {
+            return GetLazyStatus(type);
+        }
+
         if (!fields.Injectors.TryGetValue(type, out var injectorItem))
         {
             throw new TypeNotRegisterException(type.Type);
@@ -484,5 +489,90 @@ public class DependencyInjector : IDependencyInjector
         BuildExpression(type, injectorItem, out var expression);
 
         return new DependencyStatus(type, expression);
+    }
+
+    private DependencyStatus GetLazyStatus(TypeInformation type)
+    {
+        var instanceType = type.GenericTypeArguments.GetSingle();
+
+        if (!fields.Injectors.TryGetValue(instanceType, out var injectorItem))
+        {
+            throw new TypeNotRegisterException(instanceType.Type);
+        }
+
+        BuildExpression(type, injectorItem, out var expression);
+        var options = fields.LazyOptions.Get(instanceType, LazyDependencyInjectorOptions.None);
+
+        switch (options)
+        {
+            case LazyDependencyInjectorOptions.None:
+            {
+                var constructor = type.Type.GetConstructor(
+                    new[]
+                    {
+                        typeof(Func<>).MakeGenericType(instanceType.Type),
+                        typeof(LazyThreadSafetyMode)
+                    }).ThrowIfNull();
+
+                return new DependencyStatus(
+                    type,
+                    constructor.ToNew(expression.ToLambda(), LazyThreadSafetyMode.None.ToConstant()));
+            }
+            case LazyDependencyInjectorOptions.PublicationOnly:
+            {
+                var constructor = type.Type.GetConstructor(
+                    new[]
+                    {
+                        typeof(Func<>).MakeGenericType(instanceType.Type),
+                        typeof(LazyThreadSafetyMode)
+                    }).ThrowIfNull();
+
+                return new DependencyStatus(
+                    type,
+                    constructor.ToNew(expression.ToLambda(), LazyThreadSafetyMode.PublicationOnly.ToConstant()));
+            }
+            case LazyDependencyInjectorOptions.ExecutionAndPublication:
+            {
+                var constructor = type.Type.GetConstructor(
+                    new[]
+                    {
+                        typeof(Func<>).MakeGenericType(instanceType.Type),
+                        typeof(LazyThreadSafetyMode)
+                    }).ThrowIfNull();
+
+                return new DependencyStatus(
+                    type,
+                    constructor.ToNew(
+                        expression.ToLambda(),
+                        LazyThreadSafetyMode.ExecutionAndPublication.ToConstant()));
+            }
+            case LazyDependencyInjectorOptions.ThreadSafe:
+            {
+                var constructor = type.Type.GetConstructor(
+                    new[]
+                    {
+                        typeof(Func<>).MakeGenericType(instanceType.Type),
+                        typeof(bool)
+                    }).ThrowIfNull();
+
+                return new DependencyStatus(type, constructor.ToNew(expression.ToLambda(), true.ToConstant()));
+            }
+            default: throw new UnreachableException();
+        }
+    }
+
+    private bool IsLazy(TypeInformation type)
+    {
+        if (!type.IsGenericType)
+        {
+            return false;
+        }
+
+        if (type.Type.GetGenericTypeDefinition() == typeof(Lazy<>))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

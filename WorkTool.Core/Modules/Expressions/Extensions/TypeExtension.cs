@@ -6,7 +6,7 @@ public static class TypeExtension
     {
         return Expression.New(type);
     }
-
+    
     public static ParameterExpression ToVariable(this Type type, string name)
     {
         return Expression.Variable(type, name);
