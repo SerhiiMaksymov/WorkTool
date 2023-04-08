@@ -2,11 +2,18 @@
 
 public class PropertyInfoTemplatedControl<TValue, TControl>
     : TemplatedControl,
-        IObjectValue,
-        IDisposable where TControl : class, IAvaloniaObject, new()
+        IDisposable where TControl : AvaloniaObject, new()
 {
     public const string ElementControlName = "PART_Control";
     public const string ElementTextBlockName = "PART_TextBlock";
+    
+    public static readonly DirectProperty< PropertyInfoTemplatedControl<TValue, TControl>, object?> ObjectProperty =
+        AvaloniaProperty.RegisterDirect< PropertyInfoTemplatedControl<TValue, TControl>, object?>(
+            nameof(Object),
+            o => o.Object,
+            (o, v) => o.Object = v
+        );
+
 
     public static readonly DirectProperty<
         PropertyInfoTemplatedControl<TValue, TControl>,
@@ -71,7 +78,7 @@ public class PropertyInfoTemplatedControl<TValue, TControl>
             PropertyInfoTemplatedControl<TValue, TControl>
         >((_, e) => PropertyInfoChanged(e));
 
-        IObjectValue.ObjectProperty.Changed.AddClassHandler<
+        ObjectProperty.Changed.AddClassHandler<
             PropertyInfoTemplatedControl<TValue, TControl>
         >((_, e) => ObjectChanged(e));
 
@@ -101,9 +108,7 @@ public class PropertyInfoTemplatedControl<TValue, TControl>
     public object? Object
     {
         get => @object;
-#pragma warning disable CS8601
-        set => SetAndRaise(IObjectValue.ObjectProperty, ref @object, value);
-#pragma warning restore CS8601
+        set => SetAndRaise(ObjectProperty, ref @object, value);
     }
 
     private static void ValueChanged(AvaloniaPropertyChangedEventArgs e)

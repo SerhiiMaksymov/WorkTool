@@ -1,10 +1,17 @@
 ﻿namespace WorkTool.Core.Modules.AvaloniaUi.Controls;
 
 [TemplatePart(ElementItemsPresenter, typeof(ItemsPresenter))]
-public class PropertyInfoReactiveItemsControl : ItemsControl, IObjectValue, IActivatableView
+public class PropertyInfoReactiveItemsControl : ItemsControl, IActivatableView
 {
     public const string ElementItemsPresenter = "PART_ItemsPresenter";
     public const string ElementTextBlock = "PART_TextBlock";
+    
+    public static readonly DirectProperty<PropertyInfoReactiveItemsControl, object?> ObjectProperty =
+        AvaloniaProperty.RegisterDirect< PropertyInfoReactiveItemsControl, object?>(
+            nameof(Object),
+            o => o.Object,
+            (o, v) => o.Object = v
+        );
 
     public static readonly DirectProperty<PropertyInfoReactiveItemsControl, string?> TitleProperty =
         AvaloniaProperty.RegisterDirect<PropertyInfoReactiveItemsControl, string?>(
@@ -43,17 +50,13 @@ public class PropertyInfoReactiveItemsControl : ItemsControl, IObjectValue, IAct
     public PropertyInfo? PropertyInfo
     {
         get => propertyInfo;
-#pragma warning disable CS8601
         set => SetAndRaise(PropertyInfoProperty, ref propertyInfo, value);
-#pragma warning restore CS8601
     }
 
     public object? Value
     {
         get => value;
-#pragma warning disable CS8601
         set => SetAndRaise(ValueProperty, ref this.value, value);
-#pragma warning restore CS8601
     }
 
     static PropertyInfoReactiveItemsControl()
@@ -61,15 +64,13 @@ public class PropertyInfoReactiveItemsControl : ItemsControl, IObjectValue, IAct
         ItemTemplateProperty.AddOwner<PropertyInfoReactiveItemsControl>();
         ItemsProperty.AddOwner<PropertyInfoReactiveItemsControl>(x => x.Items);
         ItemsPanelProperty.AddOwner<PropertyInfoReactiveItemsControl>();
-#pragma warning disable CS8603
-        IObjectValue.ObjectProperty.AddOwner<PropertyInfoReactiveItemsControl>(x => x.Object);
-#pragma warning restore CS8603
+        ObjectProperty.AddOwner<PropertyInfoReactiveItemsControl>(x => x.Object);
 
         PropertyInfoProperty.Changed.AddClassHandler<PropertyInfoReactiveItemsControl>(
             (_, e) => PropertyInfoChanged(e)
         );
 
-        IObjectValue.ObjectProperty.Changed.AddClassHandler<PropertyInfoReactiveItemsControl>(
+        ObjectProperty.Changed.AddClassHandler<PropertyInfoReactiveItemsControl>(
             (_, e) => ObjectChanged(e)
         );
 
@@ -97,9 +98,7 @@ public class PropertyInfoReactiveItemsControl : ItemsControl, IObjectValue, IAct
     public object? Object
     {
         get => @object;
-#pragma warning disable CS8601
-        set => SetAndRaise(IObjectValue.ObjectProperty, ref @object, value);
-#pragma warning restore CS8601
+        set => SetAndRaise(ObjectProperty, ref @object, value);
     }
 
     protected virtual void UpdateItems() { }

@@ -5,7 +5,7 @@ public class UInt16PropertyInfoTemplatedControl
 {
     static UInt16PropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<UInt16PropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<UInt16PropertyInfoTemplatedControl>(x => x.Object);
         TitleProperty.AddOwner<UInt16PropertyInfoTemplatedControl>(x => x.Title);
     }
 

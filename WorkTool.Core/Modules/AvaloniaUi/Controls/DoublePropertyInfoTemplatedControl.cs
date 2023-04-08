@@ -5,7 +5,7 @@ public class DoublePropertyInfoTemplatedControl
 {
     static DoublePropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<DoublePropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<DoublePropertyInfoTemplatedControl>(x => x.Object);
     }
 
     public DoublePropertyInfoTemplatedControl()

@@ -28,7 +28,7 @@ public class NullablePropertyInfoReactiveItemsControl : PropertyInfoReactiveItem
     static NullablePropertyInfoReactiveItemsControl()
     {
         ItemsPanelProperty.OverrideDefaultValue<NullablePropertyInfoReactiveItemsControl>(
-            new FuncTemplate<IPanel>(() => new ItemsRepeater())
+            new FuncTemplate<Panel>(() => new ItemsRepeater())
         );
 
         IsNullProperty.Changed.AddClassHandler<NullablePropertyInfoReactiveItemsControl>(

@@ -1,10 +1,10 @@
 ﻿namespace WorkTool.Core.Modules.SmsClub.Views;
 
-public partial class ControlPanelView
+public partial class SmsClubPanelView
     : ReactiveUserControl<ControlPanelViewModel>,
         IRefreshCommandView
 {
-    public ControlPanelView()
+    public SmsClubPanelView()
     {
         InitializeComponent();
     }

@@ -1,4 +1,6 @@
-﻿namespace WorkTool.Console;
+﻿using WorkTool.Core.Modules.Windows.Services;
+
+namespace WorkTool.Console;
 
 class Program
 {

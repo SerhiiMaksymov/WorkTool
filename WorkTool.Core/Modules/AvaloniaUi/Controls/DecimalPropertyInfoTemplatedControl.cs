@@ -5,7 +5,7 @@ public class DecimalPropertyInfoTemplatedControl
 {
     static DecimalPropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<DecimalPropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<DecimalPropertyInfoTemplatedControl>(x => x.Object);
     }
 
     public DecimalPropertyInfoTemplatedControl()

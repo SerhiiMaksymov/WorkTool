@@ -5,7 +5,7 @@ public class StringNullablePropertyInfoTemplatedControl
 {
     static StringNullablePropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<StringNullablePropertyInfoTemplatedControl>(
+        ObjectProperty.AddOwner<StringNullablePropertyInfoTemplatedControl>(
             x => x.Object
         );
     }

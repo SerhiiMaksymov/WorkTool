@@ -19,7 +19,7 @@ public class DynamicResourceBinding : IBinding
     }
 
     InstancedBinding? IBinding.Initiate(
-        IAvaloniaObject target,
+        AvaloniaObject target,
         AvaloniaProperty? targetProperty,
         object? newAnchor,
         bool enableDataValidation

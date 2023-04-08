@@ -14,7 +14,7 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
         register.RegisterTransient<ViewModelBase>();
         register.RegisterTransient<UiContextBuilder>();
         register.RegisterTransient<AppViewLocatorBuilder>();
-        register.RegisterTransient<FluentTheme>((Uri uri) => new FluentTheme(uri));
+        register.RegisterTransient<FluentTheme>();
         register.RegisterTransient(() => new Window());
         register.RegisterTransient<IMessageBoxView, DialogControlMessageBoxView>();
         ConfigureViewModels(register);
@@ -51,7 +51,7 @@ public readonly struct AvaloniaUiDependencyInjectorConfiguration : IDependencyIn
 
         register.RegisterTransientAutoInject(
             (Window window) => window.Content,
-            (IControl control) => control
+            (Control control) => control
         );
 
         register.RegisterTransient<IEnumerable<IResourceProvider>>(

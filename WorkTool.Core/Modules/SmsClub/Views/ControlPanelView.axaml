@@ -4,7 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:WorkTool.Core.Modules.AvaloniaUi.Controls"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="WorkTool.Core.Modules.SmsClub.Views.ControlPanelView"
+    x:Class="WorkTool.Core.Modules.SmsClub.Views.SmsClubPanelView"
     Name="ControlPanelView">
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded" SourceObject="ControlPanelView">

@@ -6,10 +6,10 @@ public readonly struct SmsClubUiConfiguration : IUiConfiguration
     {
         var nameAddTabItemFunction = NameHelper.GetNameAddTabItemFunction<
             MainView,
-            ControlPanelView
+            SmsClubPanelView
         >();
 
-        builder.AddTabItemFunction<MainView, ControlPanelView>(() => "SMS Club");
+        builder.AddTabItemFunction<MainView, SmsClubPanelView>(() => "SMS Club");
         builder.AddMenuItem<MainView>(nameAddTabItemFunction, "SMS", "SMS Club");
     }
 }

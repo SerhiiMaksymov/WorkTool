@@ -2,7 +2,7 @@
 
 public class NullablePropertyInfoTemplatedControl<TValue, TControl>
     : PropertyInfoTemplatedControl<TValue, TControl>
-    where TControl : class, IAvaloniaObject, new()
+    where TControl : AvaloniaObject, new()
     where TValue : class
 {
     public static readonly DirectProperty<
@@ -26,7 +26,7 @@ public class NullablePropertyInfoTemplatedControl<TValue, TControl>
             NullablePropertyInfoTemplatedControl<TValue, TControl>
         >((_, e) => IsNullChanged(e));
 
-        IObjectValue.ObjectProperty.AddOwner<
+        ObjectProperty.AddOwner<
             NullablePropertyInfoTemplatedControl<TValue, TControl>
         >(x => x.Object);
     }

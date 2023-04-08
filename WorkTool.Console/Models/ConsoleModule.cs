@@ -15,7 +15,7 @@ public class ConsoleModule : ModularSystemModule
     static ConsoleModule()
     {
         var register = new ReadOnlyDependencyInjectorRegister();
-        register.RegisterTransient<IControl, MainView>();
+        register.RegisterTransient<Control, MainView>();
 
         register.RegisterTransient<IEnumerable<IApplicationCommandLine>>(
             (AvaloniaUiApplicationCommandLine avaloniaUiApplicationCommandLine) =>

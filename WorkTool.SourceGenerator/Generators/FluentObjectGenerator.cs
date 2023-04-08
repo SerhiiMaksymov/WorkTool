@@ -1,4 +1,6 @@
-﻿namespace WorkTool.SourceGenerator.Generators;
+﻿using System.Diagnostics;
+
+namespace WorkTool.SourceGenerator.Generators;
 
 [Generator]
 public class FluentObjectGenerator : ISourceGenerator
@@ -6,7 +8,7 @@ public class FluentObjectGenerator : ISourceGenerator
     public void Initialize(GeneratorInitializationContext context)
     {
         //if (!Debugger.IsAttached)
-        //Debugger.Launch();
+            //Debugger.Launch();
 
         try
         {
@@ -21,7 +23,7 @@ public class FluentObjectGenerator : ISourceGenerator
     public void Execute(GeneratorExecutionContext context)
     {
         //if (!Debugger.IsAttached)
-        //Debugger.Launch();
+            //Debugger.Launch();
 
         try
         {

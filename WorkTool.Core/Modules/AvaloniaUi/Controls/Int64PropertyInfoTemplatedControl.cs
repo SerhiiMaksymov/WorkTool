@@ -4,7 +4,7 @@ public class Int64PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<lo
 {
     static Int64PropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<Int64PropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<Int64PropertyInfoTemplatedControl>(x => x.Object);
     }
 
     public Int64PropertyInfoTemplatedControl()

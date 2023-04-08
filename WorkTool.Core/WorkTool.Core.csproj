@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
@@ -12,18 +12,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview4" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview4" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview6" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview6" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview6" />
         <PackageReference Include="Avalonia.Web" Version="11.0.0-preview4" />
-        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.0-preview4" />
-        <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.0.0-preview6" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.15.1" />
         <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.3" />
         <PackageReference Include="FormatWith" Version="3.0.1" />
         <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
-        <PackageReference Include="Material.Avalonia" Version="3.0.0-avalonia11-preview2.137-nightly" />
-        <PackageReference Include="Material.Icons.Avalonia" Version="1.2.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
+        <PackageReference Include="Material.Avalonia" Version="3.0.0-avalonia11-preview3.152-nightly" />
+        <PackageReference Include="Material.Icons.Avalonia" Version="2.0.0-preview3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.4" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     </ItemGroup>
 

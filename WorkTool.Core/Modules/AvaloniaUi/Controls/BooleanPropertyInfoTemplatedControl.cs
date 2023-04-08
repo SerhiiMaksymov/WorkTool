@@ -4,7 +4,7 @@ public class BooleanPropertyInfoTemplatedControl : PropertyInfoTemplatedControl<
 {
     static BooleanPropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<BooleanPropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<BooleanPropertyInfoTemplatedControl>(x => x.Object);
     }
 
     public BooleanPropertyInfoTemplatedControl()

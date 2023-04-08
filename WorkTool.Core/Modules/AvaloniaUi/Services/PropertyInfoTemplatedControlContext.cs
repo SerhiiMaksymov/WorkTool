@@ -2,21 +2,21 @@
 
 public class PropertyInfoTemplatedControlContext
 {
-    private readonly Func<object, PropertyInfo, IObjectValue> defaultTypeMatch;
-    private readonly Dictionary<Type, Func<object, PropertyInfo, IObjectValue>> typeMatchs;
+    private readonly Func<object, PropertyInfo, AvaloniaObject>                   defaultTypeMatch;
+    private readonly Dictionary<Type, Func<object, PropertyInfo, AvaloniaObject>> typeMatchs;
 
     public PropertyInfoTemplatedControlContext(
-        IReadOnlyDictionary<Type, Func<object, PropertyInfo, IObjectValue>> typeMatchs,
-        Func<object, PropertyInfo, IObjectValue> defaultTypeMatch
+        IReadOnlyDictionary<Type, Func<object, PropertyInfo, AvaloniaObject>> typeMatchs,
+        Func<object, PropertyInfo, AvaloniaObject>                            AvaloniaObject
     )
     {
         this.defaultTypeMatch = defaultTypeMatch;
-        this.typeMatchs = new Dictionary<Type, Func<object, PropertyInfo, IObjectValue>>(
+        this.typeMatchs = new Dictionary<Type, Func<object, PropertyInfo, AvaloniaObject>>(
             typeMatchs
         );
     }
 
-    public Func<object, PropertyInfo, IObjectValue> GetView(Type key)
+    public Func<object, PropertyInfo, AvaloniaObject> GetView(Type key)
     {
         if (typeMatchs.TryGetValue(key, out var value))
         {
@@ -26,7 +26,7 @@ public class PropertyInfoTemplatedControlContext
         return defaultTypeMatch;
     }
 
-    public Func<object, PropertyInfo, IObjectValue> GetView<TType>()
+    public Func<object, PropertyInfo, AvaloniaObject> GetView<TType>()
     {
         return GetView(typeof(TType));
     }

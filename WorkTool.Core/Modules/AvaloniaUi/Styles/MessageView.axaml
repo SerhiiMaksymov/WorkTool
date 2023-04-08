@@ -32,9 +32,7 @@
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignmentContent}" />
                         <ItemsPresenter Grid.Row="2"
                                         Name="{x:Static helpers:ControlNames.PartItemsPresenter}"
-                                        Items="{TemplateBinding Items}"
-                                        ItemsPanel="{TemplateBinding ItemsPanel}"
-                                        ItemTemplate="{TemplateBinding ItemTemplate}" />
+                                        ItemsPanel="{TemplateBinding ItemsPanel}" />
                     </Grid>
                 </Border>
             </ControlTemplate>

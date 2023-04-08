@@ -6,7 +6,7 @@ public static class AvaloniaObjectExtension
         this TAvaloniaObject target,
         AvaloniaProperty targetProperty,
         object resourceKey
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var dynamicResourceBinding = new DynamicResourceBinding(resourceKey);
 
@@ -17,7 +17,7 @@ public static class AvaloniaObjectExtension
         this TAvaloniaObject target,
         AvaloniaProperty targetProperty,
         Expression expression
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var path = expression.GetBindingPath();
         var binding = new Binding(path);
@@ -30,7 +30,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty targetProperty,
         Expression expression,
         string stringFormat
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var path = expression.GetBindingPath();
 
@@ -44,7 +44,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty targetProperty,
         Expression expression,
         IValueConverter converter
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var path = expression.GetBindingPath();
 
@@ -58,7 +58,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty targetProperty,
         Expression expression,
         Action<Binding> setup
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var path = expression.GetBindingPath();
         var binding = new Binding(path);
@@ -72,7 +72,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty targetProperty,
         Expression expression,
         object source
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var path = expression.GetBindingPath();
 
@@ -86,7 +86,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty targetProperty,
         Expression expression,
         BindingMode mode
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var path = expression.GetBindingPath();
         var binding = new Binding(path, mode);
@@ -99,7 +99,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty targetProperty,
         AvaloniaProperty property,
         IValueConverter converter
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var templateBinding = new TemplateBinding(property).SetConverter(converter);
 
@@ -111,7 +111,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty targetProperty,
         AvaloniaProperty property,
         BindingMode mode
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var templateBinding = new TemplateBinding(property).SetMode(mode);
 
@@ -122,7 +122,7 @@ public static class AvaloniaObjectExtension
         this TAvaloniaObject target,
         AvaloniaProperty targetProperty,
         AvaloniaProperty property
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var templateBinding = new TemplateBinding(property);
 
@@ -134,7 +134,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty property,
         IBinding binding,
         object? anchor = null
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var disposable = target.Bind(property, binding, anchor);
 
@@ -146,7 +146,7 @@ public static class AvaloniaObjectExtension
         AvaloniaProperty property,
         IObservable<object> source,
         BindingPriority priority = BindingPriority.LocalValue
-    ) where TAvaloniaObject : IAvaloniaObject
+    ) where TAvaloniaObject : AvaloniaObject
     {
         var disposable = target.Bind(property, source, priority);
 

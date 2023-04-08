@@ -2,8 +2,8 @@
 
 public static class ControlExtension
 {
-    public static T FindControlThrowIfNotFound<T>(this IControl control, string name)
-        where T : class, IControl
+    public static T FindControlThrowIfNotFound<T>(this Control control, string name)
+        where T : Control
     {
         var child = control.FindControl<T>(name);
 
@@ -81,7 +81,7 @@ public static class ControlExtension
         return control;
     }
 
-    public static TParent? FindParent<TParent>(this IControl control)
+    public static TParent? FindParent<TParent>(this Control control)
     {
         if (control.Parent is null)
         {
@@ -93,6 +93,6 @@ public static class ControlExtension
             return parent;
         }
 
-        return control.Parent.FindParent<TParent>();
+        return ((Control)control.Parent).FindParent<TParent>();
     }
 }

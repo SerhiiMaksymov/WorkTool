@@ -4,7 +4,7 @@ public class Int32PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<in
 {
     static Int32PropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<Int32PropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<Int32PropertyInfoTemplatedControl>(x => x.Object);
     }
 
     public Int32PropertyInfoTemplatedControl()

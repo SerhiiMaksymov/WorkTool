@@ -4,7 +4,7 @@ public class BytePropertyInfoTemplatedControl : PropertyInfoTemplatedControl<byt
 {
     static BytePropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<BytePropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<BytePropertyInfoTemplatedControl>(x => x.Object);
     }
 
     public BytePropertyInfoTemplatedControl()

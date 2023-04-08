@@ -4,7 +4,7 @@ public class SBytePropertyInfoTemplatedControl : PropertyInfoTemplatedControl<sb
 {
     static SBytePropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<SBytePropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<SBytePropertyInfoTemplatedControl>(x => x.Object);
     }
 
     public SBytePropertyInfoTemplatedControl()

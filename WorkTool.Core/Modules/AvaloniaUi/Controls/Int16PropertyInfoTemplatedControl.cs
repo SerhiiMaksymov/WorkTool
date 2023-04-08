@@ -4,7 +4,7 @@ public class Int16PropertyInfoTemplatedControl : PropertyInfoTemplatedControl<sh
 {
     static Int16PropertyInfoTemplatedControl()
     {
-        IObjectValue.ObjectProperty.AddOwner<Int16PropertyInfoTemplatedControl>(x => x.Object);
+        ObjectProperty.AddOwner<Int16PropertyInfoTemplatedControl>(x => x.Object);
     }
 
     public Int16PropertyInfoTemplatedControl()
